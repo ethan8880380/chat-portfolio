@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ThreeDPhotoCarousel } from "@/components/ui/3d-carousel";
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { SendIcon } from "lucide-react";
 import Image from "next/image";
@@ -141,47 +140,6 @@ const WordByWordTypewriter = ({ text, speed = 40, delayBetweenWords = 30 }: {
       )}
     </p>
   );
-};
-
-// Very simple typing animation that works reliably
-const SimpleTypewriter = ({ text, speed = 10 }: { text: string; speed?: number }) => {
-  const [displayText, setDisplayText] = useState("");
-  const prefersReducedMotion = useReducedMotion();
-  
-  useEffect(() => {
-    // Show full text immediately if reduced motion is preferred
-    if (prefersReducedMotion) {
-      setDisplayText(text);
-      return;
-    }
-    
-    // Reset display when text changes
-    setDisplayText("");
-    
-    // Use a temporary variable to store the current text
-    let currentText = "";
-    let i = 0;
-    
-    const typeNextCharacter = () => {
-      if (i < text.length) {
-        // Update the temporary variable
-        currentText = text.substring(0, i + 1);
-        // Set the state directly to the current substring
-        setDisplayText(currentText);
-        i++;
-        setTimeout(typeNextCharacter, speed);
-      }
-    };
-    
-    typeNextCharacter();
-    
-    // Cleanup function
-    return () => {
-      setDisplayText("");
-    };
-  }, [text, prefersReducedMotion, speed]);
-  
-  return <p className="text-sm whitespace-pre-wrap">{displayText}</p>;
 };
 
 export function ChatBot({ className = "" }: { className?: string }) {

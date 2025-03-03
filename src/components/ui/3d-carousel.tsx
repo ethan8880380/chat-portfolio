@@ -87,7 +87,7 @@ const Carousel = memo(
     isCarouselActive,
   }: {
     handleClick: (imgUrl: string, index: number) => void
-    controls: any
+    controls: ReturnType<typeof useAnimation>
     cards: string[]
     isCarouselActive: boolean
   }) => {
@@ -175,8 +175,8 @@ const Carousel = memo(
   }
 )
 
-const hiddenMask = `repeating-linear-gradient(to right, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 30px, rgba(0,0,0,1) 30px, rgba(0,0,0,1) 30px)`
-const visibleMask = `repeating-linear-gradient(to right, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 0px, rgba(0,0,0,1) 30px)`
+Carousel.displayName = "Carousel"
+
 function ThreeDPhotoCarousel() {
   const [activeImg, setActiveImg] = useState<string | null>(null)
   const [isCarouselActive, setIsCarouselActive] = useState(true)

@@ -1,9 +1,6 @@
-import Image from "next/image";
 import { Header } from "@/components/sections/header";
-import AnimatedGradientBackground from "@/components/ui/animated-gradient-background";
 import { BasiocHero } from "@/components/sections/basioc-hero";
 import { ProjectTabs } from "@/components/sections/project";
-
 
 export default function Home() {
   return (

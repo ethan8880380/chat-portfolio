@@ -3,12 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import Image from "next/image";
 
 interface HeroProps {
   chatResponse?: string;
@@ -111,10 +106,12 @@ export function Hero({ chatResponse, selectedImage, isInitialState }: HeroProps)
                 transition={{ delay: 0.3 }}
                 className="bg-foreground/10 rounded-lg overflow-hidden aspect-video"
               >
-                <img 
+                <Image 
                   src={selectedImage} 
                   alt="Response visual" 
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full object-cover"
+                  width={800}
+                  height={450}
                 />
               </motion.div>
             )}

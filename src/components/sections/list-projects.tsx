@@ -47,7 +47,7 @@ const getDirection = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>, obj: HTM
 };
 
 export const Cta38 = (props: Cta38Props) => {
-  const { tagline, hoverLinks } = {
+  const { hoverLinks } = {
     ...Cta38Defaults,
     ...props,
   };

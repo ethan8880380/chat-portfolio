@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import Image from "next/image";
 
 const projects = [
   {
@@ -38,10 +38,12 @@ export function Projects() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {projects.map((project) => (
             <div key={project.id} className="aspect-video overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={project.image}
                 alt={project.title}
                 className="w-full h-full object-cover"
+                width={600}
+                height={600}
               />
             </div>
           ))}

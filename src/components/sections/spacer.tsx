@@ -1,6 +1,3 @@
-import AnimatedGradientBackground from "../ui/animated-gradient-background";
-import { Button } from "../ui/button";
-
 export function Spacer() {
   return (
       <div className="">
