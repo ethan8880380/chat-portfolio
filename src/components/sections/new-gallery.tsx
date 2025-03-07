@@ -7,64 +7,9 @@ import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Updated gallery images with detailed descriptions
-const galleryImages = [
-  { 
-    id: 1, 
-    src: "/myself.png", 
-    alt: "Project 2",
-    title: "Modern Web Application",
-    description: "A responsive web application built with React and Next.js, focusing on performance and user experience."
-  },
-  { 
-    id: 2, 
-    src: "/defoor.png", 
-    alt: "Project 3",
-    title: "E-Commerce Platform",
-    description: "Fully-featured online store with secure payments, inventory management, and customer analytics."
-  },
-  { 
-    id: 3, 
-    src: "/ux-design.png", 
-    alt: "Project 4",
-    title: "UX Design System",
-    description: "Comprehensive design system with reusable components, ensuring consistency across products."
-  },
-  { 
-    id: 4, 
-    src: "/myself.png", 
-    alt: "Project 5",
-    title: "Mobile Application",
-    description: "Cross-platform mobile app built with React Native, featuring offline capabilities and real-time updates."
-  },
-  { 
-    id: 5, 
-    src: "/defoor.png", 
-    alt: "Project 6",
-    title: "Dashboard Interface",
-    description: "Data visualization dashboard with interactive charts and customizable widgets for business intelligence."
-  },
-  { 
-    id: 6, 
-    src: "/ux-design.png", 
-    alt: "Project 7",
-    title: "AI Integration",
-    description: "Machine learning powered features that provide personalized recommendations and intelligent automation."
-  },
-  { 
-    id: 7, 
-    src: "/myself.png", 
-    alt: "Project 8",
-    title: "API Development",
-    description: "RESTful API architecture with comprehensive documentation, authentication, and rate limiting."
-  },
-  { 
-    id: 8, 
-    src: "/defoor.png", 
-    alt: "Project 9",
-    title: "DevOps Pipeline",
-    description: "Continuous integration and deployment pipeline ensuring reliable, automated releases with minimal downtime."
-  }
-];
+// Commented out unused variable
+// const galleryImages = [
+// ... existing code ...
 
 // Updated gallery images with detailed descriptions
 const desktopGalleryImages = [
@@ -361,7 +306,8 @@ export function NewGallery() {
   const rawContentX5 = useTransform(slideProgress, [0.5, 0.53, 0.61, 0.64], ["100%", "0%", "0%", "-100%"]);
   const rawContentX6 = useTransform(slideProgress, [0.625, 0.66, 0.73, 0.76], ["100%", "0%", "0%", "-100%"]);
   const rawContentX7 = useTransform(slideProgress, [0.75, 0.78, 0.86, 0.89], ["100%", "0%", "0%", "-100%"]);
-  const rawContentX8 = useTransform(slideProgress, [0.875, 0.9, 0.98, 1], ["100%", "0%", "0%", "0%"]);
+  // Commented out unused variable
+  // const rawContentX8 = useTransform(slideProgress, [0.875, 0.9, 0.98, 1], ["100%", "0%", "0%", "0%"]);
 
   // Apply spring to content transitions for subtle bounce
   const contentX1 = useSpring(rawContentX1, { stiffness: 120, damping: 20, mass: 0.5 });

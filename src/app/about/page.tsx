@@ -10,7 +10,7 @@ export default function About() {
           <div className="col-span-2 space-y-6">
             <h1 className="text-4xl font-semibold">About Me</h1>
             <p className="text-lg leading-relaxed">
-              I'm a UX Designer and Developer with a passion for creating intuitive, user-centered digital experiences. With expertise in both design and front-end development, I bridge the gap between aesthetics and functionality to build products that truly resonate with users.
+              I&apos;m a UX Designer and Developer with a passion for creating intuitive, user-centered digital experiences. With expertise in both design and front-end development, I bridge the gap between aesthetics and functionality to build products that truly resonate with users.
             </p>
             <p className="text-lg leading-relaxed">
               My approach combines thorough user research, iterative design processes, and clean, efficient code implementation. I specialize in React, Next.js, and modern web technologies while maintaining a strong foundation in UX principles and design systems.
