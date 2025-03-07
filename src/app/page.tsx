@@ -1,6 +1,7 @@
 import { Header } from "@/components/sections/header";
 import { BasiocHero } from "@/components/sections/basioc-hero";
 import { ProjectTabs } from "@/components/sections/project";
+import { NewGallery } from "@/components/sections/new-gallery";
 
 export default function Home() {
   return (
@@ -20,6 +21,11 @@ export default function Home() {
       <div className="relative">
         <Header />
         <BasiocHero />
+        
+        {/* Gallery Section with Title */}
+        
+          <NewGallery />
+        
         <ProjectTabs />
         {/* <Cta38 /> */}
         {/* <Team22 /> */}
