@@ -72,7 +72,7 @@ Focus on your AI/ML integration work, particularly the OpenAI model implementati
 
 export async function POST(request: Request) {
   try {
-    const { message, category = 'default' } = await request.json();
+    const { message, category = 'default', model = 'gpt-4o' } = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -93,8 +93,12 @@ export async function POST(request: Request) {
     const validCategory = Object.keys(categoryPrompts).includes(category) ? category : 'default';
     const systemPrompt = categoryPrompts[validCategory as keyof typeof categoryPrompts];
 
+    // Validate model parameter - fall back to default if not valid
+    const validModels = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo', 'gpt-4o'];
+    const validModel = validModels.includes(model) ? model : 'gpt-3.5-turbo';
+
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: validModel,
       messages: [
         {
           role: 'system',

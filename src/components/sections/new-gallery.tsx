@@ -11,123 +11,95 @@ import { Button } from "@/components/ui/button";
 // const galleryImages = [
 // ... existing code ...
 
-// Updated gallery images with detailed descriptions
-const desktopGalleryImages = [
+// Combined gallery images with mobile and desktop image sources
+const galleryImages = [
   { 
     id: 1, 
-    src: "/myself.png", 
-    alt: "Project 2",
-    title: "Modern Web Application",
-    description: "A responsive web application built with React and Next.js, focusing on performance and user experience."
+    src: {
+      desktop: "/projectImages/eds.png",
+      mobile: "/projectImages/eds.png"
+    },
+    alt: "Design System",
+    title: "Enterprise Design System",
+    description: "Company-wide enterprise design system for Kimberly-Clark. Research, design, and development all done by me.",
+    color: "bg-red-500"
   },
   { 
     id: 2, 
-    src: "/defoor.png", 
-    alt: "Project 3",
-    title: "E-Commerce Platform",
-    description: "Fully-featured online store with secure payments, inventory management, and customer analytics."
+    src: {
+      desktop: "/projectImages/fei.png",
+      mobile: "/myself.png"
+    },
+    alt: "AI Chatbot",
+    title: "GenFEI Chatbot",
+    description: "Complex AI chatbot connected to a multiple different knowledge bases. Design, Frontend Development.",
+    color: "bg-purple-500"
   },
   { 
     id: 3, 
-    src: "/ux-design.png", 
-    alt: "Project 4",
-    title: "UX Design System",
-    description: "Comprehensive design system with reusable components, ensuring consistency across products."
+    src: {
+      desktop: "/myself.png",
+      mobile: "/myself.png"
+    },
+    alt: "Analytic Dashboard",
+    title: "IRIS",
+    description: "Complex analytic dashboard focusing on new ways to visualize data and plan promotions.",
+    color: "bg-green-500"
   },
   { 
     id: 4, 
-    src: "/myself.png", 
-    alt: "Project 5",
-    title: "Mobile Application",
-    description: "Cross-platform mobile app built with React Native, featuring offline capabilities and real-time updates."
+    src: {
+      desktop: "/myself.png",
+      mobile: "/myself.png"
+    },
+    alt: "Consumer Website",
+    title: "Web Templates",
+    description: "Standardized web templates for Kimberly-Clark consumer websites.",
+    color: "bg-yellow-500"
   },
   { 
     id: 5, 
-    src: "/defoor.png", 
-    alt: "Project 6",
-    title: "Dashboard Interface",
-    description: "Data visualization dashboard with interactive charts and customizable widgets for business intelligence."
+    src: {
+      desktop: "/myself.png",
+      mobile: "/myself.png"
+    },
+    alt: "Pull Ups Research",
+    title: "Pull Ups Research",
+    description: "Research and Prototypes for a PullUps potty training mobile app.",
+    color: "bg-red-500"
   },
   { 
     id: 6, 
-    src: "/ux-design.png", 
-    alt: "Project 7",
-    title: "AI Integration",
-    description: "Machine learning powered features that provide personalized recommendations and intelligent automation."
+    src: {
+      desktop: "/projectImages/commhub.png",
+      mobile: "/myself.png"
+    },
+    alt: "Huggies Website",
+    title: "Huggies Website",
+    description: "Redesigned the Huggies website to be more user-friendly and engaging.",
+    color: "bg-indigo-500"
   },
   { 
     id: 7, 
-    src: "/myself.png", 
-    alt: "Project 8",
-    title: "API Development",
-    description: "RESTful API architecture with comprehensive documentation, authentication, and rate limiting."
+    src: {
+      desktop: "/myself.png",
+      mobile: "/myself.png"
+    },
+    alt: "Real Estate Website",
+    title: "BuyerSpring",
+    description: "Real estate website focused on a new way to buy and sell homes.",
+    color: "bg-pink-500"
   },
   { 
     id: 8, 
-    src: "/defoor.png", 
-    alt: "Project 9",
-    title: "DevOps Pipeline",
-    description: "Continuous integration and deployment pipeline ensuring reliable, automated releases with minimal downtime."
-  }
-];
-
-// Mobile-specific gallery images - using optimized images for mobile viewport
-const mobileGalleryImages = [
-  { 
-    id: 1, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "Modern Web Application on Mobile",
-    title: "Modern Web Application",
-    description: "A responsive web application built with React and Next.js, focusing on performance and user experience."
-  },
-  { 
-    id: 2, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "E-Commerce Platform on Mobile",
-    title: "E-Commerce Platform",
-    description: "Fully-featured online store with secure payments, inventory management, and customer analytics."
-  },
-  { 
-    id: 3, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "UX Design System on Mobile",
-    title: "UX Design System",
-    description: "Comprehensive design system with reusable components, ensuring consistency across products."
-  },
-  { 
-    id: 4, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "Mobile Application on Mobile",
-    title: "Mobile Application",
-    description: "Cross-platform mobile app built with React Native, featuring offline capabilities and real-time updates."
-  },
-  { 
-    id: 5, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "Dashboard Interface on Mobile",
-    title: "Dashboard Interface",
-    description: "Data visualization dashboard with interactive charts and customizable widgets for business intelligence."
-  },
-  { 
-    id: 6, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "AI Integration on Mobile",
-    title: "AI Integration",
-    description: "Machine learning powered features that provide personalized recommendations and intelligent automation."
-  },
-  { 
-    id: 7, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "API Development on Mobile",
-    title: "API Development",
-    description: "RESTful API architecture with comprehensive documentation, authentication, and rate limiting."
-  },
-  { 
-    id: 8, 
-    src: "/myself.png", // Mobile-optimized image
-    alt: "DevOps Pipeline on Mobile",
-    title: "DevOps Pipeline",
-    description: "Continuous integration and deployment pipeline ensuring reliable, automated releases with minimal downtime."
+    src: {
+      desktop: "/defoor.png",
+      mobile: "/myself.png"
+    },
+    alt: "Property Development Website",
+    title: "DEFOOR Development",
+    description: "Property development website for a local family-owned business.",
+    color: "bg-orange-500"
   }
 ];
 
@@ -136,15 +108,13 @@ export function NewGallery() {
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   // Create state for the current set of gallery images
-  const [currentGalleryImages, setCurrentGalleryImages] = useState(desktopGalleryImages);
+  const [currentGalleryImages, setCurrentGalleryImages] = useState(galleryImages);
 
   // Check if device is mobile
   useEffect(() => {
     const checkIfMobile = () => {
       const mobileView = window.innerWidth < 768;
       setIsMobile(mobileView);
-      // Update gallery images based on device type
-      setCurrentGalleryImages(mobileView ? mobileGalleryImages : desktopGalleryImages);
     };
     
     checkIfMobile();
@@ -395,32 +365,46 @@ export function NewGallery() {
                 {currentGalleryImages.slice(0, 4).map((image) => (
                   <div 
                     key={image.id} 
-                    className="relative min-w-[30vw] h-[33vh] overflow-hidden"
+                    className={`relative min-w-[30vw] aspect-video backdrop-blur-sm mt-12`}
                   >
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      sizes="(max-width: 768px) 70vw, 30vw"
-                      className="object-cover"
-                      loading="eager"
-                      priority={image.id <= 4}
-                    />
+                    <div className="relative w-full h-full overflow-hidden">
+                      <div className="aspect-video w-full h-full relative">
+                        <Image
+                          src={isMobile ? image.src.mobile : image.src.desktop}
+                          alt={image.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 30vw"
+                          className="object-cover"
+                          style={{ objectPosition: '50% 10%' }}
+                          quality={100}
+                          loading="eager"
+                          priority={image.id <= 4}
+                          unoptimized={image.src.desktop.endsWith('.gif')}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
                 {currentGalleryImages.slice(0, 4).map((image) => (
                   <div 
                     key={`dup-${image.id}`} 
-                    className="relative min-w-[70vw] md:min-w-[30vw] h-[33vh] overflow-hidden"
+                    className={`relative min-w-[70vw] md:min-w-[30vw] backdrop-blur-sm`}
                   >
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      sizes="(max-width: 768px) 70vw, 30vw"
-                      className="object-cover"
-                      loading="lazy"
-                    />
+                    <div className="relative w-full h-full overflow-hidden">
+                      <div className="aspect-video w-full h-full relative">
+                        <Image
+                          src={isMobile ? image.src.mobile : image.src.desktop}
+                          alt={image.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 30vw"
+                          className="object-cover"
+                          style={{ objectPosition: '50% 10%' }}
+                          quality={100}
+                          loading="lazy"
+                          unoptimized={image.src.desktop.endsWith('.gif')}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </motion.div>
@@ -430,16 +414,23 @@ export function NewGallery() {
                 {currentGalleryImages.slice(4, 7).map((image) => (
                   <div 
                     key={image.id} 
-                    className="relative flex-1 min-w-[33vw] h-[33vh] overflow-hidden"
+                    className={`relative flex-1 min-w-[33vw] aspect-video backdrop-blur-sm`}
                   >
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      sizes="(max-width: 768px) 90vw, 33vw"
-                      className="object-cover"
-                      loading="eager"
-                    />
+                    <div className="relative w-full h-full overflow-hidden">
+                      <div className="aspect-video w-full h-full relative">
+                        <Image
+                          src={isMobile ? image.src.mobile : image.src.desktop}
+                          alt={image.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover"
+                          style={{ objectPosition: '50% 10%' }}
+                          quality={100}
+                          loading="eager"
+                          unoptimized={image.src.desktop.endsWith('.gif')}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -452,29 +443,43 @@ export function NewGallery() {
                 {currentGalleryImages.slice(0, 4).map((image) => (
                   <div 
                     key={`dup-${image.id}`} 
-                    className="relative min-w-[33vw] h-[33vh] overflow-hidden"
+                    className={`relative min-w-[33vw] aspect-video backdrop-blur-sm`}
                   >
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      sizes="70vw, 30vw"
-                      className="object-cover"
-                    />
+                    <div className="relative w-full h-full overflow-hidden">
+                      <div className="aspect-video w-full h-full relative">
+                        <Image
+                          src={isMobile ? image.src.mobile : image.src.desktop}
+                          alt={image.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover"
+                          style={{ objectPosition: '50% 10%' }}
+                          quality={100}
+                          unoptimized={image.src.desktop.endsWith('.gif')}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
                 {currentGalleryImages.slice(0, 4).map((image) => (
                   <div 
                     key={`bottom-${image.id}`} 
-                    className="relative min-w-[30vw] overflow-hidden"
+                    className={`relative min-w-[30vw] aspect-video backdrop-blur-sm`}
                   >
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      sizes="70vw, 30vw"
-                      className="object-cover"
-                    />
+                    <div className="relative w-full h-full overflow-hidden">
+                      <div className="aspect-video w-full h-full relative">
+                        <Image
+                          src={isMobile ? image.src.mobile : image.src.desktop}
+                          alt={image.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 30vw"
+                          className="object-cover"
+                          style={{ objectPosition: '50% 10%' }}
+                          quality={100}
+                          unoptimized={image.src.desktop.endsWith('.gif')}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </motion.div>
@@ -484,9 +489,9 @@ export function NewGallery() {
           {/* Phase 2: Info Card - slides up before the images */}
           <motion.div
             style={{ y: cardSlideY }}
-            className="absolute bottom-0 md:bottom-4 left-0 right-0 mx-auto w-[100vw] md:top-1/2 md:-translate-y-1/2 md:right-8 md:left-auto md:w-[30vw] md:max-w-md md:min-w-[350px] h-auto z-[9000]"
+            className="absolute bottom-0 md:bottom-8 left-0 right-0 mx-auto w-[100vw] md:right-8 md:left-auto md:w-[30vw] md:max-w-md md:min-w-[350px] h-auto z-[9000]"
           >
-            <div className="w-full bg-white dark:bg-gray-900 overflow-hidden border-4 border-indigo-500">
+            <div className="w-full bg-background/70 backdrop-blur-sm overflow-hidden border rounded-lg">
               {/* Container for all animated content cards */}
               <div className="relative h-[300px] md:h-[400px] w-full">
                 {/* Initial card content - shown when card first appears */}
@@ -502,20 +507,20 @@ export function NewGallery() {
                 >
                   <div className="p-8 flex flex-col h-full">
                     <div className="flex-1">
-                      <div className="mb-4 text-indigo-500 font-semibold text-sm">
+                      <div className="mb-4 text-primary font-semibold text-sm">
                         Project 1
                       </div>
                       <h3 className="text-2xl md:text-3xl font-bold mb-4 text-black dark:text-white">
-                        Design System
+                        Commercial Analytics Hub
                       </h3>
-                      <div className="w-16 h-1 bg-indigo-600 mb-6"></div>
+                      <div className="w-16 h-1 bg-primary mb-6"></div>
                       <p className="text-base md:text-lg text-gray-700 dark:text-gray-300">
-                        Explore a collection of my professional projects showcasing design, development, and creative solutions. Scroll to discover more.
+                        GDUSA Award-winning internal analytics hub serving over 1,000 internal users weekly. Research, design, and development all done by me.
                       </p>
                     </div>
                     
                     <div className="mt-auto">
-                      <Button variant="ghost" className="flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition-colors">
+                      <Button variant="ghost" className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors">
                         View Project
                         <ArrowUpRight className="h-5 w-5 ml-2" />
                       </Button>
@@ -539,13 +544,13 @@ export function NewGallery() {
                   >
                     <div className="p-8 flex flex-col h-full">
                       <div className="flex-1">
-                        <div className="mb-4 text-indigo-500 font-semibold text-sm">
+                        <div className="mb-4 text-primary font-semibold text-sm">
                           PROJECT {index + 2}
                         </div>
                         <h3 className="text-2xl md:text-3xl font-bold mb-4 text-black dark:text-white">
                           {image.title}
                         </h3>
-                        <div className="w-16 h-1 bg-indigo-600 mb-6"></div>
+                        <div className="w-16 h-1 bg-primary mb-6"></div>
                         <p className="text-base md:text-lg text-gray-700 dark:text-gray-300">
                           {image.description}
                         </p>
@@ -577,17 +582,25 @@ export function NewGallery() {
                 className="absolute inset-0 flex items-center justify-center"
               >
                 {/* Fullscreen image container */}
-                <div className="relative w-screen h-screen">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes={isMobile ? "100vw" : "100vw"}
-                    className="object-cover"
-                    priority={isMobile ? index < 3 : index < 2}
-                    quality={isMobile ? 85 : 75}
-                    loading={isMobile && index < 4 && !(isMobile ? index < 3 : index < 2) ? "eager" : undefined}
-                  />
+                <div className={`relative w-screen h-screen backdrop-blur-sm`}>
+                  <div className="relative w-full h-full overflow-hidden rounded-lg">
+                    <div className="aspect-video w-full h-full max-h-full flex items-center justify-center">
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={isMobile ? image.src.mobile : image.src.desktop}
+                          alt={image.alt}
+                          fill
+                          sizes="100vw"
+                          className="object-cover"
+                          style={{ objectPosition: '50% 10%' }}
+                          quality={100}
+                          priority={isMobile ? index < 3 : index < 2}
+                          loading={isMobile && index < 4 && !(isMobile ? index < 3 : index < 2) ? "eager" : undefined}
+                          unoptimized={image.src.desktop.endsWith('.gif')}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             ))}

@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.gif$/,
+      type: 'asset',
+    });
+    return config;
   },
 };
 

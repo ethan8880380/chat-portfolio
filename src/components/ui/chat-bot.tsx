@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
@@ -42,101 +42,111 @@ const projectImages = {
 };
 
 // Word-by-word animation with staggered timing and word highlighting
-const WordByWordTypewriter = ({ text, speed = 40, delayBetweenWords = 30 }: { 
+const WordByWordTypewriter = ({ 
+  text, 
+  speed = 40,
+  onComplete
+}: { 
   text: string; 
   speed?: number;
-  delayBetweenWords?: number;
+  onComplete?: () => void;
 }) => {
-  const [displayedWords, setDisplayedWords] = useState<Array<{word: string, highlight: boolean}>>([]);
+  const [visibleWords, setVisibleWords] = useState<string[]>([]);
   const [isComplete, setIsComplete] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
   const prefersReducedMotion = useReducedMotion();
   
+  // Process text into words to display
+  const words = useMemo(() => text.split(/(\s+)/).filter(w => w.length > 0), [text]);
+  
+  // When animation completes, call the onComplete callback
   useEffect(() => {
-    // Split text into words on mount
-    const splitWords = text.split(/(\s+)/); // Split keeping spaces
+    if (isComplete && onComplete) {
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isComplete, onComplete]);
+  
+  // Simple blinking cursor effect
+  useEffect(() => {
+    if (isComplete) return;
     
+    const cursorInterval = setInterval(() => {
+      setShowCursor(prev => !prev);
+    }, 500);
+    
+    return () => clearInterval(cursorInterval);
+  }, [isComplete]);
+  
+  // Word by word typing effect
+  useEffect(() => {
     // Show full text immediately if reduced motion is preferred
     if (prefersReducedMotion) {
-      setDisplayedWords(splitWords.map(word => ({ word, highlight: false })));
+      setVisibleWords(words);
       setIsComplete(true);
       return;
     }
     
     // Reset state when text changes
-    setDisplayedWords([]);
+    setVisibleWords([]);
     setIsComplete(false);
     
-    let wordIndex = 0;
+    let currentIndex = 0;
+    let timers: NodeJS.Timeout[] = [];
     
-    const animateNextWord = () => {
-      if (wordIndex < splitWords.length) {
-        const word = splitWords[wordIndex];
+    // Add word by word with calculated delays
+    const addNextWord = () => {
+      if (currentIndex < words.length) {
+        const word = words[currentIndex];
+        const currentWord = word;
         
-        // Add the new word with highlight true
-        setDisplayedWords(prev => [
-          ...prev.map(item => ({...item, highlight: false})), // Turn off highlight for all previous words
-          { word, highlight: true } // Add new word with highlight
-        ]);
+        // Calculate delay based on word length and type
+        const isPunctuation = /^[.,!?;:]/.test(word);
+        const wordDelay = word.trim() === '' ? speed * 0.5 : 
+                          isPunctuation ? speed * 1.5 : 
+                          Math.max(speed, word.length * speed * 0.15);
         
-        wordIndex++;
+        // Add this word to visible words
+        const timer = setTimeout(() => {
+          setVisibleWords(prev => [...prev, currentWord]);
+          
+          // Move to next word
+          currentIndex++;
+          
+          if (currentIndex < words.length) {
+            addNextWord();
+          } else {
+            // All words added
+            setTimeout(() => setIsComplete(true), 500);
+          }
+        }, wordDelay);
         
-        // Turn off highlight after a short delay
-        setTimeout(() => {
-          setDisplayedWords(prev => 
-            prev.map((item, i) => i === prev.length - 1 ? {...item, highlight: false} : item)
-          );
-        }, 150); // Duration of highlight effect
-        
-        // Sophisticated timing algorithm for natural-feeling text
-        // Longer words take longer, punctuation adds pauses, slight randomness for human feel
-        const baseDelay = word.length * speed;
-        const randomFactor = Math.random() * delayBetweenWords; 
-        const punctuationDelay = word.match(/[.,!?;:]/) ? 200 : 0;
-        const endOfSentenceDelay = word.match(/[.!?]\s*$/) ? 350 : 0;
-        const nextTiming = baseDelay + randomFactor + punctuationDelay + endOfSentenceDelay;
-        
-        setTimeout(animateNextWord, nextTiming);
-      } else {
-        setIsComplete(true);
+        timers.push(timer);
       }
     };
     
-    // Start the animation
-    setTimeout(animateNextWord, 100); // Small initial delay
+    // Start adding words
+    addNextWord();
     
-    // Cleanup function
     return () => {
-      setDisplayedWords([]);
-      setIsComplete(false);
+      timers.forEach(clearTimeout);
     };
-  }, [text, prefersReducedMotion, speed, delayBetweenWords]);
+  }, [text, words, prefersReducedMotion, speed]);
   
   if (prefersReducedMotion) {
-    return <p className="text-sm whitespace-pre-wrap">{text}</p>;
+    return <p className="text-base leading-relaxed">{text}</p>;
   }
   
   return (
-    <p className="text-sm whitespace-pre-wrap">
-      {/* Render words with highlights */}
-      {displayedWords.map((item, index) => (
-        <span 
-          key={index} 
-          className={`transition-colors duration-150 ease-out ${
-            item.highlight 
-              ? 'text-primary font-medium' 
-              : ''
-          }`}
-        >
-          {item.word}
-        </span>
+    <p className="font-medium text-base leading-relaxed">
+      {visibleWords.map((word, index) => (
+        <span key={index}>{word}</span>
       ))}
-      
-      {/* Add blinking cursor at the end when not complete */}
-      {!isComplete && (
-        <span 
-          className="inline-block h-4 w-[1px] mx-[1px] bg-foreground animate-pulse" 
-          style={{ animationDuration: "750ms" }} 
-        />
+      {!isComplete && showCursor && (
+        <span className="inline-block w-[2px] h-[1.2em] bg-primary animate-pulse ml-[1px] align-middle" />
       )}
     </p>
   );
@@ -149,6 +159,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasOpenedBefore, setHasOpenedBefore] = useState(false);
   const [isClosing, setIsClosing] = useState(false); // Track when the chat is closing
+  const [selectedModel] = useState<string>("gpt-4o"); // Fixed to GPT-4o
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   // Ref to the collapsed chatbot component to measure its size
@@ -249,7 +260,10 @@ export function ChatBot({ className = "" }: { className?: string }) {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userMessage }),
+          body: JSON.stringify({ 
+            message: userMessage,
+            model: selectedModel 
+          }),
         });
 
         const data = await res.json();
@@ -261,12 +275,12 @@ export function ChatBot({ className = "" }: { className?: string }) {
         imageData = getProjectImage(responseMessage);
       }
       
-      // Bot message with seen=true since it's added while chat is open
+      // Bot message with seen=false initially to trigger the animation
       setMessages(prev => [...prev, { 
         role: 'bot', 
         content: responseMessage,
         image: imageData,
-        seen: true
+        seen: false
       }]);
       
     } catch (err) {
@@ -300,6 +314,32 @@ export function ChatBot({ className = "" }: { className?: string }) {
       setIsClosing(false);
     }, 150); // Short delay to allow exit animations to start
   };
+
+  // Add shimmer keyframe animation in global.css or add it inline in the component
+  useEffect(() => {
+    // Add shimmer animation keyframes to document if not already added
+    if (!document.getElementById('shimmer-keyframes')) {
+      const style = document.createElement('style');
+      style.id = 'shimmer-keyframes';
+      style.innerHTML = `
+        @keyframes shimmer {
+          0% {
+            opacity: 0.6;
+            transform: translateY(0);
+          }
+          50% {
+            opacity: 1;
+            transform: translateY(-2px);
+          }
+          100% {
+            opacity: 0.6;
+            transform: translateY(0);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
 
   return (
     <LayoutGroup>
@@ -376,7 +416,6 @@ export function ChatBot({ className = "" }: { className?: string }) {
           ) : (
             <>
               <motion.div
-                key="backdrop"
                 initial={!hasOpenedBefore ? { opacity: 0, backdropFilter: "blur(0px)" } : { opacity: 0.6, backdropFilter: "blur(10px)" }}
                 animate={{ opacity: 0.6, backdropFilter: "blur(10px)" }}
                 exit={{ opacity: 0, backdropFilter: "blur(0px)", transition: { duration: 0.2 } }}
@@ -394,7 +433,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                   scale: !hasOpenedBefore ? springTransition : linearTransition,
                   exit: { duration: 0.15 }
                 }}
-                className="fixed inset-0 m-4 md:m-auto md:inset-[5%] lg:inset-[10%] max-h-[90vh] md:max-h-[80vh] max-w-[70vw] mx-auto z-50"
+                className="fixed inset-0 m-0 md:m-4 md:mx-auto md:inset-[5%] lg:inset-[10%] max-h-[100vh] md:max-h-[80vh] max-w-none md:max-w-[70vw] z-50"
                 initial={!hasOpenedBefore ? { scale: 0.9, opacity: 0 } : { scale: 1, opacity: 1 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
@@ -402,7 +441,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                 <motion.div
                   layoutId="chat-content"
                   transition={linearTransition}
-                  className="w-full h-full bg-background/70 backdrop-blur-md rounded-xl overflow-hidden shadow-2xl flex flex-col border"
+                  className="w-full h-full bg-background/70 backdrop-blur-md rounded-none md:rounded-xl overflow-hidden shadow-2xl flex flex-col border-none md:border"
                 >
                   <motion.div
                     initial={!hasOpenedBefore ? { opacity: 0 } : { opacity: 1 }}
@@ -444,9 +483,21 @@ export function ChatBot({ className = "" }: { className?: string }) {
                             message.role === 'user' ? 'bg-background' : ''
                           }`}>
                             {message.role === 'bot' && message === messages[messages.length - 1] && !message.seen ? (
-                              <WordByWordTypewriter text={message.content} />
+                              <WordByWordTypewriter 
+                                text={message.content}
+                                onComplete={() => {
+                                  // Mark the message as seen when animation completes
+                                  setMessages(prev => 
+                                    prev.map((msg, idx) => 
+                                      idx === prev.length - 1 && msg.role === 'bot' && !msg.seen
+                                        ? { ...msg, seen: true }
+                                        : msg
+                                    )
+                                  );
+                                }}
+                              />
                             ) : (
-                              <p className="text-sm">{message.content}</p>
+                              <p className="text-base leading-relaxed">{message.content}</p>
                             )}
                             
                             {/* Render image if available and not in closing state */}
@@ -459,8 +510,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                                   type: "spring",
                                   stiffness: 200,
                                   damping: 20,
-                                  delay: message.role === 'bot' && message === messages[messages.length - 1] && !message.seen ? 
-                                    message.content.length * 0.01 : 0 // Delay image after text finishes typing
+                                  delay: message.role === 'bot' && !message.seen ? 0.3 : 0 // Small fixed delay after typing starts
                                 }}
                                 className="mt-3 overflow-hidden rounded-lg"
                               >
@@ -486,10 +536,25 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         className="flex justify-start"
                       >
                         <div className="bg-muted rounded-lg px-4 py-2">
-                          <div className="flex space-x-1">
-                            <div className="h-2 w-2 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="h-2 w-2 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="h-2 w-2 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          <div className="relative">
+                            <span className="font-medium text-base relative inline-block">
+                              <span className="opacity-0">thinking</span>
+                              <span className="absolute inset-0 flex justify-center">
+                                {/* Shimmer effect for each letter of "thinking" */}
+                                {"thinking".split('').map((letter, index) => (
+                                  <span 
+                                    key={index} 
+                                    className="relative inline-block"
+                                    style={{
+                                      animation: `shimmer 1.5s infinite`,
+                                      animationDelay: `${index * 100}ms`,
+                                    }}
+                                  >
+                                    {letter}
+                                  </span>
+                                ))}
+                              </span>
+                            </span>
                           </div>
                         </div>
                       </motion.div>
