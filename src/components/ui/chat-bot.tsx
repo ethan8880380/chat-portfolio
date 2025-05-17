@@ -191,7 +191,6 @@ export function ChatBot({ className = "" }: { className?: string }) {
   const [hasOpenedBefore, setHasOpenedBefore] = useState(false);
   const [isClosing, setIsClosing] = useState(false); // Track when the chat is closing
   const [selectedModel] = useState<string>("gpt-4o"); // Fixed to GPT-4o
-  const [currentContext, setCurrentContext] = useState<string>(""); // Track current conversation context
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null); // Add a ref for the input element
   const prefersReducedMotion = useReducedMotion();
@@ -302,7 +301,9 @@ export function ChatBot({ className = "" }: { className?: string }) {
       "what about", "tell me more", "can you explain", "how does that", 
       "why is", "and what", "what else", "is there more", "elaborate on",
       "more details", "go on", "what happened", "how did", "when was",
-      "where was", "who was", "can you show", "follow up", "related to"
+      "where was", "who was", "can you show", "follow up", "related to",
+      "difficult", "challenges", "problems", "issues", "hard", "tough",
+      "what was", "how was", "when did", "why did", "what were"
     ];
     
     const messageLower = message.toLowerCase();
@@ -311,51 +312,167 @@ export function ChatBot({ className = "" }: { className?: string }) {
     const hasReferencePronouns = /\b(it|this|that|these|those|they|them|he|she|his|her|its|their)\b/.test(messageLower);
     
     // Check for short queries that are likely follow-ups
-    const isShortQuery = message.split(" ").length <= 4 && message.includes("?");
+    const isShortQuery = message.split(" ").length <= 6;
     
     // Check for follow-up indicators
     const hasFollowUpIndicator = followUpIndicators.some(indicator => 
       messageLower.includes(indicator)
     );
     
-    return hasReferencePronouns || isShortQuery || hasFollowUpIndicator;
+    // Check for questions about difficulty, challenges, problems
+    const isDifficultyQuestion = (
+      messageLower.includes("difficult") || 
+      messageLower.includes("challenge") || 
+      messageLower.includes("problem") ||
+      messageLower.includes("issue") ||
+      messageLower.includes("hard") ||
+      messageLower.includes("tough")
+    );
+    
+    return hasReferencePronouns || isShortQuery || hasFollowUpIndicator || isDifficultyQuestion;
   };
 
-  // Function to get the context from previous messages
-  const getConversationContext = (): string => {
+  // Enhanced function to get conversation context with topic tracking
+  const getConversationContext = (): { context: string, lastTopic: string } => {
     // Get the last 3 messages for context
     const recentMessages = messages.slice(-3);
     
-    if (recentMessages.length === 0) return "";
+    if (recentMessages.length === 0) return { context: "", lastTopic: "" };
     
     // Extract context from recent messages
-    return recentMessages.map(msg => {
+    const contextString = recentMessages.map(msg => {
       return `${msg.role === 'user' ? 'Question' : 'Answer'}: ${msg.content}`;
     }).join("\n");
+
+    // Try to identify the main topic from the last bot response
+    let lastTopic = "";
+    const lastBotMessage = [...messages].reverse().find(msg => msg.role === 'bot');
+    
+    if (lastBotMessage) {
+      // Check for project mentions in the last bot message
+      const projectMentions = [
+        { key: "analytics hub", variants: ["commercial analytics", "analytics hub", "analytic hub", "gdusa award", "gdusa"] },
+        { key: "design system", variants: ["design system", "enterprise design", "component library"] },
+        { key: "genfei", variants: ["genfei", "chatbot", "ai interface", "ai assistant"] },
+        { key: "iris", variants: ["iris", "analytics dashboard", "data visualization"] },
+        { key: "web templates", variants: ["web templates", "website templates", "consumer websites", "brand websites"] },
+        { key: "pull ups", variants: ["pull ups", "potty training", "mobile app"] },
+        { key: "buyerspring", variants: ["buyerspring", "real estate", "home buying"] },
+        { key: "huggies", variants: ["huggies", "e-commerce", "redesign"] }
+      ];
+
+      // Check each project's variants against the last bot message content
+      for (const project of projectMentions) {
+        if (project.variants.some(variant => 
+          lastBotMessage.content.toLowerCase().includes(variant.toLowerCase())
+        )) {
+          lastTopic = project.key;
+          break;
+        }
+      }
+    }
+    
+    return { context: contextString, lastTopic };
   };
 
-  // Function to determine relevant project based on conversation
-  const determineRelevantProject = (message: string, context: string): string | null => {
+  // Enhanced function to determine relevant project based on conversation
+  const determineRelevantProject = (message: string, context: string, lastTopic: string): string | null => {
     const projects = [
       "analytics hub", "design system", "genfei", "iris", 
       "web templates", "pull ups", "buyerspring", "huggies"
     ];
+
+    const projectAliases: {[key: string]: string[]} = {
+      "analytics hub": ["analytics hub", "analytics dashboard", "analytic hub", "commercial analytics", "gdusa", "gdusa award", "analytics", "data hub", "favorite project", "internal hub", "openai integration"],
+      "design system": ["design system", "enterprise design", "component library", "ui library", "design standards", "kimberly-clark design"],
+      "genfei": ["genfei", "chatbot", "ai interface", "ai chatbot", "ai assistant", "conversational interface"],
+      "iris": ["iris", "analytics dashboard", "data visualization", "promotional planning", "promotion planning", "visualization", "sales analytics"],
+      "web templates": ["web templates", "website templates", "consumer websites", "brand websites", "website standards", "templates", "web development"],
+      "pull ups": ["pull ups", "potty training", "mobile app", "child app", "parent app", "research", "prototypes"],
+      "buyerspring": ["buyerspring", "real estate", "home buying", "property search", "real estate platform"],
+      "huggies": ["huggies", "e-commerce", "redesign", "website redesign", "e-commerce platform", "huggies website"]
+    };
     
-    // First check the current message
+    // First check the current message for direct project references
     for (const project of projects) {
-      if (message.toLowerCase().includes(project)) {
+      const aliases = projectAliases[project] || [];
+      if (aliases.some(alias => message.toLowerCase().includes(alias.toLowerCase()))) {
         return project;
       }
     }
     
-    // If not found in message, check context
+    // If no direct reference in message, check context
     for (const project of projects) {
-      if (context.toLowerCase().includes(project)) {
+      const aliases = projectAliases[project] || [];
+      if (aliases.some(alias => context.toLowerCase().includes(alias.toLowerCase()))) {
         return project;
       }
+    }
+    
+    // If still no match but we have a lastTopic, use that
+    if (lastTopic && projects.includes(lastTopic)) {
+      return lastTopic;
     }
     
     return null;
+  };
+
+  // Function to get difficulty-related responses for projects
+  const getDifficultyResponse = (project: string): { response: string, image?: { src: string; alt: string; width: number; height: number } } => {
+    switch (project) {
+      case "analytics hub":
+        return {
+          response: "The Analytics Hub had several major challenges. First, we had to integrate data from over 20 different sources with inconsistent formats and APIs. Second, training the OpenAI model required creating a specialized dataset of company-specific queries. The most difficult aspect was balancing complex data visualization needs with a simple user interface – making powerful analytics accessible to non-technical users required multiple iterations of user testing and design refinement.",
+          image: projectImages["analytics hub"]
+        };
+      
+      case "design system":
+        return {
+          response: "The Enterprise Design System was challenging because we had to support over 30 legacy applications while enabling new development. The biggest difficulty was getting buy-in across multiple development teams, each with their own established workflows. I had to create extensive documentation and conversion guides, conduct workshops, and build tools to help teams migrate gradually. Another major challenge was maintaining backward compatibility while introducing modern design patterns.",
+          image: projectImages["design system"]
+        };
+      
+      case "genfei":
+        return {
+          response: "Building GenFEI came with significant technical hurdles. The first challenge was integrating with multiple knowledge bases with different access patterns and security requirements. We also faced issues with context handling – how to maintain conversation history while keeping responses relevant. Finally, building an effective relevance algorithm to ensure the chatbot retrieved the most appropriate information was particularly difficult, requiring multiple iterations and refinements based on user feedback.",
+          image: projectImages["genfei"]
+        };
+      
+      case "iris":
+        return {
+          response: "IRIS presented unique visualization challenges due to the complex promotional data it needed to display. The most difficult aspect was designing interactive visualizations that could handle hierarchical data while remaining performant in the browser. We also had to create custom data processing pipelines to transform raw data into formats suitable for visualization. User testing revealed that business users struggled with complex analytics concepts, so simplifying the interface without losing analytical power was a constant challenge.",
+          image: projectImages["iris"]
+        };
+      
+      case "web templates":
+        return {
+          response: "The web templates project faced significant challenges with internationalization requirements – supporting 40+ languages and regional variations while maintaining consistent design elements. We also had strict performance requirements for diverse global markets with varying internet speeds. Perhaps the most difficult aspect was balancing brand-specific customization needs with the efficiencies of standardization, which required building a sophisticated component system with careful attention to theming capabilities.",
+          image: projectImages["web templates"]
+        };
+      
+      case "pull ups":
+        return {
+          response: "The Pull Ups project had unique challenges related to designing for both parents and children simultaneously. Research was particularly difficult as it involved observing family dynamics during potty training – a sensitive topic requiring special privacy considerations. From a design perspective, we had to create interfaces that were engaging for children while providing meaningful tracking and guidance for parents. We also had to ensure the app worked effectively offline since bathroom usage isn't always predictable.",
+          image: projectImages["pull ups"]
+        };
+      
+      case "buyerspring":
+        return {
+          response: "BuyerSpring faced complex challenges integrating with multiple real estate databases and MLS systems, each with different data formats and rules. Building a consistent search experience across these fragmented sources was extremely difficult. We also had to create sophisticated geospatial visualizations for neighborhood analysis and develop complex financial calculators that needed to be both accurate and easy for non-financial experts to use.",
+          image: projectImages["buyerspring"]
+        };
+      
+      case "huggies":
+        return {
+          response: "The Huggies redesign was challenging because we needed to maintain e-commerce functionality while completely reimagining the user experience. The most difficult aspect was integrating personalized product recommendations based on child age and stage without creating privacy concerns. Performance optimization was also challenging – we had to maintain fast page loads despite rich product imagery and interactive elements. Another major hurdle was designing for parents who are often multitasking and interrupted while shopping.",
+          image: projectImages["huggies"] 
+        };
+      
+      default:
+        return {
+          response: "Each project had its own unique challenges. The analytics projects required balancing complex data with usable interfaces. Design system work involved getting buy-in across teams while maintaining flexibility. Web development projects faced performance and compatibility challenges. The most consistent challenge across all projects was understanding user needs deeply enough to create truly intuitive experiences that simplified complex workflows."
+        };
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -367,8 +484,8 @@ export function ChatBot({ className = "" }: { className?: string }) {
     setIsLoading(true);
     setIsExpanded(true);
 
-    // Get conversation context
-    const context = getConversationContext();
+    // Get enhanced conversation context
+    const { context, lastTopic } = getConversationContext();
     const isFollowUp = isFollowUpQuestion(userMessage);
     
     // Add user message with seen=true since it's being added while chat is open
@@ -381,8 +498,6 @@ export function ChatBot({ className = "" }: { className?: string }) {
 
     try {
       // In a real implementation, this would come from the server
-      // Simulating a response with image detection here
-      
       let responseMessage = "";
       let imageData: { src: string; alt: string; width: number; height: number } | undefined;
       
@@ -392,22 +507,41 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         userMessage.toLowerCase().includes("show me") ||
                         userMessage.toLowerCase().includes("tell me about");
       
-      // If it's a follow-up question, use the context to determine the response
-      const relevantProject = determineRelevantProject(userMessage, context);
+      // Check for difficulty-related questions specifically
+      const isDifficultyQuestion = userMessage.toLowerCase().match(/difficult|challenge|problem|issue|hard|tough/) !== null;
       
-      if (isFollowUp && relevantProject) {
+      // If it's a follow-up question, use the context to determine the response
+      const relevantProject = determineRelevantProject(userMessage, context, lastTopic);
+      
+      if (isDifficultyQuestion && relevantProject) {
+        // Handle difficulty questions about specific projects
+        const difficultyResponse = getDifficultyResponse(relevantProject);
+        responseMessage = difficultyResponse.response;
+        imageData = difficultyResponse.image;
+      } else if (userMessage.toLowerCase().includes("favorite project") || 
+                userMessage.toLowerCase().includes("best project")) {
+        responseMessage = "One of my favorite projects at Kimberly-Clark was the design and development of an internal analytic hub, which won a GDUSA award. This project was particularly exciting because it combined my skills in UX design, research, and front-end programming to create a tool that significantly impacted the company. The goal was to streamline the process of accessing and interpreting data for approximately 1,500 daily users. We wanted to make it easier for teams across global regions to make data-informed decisions without getting bogged down by complexity. To achieve this, I designed a user-friendly interface and leveraged tools like Next.js and Tailwind to ensure a smooth development process. A standout feature of this hub was the integration of an OpenAI model, which I trained to help users quickly find data, dashboards, and resources. This not only reduced the time to insight but also enhanced user engagement by providing a more interactive experience. We even started working on enhancing the chatbot to generate custom dashboards based on user prompts, taking our data visualization capabilities to the next level. The project also involved designing various analytics dashboards, from basic inventory reports to complex predictive analytics. These tools were crucial for simplifying the decision-making process and improving efficiency across teams. Overall, this project was a perfect blend of design, technology, and user research, and it was incredibly rewarding to see how it transformed how our teams accessed and used data.";
+        imageData = projectImages["analytics hub"];
+      } else if (isFollowUp && relevantProject) {
         // Handle follow-up questions about specific projects
         switch (relevantProject) {
           case "analytics hub":
             if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
-              responseMessage = "Here's the Analytics Hub dashboard interface. It features interactive visualizations and natural language query capabilities powered by OpenAI.";
+              responseMessage = "Here's what the Analytics Hub dashboard interface looks like. It features interactive visualizations, natural language search, and personalized data views for different user roles.";
               imageData = projectImages["analytics hub"];
             } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
-              responseMessage = "The Analytics Hub was built using React, TypeScript, and D3.js for visualizations. The backend used Node.js with a SQL database, and we integrated OpenAI for natural language processing of queries.";
+              responseMessage = "The Analytics Hub was built with a React frontend using Next.js and Tailwind CSS. For data visualization we used D3.js, and the backend was built with Node.js and Express. We integrated OpenAI's models for natural language processing and used SQL for data storage and retrieval.";
             } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
-              responseMessage = "The Analytics Hub had significant business impact: 73% reduction in time to insight, 1,500+ daily active users, and it became the central platform for all commercial analytics at the company. It won an internal innovation award.";
+              responseMessage = "The Analytics Hub had substantial business impact: it reduced time to insights by 73% according to user surveys, served approximately 1,500 daily active users, and won a GDUSA award for UI/UX design. Teams reported making more data-driven decisions, and the natural language interface significantly improved accessibility for non-technical users.";
+            } else if (lastTopic === "analytics hub" && !(userMessage.toLowerCase().includes("technology") || 
+                     userMessage.toLowerCase().includes("example") || 
+                     userMessage.toLowerCase().includes("impact") || 
+                     isDifficultyQuestion)) {
+              // General follow-up for the Analytics Hub when no specific aspect is mentioned
+              responseMessage = "The Analytics Hub project combined many aspects of UX design that I enjoy - solving complex data visualization challenges, creating intuitive interfaces for non-technical users, and integrating AI capabilities. What made it special was seeing the immediate impact as users discovered insights they couldn't easily access before. Would you like to know about the technical challenges we faced or see more examples of the interface?";
+              imageData = isInquiry ? undefined : projectImages["analytics hub"];
             } else {
-              responseMessage = "The Analytics Hub project involved creating a centralized dashboard for commercial data. It featured interactive charts, drill-down capabilities, and natural language queries powered by AI.";
+              responseMessage = "The Commercial Analytics Hub project focused on creating an intuitive, powerful platform for data analysis. It featured interactive visualizations, AI-powered search, and personalized dashboards that significantly reduced the time required to access and understand complex data.";
               imageData = isInquiry ? undefined : projectImages["analytics hub"];
             }
             break;
@@ -491,7 +625,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
             } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
               responseMessage = "BuyerSpring attracted 50,000 users in its first six months and facilitated over $80M in real estate transactions. User satisfaction scores were consistently above 4.8/5.";
             } else {
-              responseMessage = "BuyerSpring was a real estate platform designed to simplify the home buying process. It provided tools for property search, neighborhood comparison, mortgage calculation, and scheduling viewings in one integrated experience.";
+              responseMessage = "BuyerSpring is a real estate platform I designed that focused on creating a new buying experience. The interface simplifies the home search and purchase process with innovative tools for buyers and sellers.";
               imageData = isInquiry ? undefined : projectImages["buyerspring"];
             }
             break;
@@ -520,39 +654,30 @@ export function ChatBot({ className = "" }: { className?: string }) {
         if (userMessage.toLowerCase().includes("analytics hub") || userMessage.toLowerCase().includes("commercial analytics")) {
           responseMessage = "The Commercial Analytics Hub was one of our most successful projects. It helped reduce time to insight for ~1,500 users daily and integrated OpenAI for natural language queries.";
           imageData = isInquiry ? undefined : projectImages["analytics hub"];
-          setCurrentContext("analytics hub");
         } else if (userMessage.toLowerCase().includes("design system") || userMessage.toLowerCase().includes("enterprise design")) {
           responseMessage = "I created the Enterprise Design System for Kimberly-Clark, which standardized components across all their internal applications. This helped teams build consistent interfaces and reduced development time by 40%.";
           imageData = isInquiry ? undefined : projectImages["design system"];
-          setCurrentContext("design system");
         } else if (userMessage.toLowerCase().includes("genfei") || userMessage.toLowerCase().includes("ai chatbot")) {
           responseMessage = "The GenFEI Chatbot is a sophisticated AI interface that connects to multiple knowledge bases. It allows users to ask questions in natural language and get accurate responses from company data.";
           imageData = isInquiry ? undefined : projectImages["genfei"];
-          setCurrentContext("genfei");
         } else if (userMessage.toLowerCase().includes("iris") || userMessage.toLowerCase().includes("analytic dashboard")) {
           responseMessage = "IRIS is a complex analytics dashboard that focuses on innovative ways to visualize data and plan promotions. It combines multiple data sources into an intuitive interface for business users.";
           imageData = isInquiry ? undefined : projectImages["iris"];
-          setCurrentContext("iris");
         } else if (userMessage.toLowerCase().includes("web templates") || userMessage.toLowerCase().includes("consumer websites")) {
           responseMessage = "I developed standardized web templates for Kimberly-Clark's consumer websites, ensuring brand consistency while improving page load times and accessibility compliance.";
           imageData = isInquiry ? undefined : projectImages["web templates"];
-          setCurrentContext("web templates");
         } else if (userMessage.toLowerCase().includes("pull ups") || userMessage.toLowerCase().includes("potty training")) {
           responseMessage = "For the Pull Ups project, I conducted extensive user research and created prototypes for a potty training mobile app that helps parents track progress and encourages children through the process.";
           imageData = isInquiry ? undefined : projectImages["pull ups"];
-          setCurrentContext("pull ups");
         } else if (userMessage.toLowerCase().includes("buyerspring") || userMessage.toLowerCase().includes("real estate")) {
           responseMessage = "BuyerSpring is a real estate platform I designed that focused on creating a new buying experience. The interface simplifies the home search and purchase process with innovative tools for buyers and sellers.";
           imageData = isInquiry ? undefined : projectImages["buyerspring"];
-          setCurrentContext("buyerspring");
         } else if (userMessage.toLowerCase().includes("huggies") || userMessage.toLowerCase().includes("redesign")) {
           responseMessage = "The Huggies redesign completely transformed their e-commerce platform, improving user navigation and increasing site retention time by over 75%.";
           imageData = isInquiry ? undefined : projectImages["huggies"];
-          setCurrentContext("huggies");
         } else if (userMessage.toLowerCase().includes("projects") || userMessage.toLowerCase().includes("portfolio") || userMessage.toLowerCase().includes("work")) {
           responseMessage = "My portfolio includes various projects like the Commercial Analytics Hub, Enterprise Design System, GenFEI Chatbot, IRIS Analytics, Web Templates, Pull Ups Research, BuyerSpring, and the Huggies Website. Which would you like to know more about?";
           // No specific image for general inquiries
-          setCurrentContext("");
         } else {
           // For demo purposes, try to make a server request that would normally return data
           try {
@@ -570,7 +695,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
             
             if (!res.ok) throw new Error(data.error || "Failed to get response");
             responseMessage = data.reply;
-          } catch (error) {
+          } catch (_error) {
             // Fallback response if API fails
             responseMessage = "I'm not sure I understand your question. Could you rephrase or ask about a specific project like the Analytics Hub, Design System, or GenFEI chatbot?";
           }

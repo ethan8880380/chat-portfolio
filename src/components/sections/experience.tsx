@@ -67,7 +67,7 @@ export function Experience() {
         <div className="flex flex-row gap-4 items-center justify-between p-4 px-6 rounded-lg bg-foreground/10 mt-8">
             <div className="flex flex-row gap-2">
               <h2 className="text-xl font-bold">Want to know more about my work experience?</h2>
-              <p className="text-xl max-w-2xl">Let's connect and discuss how I can help you with your next project.</p>
+              <p className="text-xl max-w-2xl">Let&apos;s connect and discuss how I can help you with your next project.</p>
             </div>
             <Button variant="outline" size="lg" asChild>
               <a href="/contact">
