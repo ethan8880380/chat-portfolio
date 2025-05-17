@@ -16,74 +16,63 @@ const galleryImages = [
   { 
     id: 1, 
     src: {
-      desktop: "/projectImages/eds.png",
+      desktop: "/projectImages/desktop/design-system.png",
       mobile: "/projectImages/eds.png"
     },
     alt: "Design System",
     title: "Enterprise Design System",
     description: "Company-wide enterprise design system for Kimberly-Clark. Research, design, and development all done by me.",
-    color: "bg-red-500"
+    color: "bg-purple-500"
   },
   { 
     id: 2, 
     src: {
-      desktop: "/projectImages/fei.png",
+      desktop: "/projectImages/desktop/gen-fei.png",
       mobile: "/myself.png"
     },
     alt: "AI Chatbot",
     title: "GenFEI Chatbot",
     description: "Complex AI chatbot connected to a multiple different knowledge bases. Design, Frontend Development.",
-    color: "bg-purple-500"
+    color: "bg-green-500"
   },
   { 
     id: 3, 
     src: {
-      desktop: "/myself.png",
+      desktop: "/projectImages/desktop/IRIS.png",
       mobile: "/myself.png"
     },
     alt: "Analytic Dashboard",
     title: "IRIS",
     description: "Complex analytic dashboard focusing on new ways to visualize data and plan promotions.",
-    color: "bg-green-500"
+    color: "bg-yellow-500"
   },
   { 
     id: 4, 
     src: {
-      desktop: "/myself.png",
+      desktop: "/projectImages/desktop/web-templates.png",
       mobile: "/myself.png"
     },
     alt: "Consumer Website",
     title: "Web Templates",
     description: "Standardized web templates for Kimberly-Clark consumer websites.",
-    color: "bg-yellow-500"
+    color: "bg-red-500"
   },
   { 
     id: 5, 
     src: {
-      desktop: "/myself.png",
+      desktop: "/projectImages/desktop/pull-ups-research.png",
       mobile: "/myself.png"
     },
     alt: "Pull Ups Research",
     title: "Pull Ups Research",
     description: "Research and Prototypes for a PullUps potty training mobile app.",
-    color: "bg-red-500"
+    color: "bg-indigo-500"
   },
   { 
     id: 6, 
     src: {
-      desktop: "/projectImages/commhub.png",
-      mobile: "/myself.png"
-    },
-    alt: "Huggies Website",
-    title: "Huggies Website",
-    description: "Redesigned the Huggies website to be more user-friendly and engaging.",
-    color: "bg-indigo-500"
-  },
-  { 
-    id: 7, 
-    src: {
-      desktop: "/myself.png",
-      mobile: "/myself.png"
+      desktop: "/projectImages/desktop/buyer-spring.png",
+      mobile: "/projectImages/desktop/buyer-spring.png"
     },
     alt: "Real Estate Website",
     title: "BuyerSpring",
@@ -91,15 +80,26 @@ const galleryImages = [
     color: "bg-pink-500"
   },
   { 
-    id: 8, 
+    id: 7, 
     src: {
-      desktop: "/defoor.png",
+      desktop: "/projectImages/desktop/huggies.png",
       mobile: "/myself.png"
     },
-    alt: "Property Development Website",
-    title: "DEFOOR Development",
-    description: "Property development website for a local family-owned business.",
+    alt: "Huggies Website",
+    title: "Huggies Website",
+    description: "Redesigned the Huggies website to be more user-friendly and engaging.",
     color: "bg-orange-500"
+  },
+  { 
+    id: 8, 
+    src: {
+      desktop: "/projectImages/desktop/defoor.png",
+      mobile: "/myself.png"
+    },
+    alt: "Defoor Development",
+    title: "Defoor Development",
+    description: "Custom website for Defoor Property Development showcasing their work and services.",
+    color: "bg-red-500"
   }
 ];
 
@@ -411,28 +411,56 @@ export function NewGallery() {
 
               {/* Middle row - static */}
               <div className="flex items-center justify-center gap-2 md:gap-6 w-full">
-                {currentGalleryImages.slice(4, 7).map((image) => (
-                  <div 
-                    key={image.id} 
-                    className={`relative flex-1 min-w-[33vw] aspect-video backdrop-blur-sm`}
-                  >
-                    <div className="relative w-full h-full overflow-hidden">
-                      <div className="aspect-video w-full h-full relative">
-                        <Image
-                          src={isMobile ? image.src.mobile : image.src.desktop}
-                          alt={image.alt}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="object-cover"
-                          style={{ objectPosition: '50% 10%' }}
-                          quality={100}
-                          loading="eager"
-                          unoptimized={image.src.desktop.endsWith('.gif')}
-                        />
+                {currentGalleryImages.slice(4, 7).map((image, index) => {
+                  // Special case for the middle image (index 1)
+                  if (index === 1) {
+                    return (
+                      <div 
+                        key="custom-middle-image" 
+                        className={`relative flex-1 min-w-[33vw] aspect-video backdrop-blur-sm`}
+                      >
+                        <div className="relative w-full h-full overflow-hidden">
+                          <div className="aspect-video w-full h-full relative">
+                            <Image
+                              src="/projectImages/desktop/comm-analytics.png" 
+                              alt="Ethan's Portrait"
+                              fill
+                              sizes="40vw"
+                              className="object-cover"
+                              style={{ objectPosition: '50% 50%' }}
+                              quality={100}
+                              loading="eager"
+                              priority
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  // Regular gallery images for the other positions
+                  return (
+                    <div 
+                      key={image.id} 
+                      className={`relative flex-1 min-w-[33vw] aspect-video backdrop-blur-sm`}
+                    >
+                      <div className="relative w-full h-full overflow-hidden">
+                        <div className="aspect-video w-full h-full relative">
+                          <Image
+                            src={isMobile ? image.src.mobile : image.src.desktop}
+                            alt={image.alt}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover"
+                            style={{ objectPosition: '50% 10%' }}
+                            quality={90}
+                            loading="eager"
+                            unoptimized={image.src.desktop.endsWith('.gif')}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Bottom row - scrolls right */}
@@ -440,7 +468,7 @@ export function NewGallery() {
                 style={{ x: bottomRowX }}
                 className="flex flex-row-reverse gap-2 md:gap-6 w-full"
               >
-                {currentGalleryImages.slice(0, 4).map((image) => (
+                {currentGalleryImages.filter(img => [6,8,9].includes(img.id)).map((image) => (
                   <div 
                     key={`dup-${image.id}`} 
                     className={`relative min-w-[33vw] aspect-video backdrop-blur-sm`}
@@ -461,7 +489,7 @@ export function NewGallery() {
                     </div>
                   </div>
                 ))}
-                {currentGalleryImages.slice(0, 4).map((image) => (
+                {currentGalleryImages.slice(6, 8).concat(currentGalleryImages.slice(0, 2)).map((image) => (
                   <div 
                     key={`bottom-${image.id}`} 
                     className={`relative min-w-[30vw] aspect-video backdrop-blur-sm`}
@@ -520,7 +548,7 @@ export function NewGallery() {
                     </div>
                     
                     <div className="mt-auto">
-                      <Button variant="ghost" className="flex items-center text-primary font-medium hover:text-primary/80 transition-colors">
+                      <Button variant="ghost" className="hidden">
                         View Project
                         <ArrowUpRight className="h-5 w-5 ml-2" />
                       </Button>
@@ -557,7 +585,7 @@ export function NewGallery() {
                       </div>
                       
                       <div className="mt-auto">
-                        <button className="flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition-colors">
+                        <button className="hidden">
                           View Project
                           <ArrowUpRight className="h-5 w-5 ml-2" />
                         </button>

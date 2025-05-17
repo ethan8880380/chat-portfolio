@@ -22,20 +22,50 @@ interface Message {
 // Sample project images to use in responses
 const projectImages = {
   "analytics hub": {
-    src: "/projects.png",
-    alt: "Analytics Hub Dashboard",
+    src: "/projectImages/desktop/comm-analytics.png",
+    alt: "Commercial Analytics Hub Dashboard",
+    width: 600,
+    height: 400
+  },
+  "design system": {
+    src: "/projectImages/desktop/design-system.png",
+    alt: "Enterprise Design System",
+    width: 600,
+    height: 400
+  },
+  "genfei": {
+    src: "/projectImages/desktop/gen-fei.png",
+    alt: "GenFEI AI Chatbot Interface",
+    width: 600,
+    height: 400
+  },
+  "iris": {
+    src: "/projectImages/desktop/IRIS.png",
+    alt: "IRIS Analytics Dashboard",
+    width: 600,
+    height: 400
+  },
+  "web templates": {
+    src: "/projectImages/desktop/web-templates.png",
+    alt: "Web Templates for Consumer Websites",
+    width: 600,
+    height: 400
+  },
+  "pull ups": {
+    src: "/projectImages/desktop/pull-ups-research.png",
+    alt: "Pull Ups Research Prototype",
+    width: 600,
+    height: 400
+  },
+  "buyerspring": {
+    src: "/projectImages/desktop/buyer-spring.png",
+    alt: "BuyerSpring Real Estate Website",
     width: 600,
     height: 400
   },
   "huggies": {
-    src: "/citation.png",
+    src: "/projectImages/desktop/huggies.png",
     alt: "Huggies Website Redesign",
-    width: 600,
-    height: 400
-  },
-  "chatbot": {
-    src: "/projects.png",
-    alt: "AI Chatbot Interface",
     width: 600,
     height: 400
   }
@@ -165,7 +195,45 @@ export function ChatBot({ className = "" }: { className?: string }) {
   // Ref to the collapsed chatbot component to measure its size
   const collapsedChatRef = useRef<HTMLDivElement>(null);
   const [spacerHeight, setSpacerHeight] = useState(0);
+  const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
 
+  // Example prompts that will cycle in the placeholder
+  const examplePrompts = [
+    "Send a message...",
+    "Tell me about your analytics hub project",
+    "Can you show me your design system?",
+    "What projects have you worked on?",
+    "Show me the GenFEI chatbot",
+    "Tell me about your experience with UX research",
+    "What was the Huggies redesign about?",
+  ];
+
+  // Cycle through the placeholder prompts
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      // For reduced motion, just change the index without animation
+      const interval = setInterval(() => {
+        setCurrentPromptIndex((prev) => (prev + 1) % examplePrompts.length);
+      }, 4000);
+      return () => clearInterval(interval);
+    } else {
+      // For normal animation, fade out and fade in
+      const cycleInterval = setInterval(() => {
+        // Fade out
+        setShowPlaceholder(false);
+        
+        // Wait for fade out animation, then change text and fade in
+        setTimeout(() => {
+          setCurrentPromptIndex((prev) => (prev + 1) % examplePrompts.length);
+          setShowPlaceholder(true);
+        }, 300); // Match the exit animation duration
+      }, 4000);
+      
+      return () => clearInterval(cycleInterval);
+    }
+  }, [prefersReducedMotion]);
+  
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -213,13 +281,32 @@ export function ChatBot({ className = "" }: { className?: string }) {
   const getProjectImage = (message: string): { src: string; alt: string; width: number; height: number } | undefined => {
     const messageLower = message.toLowerCase();
     
+    // Only include images in responses, not in inquiries
+    if (messageLower.includes("what is") || 
+        messageLower.includes("tell me about") || 
+        messageLower.includes("can you show") || 
+        messageLower.includes("do you have") ||
+        messageLower.includes("?")) {
+      return undefined;
+    }
+    
     // Check for project references
-    if (messageLower.includes("analytics hub") || messageLower.includes("analytics dashboard")) {
+    if (messageLower.includes("analytics hub") || messageLower.includes("analytics dashboard") || messageLower.includes("commercial analytics")) {
       return projectImages["analytics hub"];
+    } else if (messageLower.includes("design system") || messageLower.includes("enterprise design")) {
+      return projectImages["design system"];
+    } else if (messageLower.includes("genfei") || messageLower.includes("chatbot") || messageLower.includes("ai interface")) {
+      return projectImages["genfei"];
+    } else if (messageLower.includes("iris") || messageLower.includes("data visualization")) {
+      return projectImages["iris"];
+    } else if (messageLower.includes("web templates") || messageLower.includes("consumer websites")) {
+      return projectImages["web templates"];
+    } else if (messageLower.includes("pull ups") || messageLower.includes("potty training")) {
+      return projectImages["pull ups"];
+    } else if (messageLower.includes("buyerspring") || messageLower.includes("real estate")) {
+      return projectImages["buyerspring"];
     } else if (messageLower.includes("huggies") || messageLower.includes("e-commerce") || messageLower.includes("redesign")) {
       return projectImages["huggies"];
-    } else if (messageLower.includes("chatbot") || messageLower.includes("chat interface") || messageLower.includes("ai interface")) {
-      return projectImages["chatbot"];
     }
     
     return undefined;
@@ -243,18 +330,42 @@ export function ChatBot({ className = "" }: { className?: string }) {
       // This would normally be handled by the API
       
       let responseMessage = "";
-      let imageData;
+      let imageData: { src: string; alt: string; width: number; height: number } | undefined;
+      
+      // Don't show images for inquiries
+      const isInquiry = userMessage.toLowerCase().includes("?") || 
+                        userMessage.toLowerCase().includes("what") ||
+                        userMessage.toLowerCase().includes("show me") ||
+                        userMessage.toLowerCase().includes("tell me about");
       
       // Simple logic to mimic a server responding with project information
-      if (userMessage.toLowerCase().includes("analytics") || userMessage.toLowerCase().includes("dashboard")) {
-        responseMessage = "The Analytics Hub was one of our most successful projects. It helped reduce time to insight for ~1,500 users daily and integrated OpenAI for natural language queries.";
-        imageData = projectImages["analytics hub"];
+      if (userMessage.toLowerCase().includes("analytics hub") || userMessage.toLowerCase().includes("commercial analytics")) {
+        responseMessage = "The Commercial Analytics Hub was one of our most successful projects. It helped reduce time to insight for ~1,500 users daily and integrated OpenAI for natural language queries.";
+        imageData = isInquiry ? undefined : projectImages["analytics hub"];
+      } else if (userMessage.toLowerCase().includes("design system") || userMessage.toLowerCase().includes("enterprise design")) {
+        responseMessage = "I created the Enterprise Design System for Kimberly-Clark, which standardized components across all their internal applications. This helped teams build consistent interfaces and reduced development time by 40%.";
+        imageData = isInquiry ? undefined : projectImages["design system"];
+      } else if (userMessage.toLowerCase().includes("genfei") || userMessage.toLowerCase().includes("ai chatbot")) {
+        responseMessage = "The GenFEI Chatbot is a sophisticated AI interface that connects to multiple knowledge bases. It allows users to ask questions in natural language and get accurate responses from company data.";
+        imageData = isInquiry ? undefined : projectImages["genfei"];
+      } else if (userMessage.toLowerCase().includes("iris") || userMessage.toLowerCase().includes("analytic dashboard")) {
+        responseMessage = "IRIS is a complex analytics dashboard that focuses on innovative ways to visualize data and plan promotions. It combines multiple data sources into an intuitive interface for business users.";
+        imageData = isInquiry ? undefined : projectImages["iris"];
+      } else if (userMessage.toLowerCase().includes("web templates") || userMessage.toLowerCase().includes("consumer websites")) {
+        responseMessage = "I developed standardized web templates for Kimberly-Clark's consumer websites, ensuring brand consistency while improving page load times and accessibility compliance.";
+        imageData = isInquiry ? undefined : projectImages["web templates"];
+      } else if (userMessage.toLowerCase().includes("pull ups") || userMessage.toLowerCase().includes("potty training")) {
+        responseMessage = "For the Pull Ups project, I conducted extensive user research and created prototypes for a potty training mobile app that helps parents track progress and encourages children through the process.";
+        imageData = isInquiry ? undefined : projectImages["pull ups"];
+      } else if (userMessage.toLowerCase().includes("buyerspring") || userMessage.toLowerCase().includes("real estate")) {
+        responseMessage = "BuyerSpring is a real estate platform I designed that focused on creating a new buying experience. The interface simplifies the home search and purchase process with innovative tools for buyers and sellers.";
+        imageData = isInquiry ? undefined : projectImages["buyerspring"];
       } else if (userMessage.toLowerCase().includes("huggies") || userMessage.toLowerCase().includes("redesign")) {
         responseMessage = "The Huggies redesign completely transformed their e-commerce platform, improving user navigation and increasing site retention time by over 75%.";
-        imageData = projectImages["huggies"];
-      } else if (userMessage.toLowerCase().includes("chatbot") || userMessage.toLowerCase().includes("ai")) {
-        responseMessage = "Our AI Chatbot Interface provides a seamless way for users to interact with information using natural language. It's been implemented in several client projects.";
-        imageData = projectImages["chatbot"];
+        imageData = isInquiry ? undefined : projectImages["huggies"];
+      } else if (userMessage.toLowerCase().includes("projects") || userMessage.toLowerCase().includes("portfolio") || userMessage.toLowerCase().includes("work")) {
+        responseMessage = "My portfolio includes various projects like the Commercial Analytics Hub, Enterprise Design System, GenFEI Chatbot, IRIS Analytics, Web Templates, Pull Ups Research, BuyerSpring, and the Huggies Website. Which would you like to know more about?";
+        // No specific image for general inquiries
       } else {
         // For demo purposes, try to make a server request that would normally return data
         const res = await fetch("/api/chat", {
@@ -362,7 +473,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
             >
               <motion.div 
                 layoutId="chat-content"
-                className="backdrop-blur-xl rounded-xl p-3 border bg-background/60"
+                className="backdrop-blur-xl rounded-xl p-3 border bg-foreground/90"
                 transition={linearTransition}
               >
                 <motion.form 
@@ -374,13 +485,28 @@ export function ChatBot({ className = "" }: { className?: string }) {
                     className="flex gap-2 items-center"
                     transition={linearTransition}
                   >
-                    <div className="flex-1">
+                    <div className="flex-1 relative">
                       <Input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Send a message..."
-                        className="w-full bg-background/30 backdrop-blur-xl"
+                        placeholder=""
+                        className="w-full bg-foreground backdrop-blur-sm border-muted-foreground/50"
+                        disabled={isLoading}
                       />
+                      <AnimatePresence mode="wait">
+                        {showPlaceholder && input === "" && (
+                          <motion.span
+                            key={currentPromptIndex}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 0.7 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-background pointer-events-none"
+                          >
+                            {examplePrompts[currentPromptIndex]}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
                     </div>
                     <motion.div 
                       layoutId="send-button"
@@ -441,16 +567,16 @@ export function ChatBot({ className = "" }: { className?: string }) {
                 <motion.div
                   layoutId="chat-content"
                   transition={linearTransition}
-                  className="w-full h-full bg-background/70 backdrop-blur-md rounded-none md:rounded-xl overflow-hidden shadow-2xl flex flex-col border-none md:border"
+                  className="w-full h-full bg-foreground/80 backdrop-blur-md rounded-none md:rounded-xl overflow-hidden shadow-2xl flex flex-col border-none md:border md:border-foreground/50"
                 >
                   <motion.div
                     initial={!hasOpenedBefore ? { opacity: 0 } : { opacity: 1 }}
                     animate={{ opacity: 1 }}
                     transition={linearTransition}
-                    className="flex justify-between items-center p-4 border-b"
+                    className="flex justify-between items-center p-4 border-b border-foreground/50"
                   >
-                    <h2 className="text-lg font-semibold">ethanGPT</h2>
-                    <Button variant="ghost" size="icon" onClick={handleClose}>
+                    <h2 className="text-lg font-semibold text-background">Portfolio Chat</h2>
+                    <Button variant="ghost" size="icon" onClick={handleClose} className="text-background">
                       ✕
                     </Button>
                   </motion.div>
@@ -459,16 +585,16 @@ export function ChatBot({ className = "" }: { className?: string }) {
                     initial={!hasOpenedBefore ? { opacity: 0 } : { opacity: 1 }}
                     animate={{ opacity: 1 }}
                     transition={linearTransition}
-                    className="flex-1 overflow-y-auto bg-background/40 dark:bg-background/30 space-y-4 p-4"
+                    className="flex-1 overflow-y-auto bg-background/10 backdrop-blur-md space-y-4 p-4"
                   >
                     {messages.length === 0 ? (
                       <motion.div 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={linearTransition}
-                        className="text-center text-muted-foreground"
+                        className="text-center text-background"
                       >
-                        Start a conversation
+                        Ask about anything!
                       </motion.div>
                     ) : (
                       messages.map((message, i) => (
@@ -480,7 +606,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                           className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                            message.role === 'user' ? 'bg-background' : ''
+                            message.role === 'user' ? 'bg-foreground/20 text-background border border-foreground/50' : 'text-background/80'
                           }`}>
                             {message.role === 'bot' && message === messages[messages.length - 1] && !message.seen ? (
                               <WordByWordTypewriter 
@@ -514,14 +640,19 @@ export function ChatBot({ className = "" }: { className?: string }) {
                                 }}
                                 className="mt-3 overflow-hidden rounded-lg"
                               >
-                                <Image
-                                  src={message.image.src}
-                                  alt={message.image.alt}
-                                  width={message.image.width || 600}
-                                  height={message.image.height || 400}
-                                  className="w-full h-auto object-cover max-h-[300px] rounded-lg"
-                                />
-                                <p className="text-xs text-muted-foreground mt-1">{message.image.alt}</p>
+                                <div className="aspect-video w-full relative overflow-hidden rounded-lg">
+                                  <Image
+                                    src={message.image.src}
+                                    alt={message.image.alt}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 600px"
+                                    className="object-cover"
+                                    style={{ objectPosition: '50% 10%' }}
+                                    quality={100}
+                                    priority
+                                  />
+                                </div>
+                                <p className="text-xs text-background/70 mt-1">{message.image.alt}</p>
                               </motion.div>
                             )}
                           </div>
@@ -563,7 +694,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                   </motion.div>
 
                   <motion.div
-                    className="p-4 border-t"
+                    className="p-4 border-t border-foreground/50"
                   >
                     <motion.form 
                       onSubmit={handleSubmit} 
@@ -574,14 +705,27 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         className="flex gap-2 items-center"
                         transition={linearTransition}
                       >
-                        <div className="flex-1">
+                        <div className="flex-1 relative">
                           <Input
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Send a message..."
-                            className="w-full bg-background/30 backdrop-blur-sm"
-                            disabled={isLoading}
+                            placeholder=""
+                            className="w-full bg-foreground/30 border-muted-foreground/50 text-background backdrop-blur-xl"
                           />
+                          <AnimatePresence mode="wait">
+                            {showPlaceholder && input === "" && (
+                              <motion.span
+                                key={currentPromptIndex}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 0.7 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-background pointer-events-none"
+                              >
+                                {examplePrompts[currentPromptIndex]}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
                         </div>
                         <motion.div 
                           layoutId="send-button"

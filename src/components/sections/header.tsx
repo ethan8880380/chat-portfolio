@@ -40,13 +40,6 @@ export function Header() {
           <NavigationMenu >
             <NavigationMenuList className="gap-0">
               <NavigationMenuItem>
-                <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Work
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
                 <Link href="/projects" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     About
@@ -56,7 +49,7 @@ export function Header() {
               <NavigationMenuItem>
                 <Link href="/about" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Hire Me
+                    Contact Me
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
