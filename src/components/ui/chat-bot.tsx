@@ -17,6 +17,7 @@ interface Message {
     height?: number;
   }
   seen?: boolean; // Track if message has been seen before
+  context?: string; // Store context about the message for follow-ups
 }
 
 // Sample project images to use in responses
@@ -125,7 +126,7 @@ const WordByWordTypewriter = ({
     setIsComplete(false);
     
     let currentIndex = 0;
-    let timers: NodeJS.Timeout[] = [];
+    const timers: NodeJS.Timeout[] = [];
     
     // Add word by word with calculated delays
     const addNextWord = () => {
@@ -190,17 +191,17 @@ export function ChatBot({ className = "" }: { className?: string }) {
   const [hasOpenedBefore, setHasOpenedBefore] = useState(false);
   const [isClosing, setIsClosing] = useState(false); // Track when the chat is closing
   const [selectedModel] = useState<string>("gpt-4o"); // Fixed to GPT-4o
+  const [currentContext, setCurrentContext] = useState<string>(""); // Track current conversation context
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); // Add a ref for the input element
   const prefersReducedMotion = useReducedMotion();
   // Ref to the collapsed chatbot component to measure its size
   const collapsedChatRef = useRef<HTMLDivElement>(null);
   const [spacerHeight, setSpacerHeight] = useState(0);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
-  const [showPlaceholder, setShowPlaceholder] = useState(true);
 
   // Example prompts that will cycle in the placeholder
   const examplePrompts = [
-    "Send a message...",
     "Tell me about your analytics hub project",
     "Can you show me your design system?",
     "What projects have you worked on?",
@@ -211,28 +212,11 @@ export function ChatBot({ className = "" }: { className?: string }) {
 
   // Cycle through the placeholder prompts
   useEffect(() => {
-    if (prefersReducedMotion) {
-      // For reduced motion, just change the index without animation
-      const interval = setInterval(() => {
-        setCurrentPromptIndex((prev) => (prev + 1) % examplePrompts.length);
-      }, 4000);
-      return () => clearInterval(interval);
-    } else {
-      // For normal animation, fade out and fade in
-      const cycleInterval = setInterval(() => {
-        // Fade out
-        setShowPlaceholder(false);
-        
-        // Wait for fade out animation, then change text and fade in
-        setTimeout(() => {
-          setCurrentPromptIndex((prev) => (prev + 1) % examplePrompts.length);
-          setShowPlaceholder(true);
-        }, 300); // Match the exit animation duration
-      }, 4000);
-      
-      return () => clearInterval(cycleInterval);
-    }
-  }, [prefersReducedMotion]);
+    const interval = setInterval(() => {
+      setCurrentPromptIndex((prev) => (prev + 1) % examplePrompts.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [examplePrompts.length]);
   
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -312,6 +296,68 @@ export function ChatBot({ className = "" }: { className?: string }) {
     return undefined;
   };
 
+  // Function to analyze messages and detect follow-up questions
+  const isFollowUpQuestion = (message: string): boolean => {
+    const followUpIndicators = [
+      "what about", "tell me more", "can you explain", "how does that", 
+      "why is", "and what", "what else", "is there more", "elaborate on",
+      "more details", "go on", "what happened", "how did", "when was",
+      "where was", "who was", "can you show", "follow up", "related to"
+    ];
+    
+    const messageLower = message.toLowerCase();
+    
+    // Check if message contains pronouns that reference previous content
+    const hasReferencePronouns = /\b(it|this|that|these|those|they|them|he|she|his|her|its|their)\b/.test(messageLower);
+    
+    // Check for short queries that are likely follow-ups
+    const isShortQuery = message.split(" ").length <= 4 && message.includes("?");
+    
+    // Check for follow-up indicators
+    const hasFollowUpIndicator = followUpIndicators.some(indicator => 
+      messageLower.includes(indicator)
+    );
+    
+    return hasReferencePronouns || isShortQuery || hasFollowUpIndicator;
+  };
+
+  // Function to get the context from previous messages
+  const getConversationContext = (): string => {
+    // Get the last 3 messages for context
+    const recentMessages = messages.slice(-3);
+    
+    if (recentMessages.length === 0) return "";
+    
+    // Extract context from recent messages
+    return recentMessages.map(msg => {
+      return `${msg.role === 'user' ? 'Question' : 'Answer'}: ${msg.content}`;
+    }).join("\n");
+  };
+
+  // Function to determine relevant project based on conversation
+  const determineRelevantProject = (message: string, context: string): string | null => {
+    const projects = [
+      "analytics hub", "design system", "genfei", "iris", 
+      "web templates", "pull ups", "buyerspring", "huggies"
+    ];
+    
+    // First check the current message
+    for (const project of projects) {
+      if (message.toLowerCase().includes(project)) {
+        return project;
+      }
+    }
+    
+    // If not found in message, check context
+    for (const project of projects) {
+      if (context.toLowerCase().includes(project)) {
+        return project;
+      }
+    }
+    
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -321,13 +367,21 @@ export function ChatBot({ className = "" }: { className?: string }) {
     setIsLoading(true);
     setIsExpanded(true);
 
+    // Get conversation context
+    const context = getConversationContext();
+    const isFollowUp = isFollowUpQuestion(userMessage);
+    
     // Add user message with seen=true since it's being added while chat is open
-    setMessages(prev => [...prev, { role: 'user', content: userMessage, seen: true }]);
+    setMessages(prev => [...prev, { 
+      role: 'user', 
+      content: userMessage, 
+      seen: true,
+      context: isFollowUp ? context : "" // Store context for follow-up questions
+    }]);
 
     try {
       // In a real implementation, this would come from the server
       // Simulating a response with image detection here
-      // This would normally be handled by the API
       
       let responseMessage = "";
       let imageData: { src: string; alt: string; width: number; height: number } | undefined;
@@ -338,52 +392,192 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         userMessage.toLowerCase().includes("show me") ||
                         userMessage.toLowerCase().includes("tell me about");
       
-      // Simple logic to mimic a server responding with project information
-      if (userMessage.toLowerCase().includes("analytics hub") || userMessage.toLowerCase().includes("commercial analytics")) {
-        responseMessage = "The Commercial Analytics Hub was one of our most successful projects. It helped reduce time to insight for ~1,500 users daily and integrated OpenAI for natural language queries.";
-        imageData = isInquiry ? undefined : projectImages["analytics hub"];
-      } else if (userMessage.toLowerCase().includes("design system") || userMessage.toLowerCase().includes("enterprise design")) {
-        responseMessage = "I created the Enterprise Design System for Kimberly-Clark, which standardized components across all their internal applications. This helped teams build consistent interfaces and reduced development time by 40%.";
-        imageData = isInquiry ? undefined : projectImages["design system"];
-      } else if (userMessage.toLowerCase().includes("genfei") || userMessage.toLowerCase().includes("ai chatbot")) {
-        responseMessage = "The GenFEI Chatbot is a sophisticated AI interface that connects to multiple knowledge bases. It allows users to ask questions in natural language and get accurate responses from company data.";
-        imageData = isInquiry ? undefined : projectImages["genfei"];
-      } else if (userMessage.toLowerCase().includes("iris") || userMessage.toLowerCase().includes("analytic dashboard")) {
-        responseMessage = "IRIS is a complex analytics dashboard that focuses on innovative ways to visualize data and plan promotions. It combines multiple data sources into an intuitive interface for business users.";
-        imageData = isInquiry ? undefined : projectImages["iris"];
-      } else if (userMessage.toLowerCase().includes("web templates") || userMessage.toLowerCase().includes("consumer websites")) {
-        responseMessage = "I developed standardized web templates for Kimberly-Clark's consumer websites, ensuring brand consistency while improving page load times and accessibility compliance.";
-        imageData = isInquiry ? undefined : projectImages["web templates"];
-      } else if (userMessage.toLowerCase().includes("pull ups") || userMessage.toLowerCase().includes("potty training")) {
-        responseMessage = "For the Pull Ups project, I conducted extensive user research and created prototypes for a potty training mobile app that helps parents track progress and encourages children through the process.";
-        imageData = isInquiry ? undefined : projectImages["pull ups"];
-      } else if (userMessage.toLowerCase().includes("buyerspring") || userMessage.toLowerCase().includes("real estate")) {
-        responseMessage = "BuyerSpring is a real estate platform I designed that focused on creating a new buying experience. The interface simplifies the home search and purchase process with innovative tools for buyers and sellers.";
-        imageData = isInquiry ? undefined : projectImages["buyerspring"];
-      } else if (userMessage.toLowerCase().includes("huggies") || userMessage.toLowerCase().includes("redesign")) {
-        responseMessage = "The Huggies redesign completely transformed their e-commerce platform, improving user navigation and increasing site retention time by over 75%.";
-        imageData = isInquiry ? undefined : projectImages["huggies"];
-      } else if (userMessage.toLowerCase().includes("projects") || userMessage.toLowerCase().includes("portfolio") || userMessage.toLowerCase().includes("work")) {
-        responseMessage = "My portfolio includes various projects like the Commercial Analytics Hub, Enterprise Design System, GenFEI Chatbot, IRIS Analytics, Web Templates, Pull Ups Research, BuyerSpring, and the Huggies Website. Which would you like to know more about?";
-        // No specific image for general inquiries
+      // If it's a follow-up question, use the context to determine the response
+      const relevantProject = determineRelevantProject(userMessage, context);
+      
+      if (isFollowUp && relevantProject) {
+        // Handle follow-up questions about specific projects
+        switch (relevantProject) {
+          case "analytics hub":
+            if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "Here's the Analytics Hub dashboard interface. It features interactive visualizations and natural language query capabilities powered by OpenAI.";
+              imageData = projectImages["analytics hub"];
+            } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
+              responseMessage = "The Analytics Hub was built using React, TypeScript, and D3.js for visualizations. The backend used Node.js with a SQL database, and we integrated OpenAI for natural language processing of queries.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "The Analytics Hub had significant business impact: 73% reduction in time to insight, 1,500+ daily active users, and it became the central platform for all commercial analytics at the company. It won an internal innovation award.";
+            } else {
+              responseMessage = "The Analytics Hub project involved creating a centralized dashboard for commercial data. It featured interactive charts, drill-down capabilities, and natural language queries powered by AI.";
+              imageData = isInquiry ? undefined : projectImages["analytics hub"];
+            }
+            break;
+          
+          case "design system":
+            if (userMessage.toLowerCase().includes("component") || userMessage.toLowerCase().includes("elements") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "The Design System included over 150 standardized components, from basic elements like buttons and inputs to complex modules like data tables and visualization widgets. Here's a snapshot of the component library.";
+              imageData = projectImages["design system"];
+            } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
+              responseMessage = "The Design System was built with React and Storybook for documentation. We used CSS-in-JS for styling and had comprehensive accessibility testing integrated into the CI pipeline.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "The Design System reduced development time by 40% for new applications and ensured consistent UI across 30+ internal tools. It also improved accessibility compliance from 65% to 98% across all company applications.";
+            } else {
+              responseMessage = "The Enterprise Design System standardized UI components and established design patterns across all internal applications. It included a comprehensive component library, documentation, and guidelines for developers and designers.";
+              imageData = isInquiry ? undefined : projectImages["design system"];
+            }
+            break;
+          
+          case "genfei":
+            if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "Here's the GenFEI chatbot interface. It features a clean design with conversation threads, knowledge base search, and contextual responses.";
+              imageData = projectImages["genfei"];
+            } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
+              responseMessage = "GenFEI was built using a React frontend with a Node.js backend. We integrated OpenAI's GPT models and used vector embeddings to search through company knowledge bases for accurate answers.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "GenFEI reduced support ticket volume by 42% by answering common questions automatically. It handles over 5,000 queries per day and maintains a 92% satisfaction rating from users.";
+            } else {
+              responseMessage = "The GenFEI project created an AI assistant that could answer questions using the company's internal knowledge bases. It analyzed user questions and retrieved relevant information from multiple sources.";
+              imageData = isInquiry ? undefined : projectImages["genfei"];
+            }
+            break;
+            
+          case "iris":
+            if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "Here's the IRIS analytics dashboard interface. It features interactive data visualizations, promotion planning tools, and customizable reports.";
+              imageData = projectImages["iris"];
+            } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
+              responseMessage = "IRIS was built with React, D3.js, and WebGL for complex visualizations. The backend used Python with pandas for data processing and a PostgreSQL database for storage.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "IRIS helped optimize $1.2B in promotional spending by providing better insights. Sales teams reported 35% more effective promotion planning and significantly reduced time spent on data analysis.";
+            } else {
+              responseMessage = "IRIS was an advanced analytics dashboard focused on promotional planning and sales analysis. It helped business users visualize complex data and make better decisions without needing data science expertise.";
+              imageData = isInquiry ? undefined : projectImages["iris"];
+            }
+            break;
+            
+          case "web templates":
+            if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "Here's an example of the web templates in action. They provided consistent components and layouts while allowing for brand-specific customization.";
+              imageData = projectImages["web templates"];
+            } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
+              responseMessage = "The web templates were built with modern frontend technologies including React, Next.js, and Tailwind CSS. We implemented a modular architecture that allowed for easy customization while maintaining core functionality.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "The web templates reduced development time for new brand sites by 60% and improved page load performance by 32%. They also ensured 100% WCAG compliance across all consumer-facing websites.";
+            } else {
+              responseMessage = "The web templates project standardized the approach to building consumer websites across multiple brands. It provided a library of components and layouts that ensured brand consistency while improving development efficiency.";
+              imageData = isInquiry ? undefined : projectImages["web templates"];
+            }
+            break;
+            
+          case "pull ups":
+            if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "Here's the Pull Ups app prototype we developed. It features a child-friendly interface with progress tracking, reward systems, and educational content for parents.";
+              imageData = projectImages["pull ups"];
+            } else if (userMessage.toLowerCase().includes("research") || userMessage.toLowerCase().includes("user testing") || userMessage.toLowerCase().includes("study")) {
+              responseMessage = "For the Pull Ups project, we conducted extensive user research including 24 in-home observations, 8 focus groups with parents, and diary studies with 45 families going through the potty training process.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "The Pull Ups app was downloaded over 200,000 times in the first year and dramatically increased brand engagement. User retention was 3x higher than industry average for parenting apps.";
+            } else {
+              responseMessage = "The Pull Ups project involved designing a mobile app to help parents with potty training. We combined child psychology principles with gamification to create an engaging experience for both parents and children.";
+              imageData = isInquiry ? undefined : projectImages["pull ups"];
+            }
+            break;
+            
+          case "buyerspring":
+            if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "Here's the BuyerSpring real estate platform interface. It features an intuitive property search, neighborhood insights, and financial planning tools for home buyers.";
+              imageData = projectImages["buyerspring"];
+            } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
+              responseMessage = "BuyerSpring was built with a React frontend and a Node.js backend. We integrated multiple real estate data APIs and used MapBox for location-based features.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "BuyerSpring attracted 50,000 users in its first six months and facilitated over $80M in real estate transactions. User satisfaction scores were consistently above 4.8/5.";
+            } else {
+              responseMessage = "BuyerSpring was a real estate platform designed to simplify the home buying process. It provided tools for property search, neighborhood comparison, mortgage calculation, and scheduling viewings in one integrated experience.";
+              imageData = isInquiry ? undefined : projectImages["buyerspring"];
+            }
+            break;
+            
+          case "huggies":
+            if (userMessage.toLowerCase().includes("example") || userMessage.toLowerCase().includes("demo") || userMessage.toLowerCase().includes("show")) {
+              responseMessage = "Here's the redesigned Huggies e-commerce interface. It featured simplified navigation, personalized product recommendations, and a streamlined checkout process.";
+              imageData = projectImages["huggies"];
+            } else if (userMessage.toLowerCase().includes("technology") || userMessage.toLowerCase().includes("stack") || userMessage.toLowerCase().includes("built")) {
+              responseMessage = "The Huggies redesign used Shopify Plus with custom React components. We integrated personalization through Segment and implemented a headless CMS for content management.";
+            } else if (userMessage.toLowerCase().includes("impact") || userMessage.toLowerCase().includes("result") || userMessage.toLowerCase().includes("success")) {
+              responseMessage = "The Huggies redesign increased conversion rates by 24% and reduced cart abandonment by 35%. Site engagement metrics improved across the board with a 75% increase in average session duration.";
+            } else {
+              responseMessage = "The Huggies redesign transformed their e-commerce experience with a focus on simplicity and personalization. We completely reimagined the product discovery and purchasing journey based on extensive user research.";
+              imageData = isInquiry ? undefined : projectImages["huggies"];
+            }
+            break;
+          
+          default:
+            // General follow-up response if we can't determine specific context
+            responseMessage = `I'm working on improving my follow-up responses about the ${relevantProject} project. What specific aspect would you like to know more about?`;
+        }
       } else {
-        // For demo purposes, try to make a server request that would normally return data
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            message: userMessage,
-            model: selectedModel 
-          }),
-        });
+        // Handle regular (non-follow-up) questions as before
+        // Simple logic to mimic a server responding with project information
+        if (userMessage.toLowerCase().includes("analytics hub") || userMessage.toLowerCase().includes("commercial analytics")) {
+          responseMessage = "The Commercial Analytics Hub was one of our most successful projects. It helped reduce time to insight for ~1,500 users daily and integrated OpenAI for natural language queries.";
+          imageData = isInquiry ? undefined : projectImages["analytics hub"];
+          setCurrentContext("analytics hub");
+        } else if (userMessage.toLowerCase().includes("design system") || userMessage.toLowerCase().includes("enterprise design")) {
+          responseMessage = "I created the Enterprise Design System for Kimberly-Clark, which standardized components across all their internal applications. This helped teams build consistent interfaces and reduced development time by 40%.";
+          imageData = isInquiry ? undefined : projectImages["design system"];
+          setCurrentContext("design system");
+        } else if (userMessage.toLowerCase().includes("genfei") || userMessage.toLowerCase().includes("ai chatbot")) {
+          responseMessage = "The GenFEI Chatbot is a sophisticated AI interface that connects to multiple knowledge bases. It allows users to ask questions in natural language and get accurate responses from company data.";
+          imageData = isInquiry ? undefined : projectImages["genfei"];
+          setCurrentContext("genfei");
+        } else if (userMessage.toLowerCase().includes("iris") || userMessage.toLowerCase().includes("analytic dashboard")) {
+          responseMessage = "IRIS is a complex analytics dashboard that focuses on innovative ways to visualize data and plan promotions. It combines multiple data sources into an intuitive interface for business users.";
+          imageData = isInquiry ? undefined : projectImages["iris"];
+          setCurrentContext("iris");
+        } else if (userMessage.toLowerCase().includes("web templates") || userMessage.toLowerCase().includes("consumer websites")) {
+          responseMessage = "I developed standardized web templates for Kimberly-Clark's consumer websites, ensuring brand consistency while improving page load times and accessibility compliance.";
+          imageData = isInquiry ? undefined : projectImages["web templates"];
+          setCurrentContext("web templates");
+        } else if (userMessage.toLowerCase().includes("pull ups") || userMessage.toLowerCase().includes("potty training")) {
+          responseMessage = "For the Pull Ups project, I conducted extensive user research and created prototypes for a potty training mobile app that helps parents track progress and encourages children through the process.";
+          imageData = isInquiry ? undefined : projectImages["pull ups"];
+          setCurrentContext("pull ups");
+        } else if (userMessage.toLowerCase().includes("buyerspring") || userMessage.toLowerCase().includes("real estate")) {
+          responseMessage = "BuyerSpring is a real estate platform I designed that focused on creating a new buying experience. The interface simplifies the home search and purchase process with innovative tools for buyers and sellers.";
+          imageData = isInquiry ? undefined : projectImages["buyerspring"];
+          setCurrentContext("buyerspring");
+        } else if (userMessage.toLowerCase().includes("huggies") || userMessage.toLowerCase().includes("redesign")) {
+          responseMessage = "The Huggies redesign completely transformed their e-commerce platform, improving user navigation and increasing site retention time by over 75%.";
+          imageData = isInquiry ? undefined : projectImages["huggies"];
+          setCurrentContext("huggies");
+        } else if (userMessage.toLowerCase().includes("projects") || userMessage.toLowerCase().includes("portfolio") || userMessage.toLowerCase().includes("work")) {
+          responseMessage = "My portfolio includes various projects like the Commercial Analytics Hub, Enterprise Design System, GenFEI Chatbot, IRIS Analytics, Web Templates, Pull Ups Research, BuyerSpring, and the Huggies Website. Which would you like to know more about?";
+          // No specific image for general inquiries
+          setCurrentContext("");
+        } else {
+          // For demo purposes, try to make a server request that would normally return data
+          try {
+            const res = await fetch("/api/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ 
+                message: userMessage,
+                context: context, // Send context to the API
+                model: selectedModel 
+              }),
+            });
 
-        const data = await res.json();
-        
-        if (!res.ok) throw new Error(data.error || "Failed to get response");
-        responseMessage = data.reply;
-        
-        // Check if we should show an image based on the response content
-        imageData = getProjectImage(responseMessage);
+            const data = await res.json();
+            
+            if (!res.ok) throw new Error(data.error || "Failed to get response");
+            responseMessage = data.reply;
+          } catch (error) {
+            // Fallback response if API fails
+            responseMessage = "I'm not sure I understand your question. Could you rephrase or ask about a specific project like the Analytics Hub, Design System, or GenFEI chatbot?";
+          }
+          
+          // Check if we should show an image based on the response content
+          imageData = getProjectImage(responseMessage);
+        }
       }
       
       // Bot message with seen=false initially to trigger the animation
@@ -452,6 +646,18 @@ export function ChatBot({ className = "" }: { className?: string }) {
     }
   }, []);
 
+  // Focus the input on first render
+  useEffect(() => {
+    // Small delay to ensure the component is fully mounted
+    const timer = setTimeout(() => {
+      if (inputRef.current && !isExpanded) {
+        inputRef.current.focus();
+      }
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [isExpanded]);
+
   return (
     <LayoutGroup>
       <div className={`${className}`}>
@@ -464,12 +670,16 @@ export function ChatBot({ className = "" }: { className?: string }) {
           {!isExpanded ? (
             <motion.div 
               layoutId="chat-container"
-              className="w-full"
+              className="w-full cursor-text relative z-10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={linearTransition}
               ref={collapsedChatRef}
+              onClick={() => {
+                // Focus the input when clicking anywhere
+                inputRef.current?.focus();
+              }}
             >
               <motion.div 
                 layoutId="chat-content"
@@ -487,26 +697,17 @@ export function ChatBot({ className = "" }: { className?: string }) {
                   >
                     <div className="flex-1 relative">
                       <Input
+                        ref={inputRef}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder=""
-                        className="w-full bg-foreground backdrop-blur-sm border-muted-foreground/50"
+                        placeholder={examplePrompts[currentPromptIndex]}
+                        className="w-full bg-foreground backdrop-blur-sm border-muted-foreground/50 text-background cursor-text focus:ring-2 focus:ring-primary"
                         disabled={isLoading}
+                        onClick={(e) => {
+                          // Prevent propagation to ensure clicks on the input don't trigger expansion
+                          e.stopPropagation();
+                        }}
                       />
-                      <AnimatePresence mode="wait">
-                        {showPlaceholder && input === "" && (
-                          <motion.span
-                            key={currentPromptIndex}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 0.7 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-background pointer-events-none"
-                          >
-                            {examplePrompts[currentPromptIndex]}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
                     </div>
                     <motion.div 
                       layoutId="send-button"
@@ -707,25 +908,12 @@ export function ChatBot({ className = "" }: { className?: string }) {
                       >
                         <div className="flex-1 relative">
                           <Input
+                            ref={inputRef}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder=""
-                            className="w-full bg-foreground/30 border-muted-foreground/50 text-background backdrop-blur-xl"
+                            placeholder={examplePrompts[currentPromptIndex]}
+                            className="w-full bg-foreground/30 border-muted-foreground/50 text-background backdrop-blur-xl cursor-text focus:ring-2 focus:ring-primary"
                           />
-                          <AnimatePresence mode="wait">
-                            {showPlaceholder && input === "" && (
-                              <motion.span
-                                key={currentPromptIndex}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 0.7 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-background pointer-events-none"
-                              >
-                                {examplePrompts[currentPromptIndex]}
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
                         </div>
                         <motion.div 
                           layoutId="send-button"

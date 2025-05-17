@@ -1,8 +1,8 @@
 import { Header } from "@/components/sections/header";
 import { BasiocHero } from "@/components/sections/basioc-hero";
-import { ProjectTabs } from "@/components/sections/project";
 import { NewGallery } from "@/components/sections/new-gallery";
-
+import { Experience } from "@/components/sections/experience";
+import { Footer } from "@/components/sections/footer";
 export default function Home() {
   return (
     <>
@@ -24,9 +24,9 @@ export default function Home() {
         
         {/* Gallery Section with Title */}
         
-          <NewGallery />
-        
-        <ProjectTabs />
+        <NewGallery />
+        <Experience />
+        <Footer />
         {/* <Cta38 /> */}
         {/* <Team22 /> */}
       </div>

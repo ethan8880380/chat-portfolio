@@ -108,7 +108,7 @@ export function NewGallery() {
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   // Create state for the current set of gallery images
-  const [currentGalleryImages, setCurrentGalleryImages] = useState(galleryImages);
+  const [currentGalleryImages] = useState(galleryImages);
 
   // Check if device is mobile
   useEffect(() => {
