@@ -6,18 +6,13 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Updated gallery images with detailed descriptions
-// Commented out unused variable
-// const galleryImages = [
-// ... existing code ...
-
 // Combined gallery images with mobile and desktop image sources
 const galleryImages = [
   { 
     id: 1, 
     src: {
       desktop: "/projectImages/desktop/design-system.png",
-      mobile: "/projectImages/eds.png"
+      mobile: "/projectImages/mobile/design-system.png"
     },
     alt: "Design System",
     title: "Enterprise Design System",
@@ -28,7 +23,7 @@ const galleryImages = [
     id: 2, 
     src: {
       desktop: "/projectImages/desktop/gen-fei.png",
-      mobile: "/myself.png"
+      mobile: "/projectImages/mobile/gen-fei.png"
     },
     alt: "AI Chatbot",
     title: "GenFEI Chatbot",
@@ -39,7 +34,7 @@ const galleryImages = [
     id: 3, 
     src: {
       desktop: "/projectImages/desktop/IRIS.png",
-      mobile: "/myself.png"
+      mobile: "/projectImages/mobile/iris.png"
     },
     alt: "Analytic Dashboard",
     title: "IRIS",
@@ -50,7 +45,7 @@ const galleryImages = [
     id: 4, 
     src: {
       desktop: "/projectImages/desktop/web-templates.png",
-      mobile: "/myself.png"
+      mobile: "/projectImages/mobile/web-templates.png"
     },
     alt: "Consumer Website",
     title: "Web Templates",
@@ -61,7 +56,7 @@ const galleryImages = [
     id: 5, 
     src: {
       desktop: "/projectImages/desktop/pull-ups-research.png",
-      mobile: "/myself.png"
+      mobile: "/projectImages/mobile/pull-ups-research.png"
     },
     alt: "Pull Ups Research",
     title: "Pull Ups Research",
@@ -72,7 +67,7 @@ const galleryImages = [
     id: 6, 
     src: {
       desktop: "/projectImages/desktop/buyer-spring.png",
-      mobile: "/projectImages/desktop/buyer-spring.png"
+      mobile: "/projectImages/mobile/buyer-spring.png"
     },
     alt: "Real Estate Website",
     title: "BuyerSpring",
@@ -83,7 +78,7 @@ const galleryImages = [
     id: 7, 
     src: {
       desktop: "/projectImages/desktop/huggies.png",
-      mobile: "/myself.png"
+      mobile: "/projectImages/mobile/huggies.png"
     },
     alt: "Huggies Website",
     title: "Huggies Website",
@@ -94,7 +89,7 @@ const galleryImages = [
     id: 8, 
     src: {
       desktop: "/projectImages/desktop/defoor.png",
-      mobile: "/myself.png"
+      mobile: "/projectImages/mobile/defoor.png"
     },
     alt: "Defoor Development",
     title: "Defoor Development",
@@ -107,21 +102,37 @@ export function NewGallery() {
   const sectionRef = useRef(null);
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [screenAspectRatio, setScreenAspectRatio] = useState(16/9); // Add state for screen aspect ratio
   // Create state for the current set of gallery images
   const [currentGalleryImages] = useState(galleryImages);
 
   // Check if device is mobile
   useEffect(() => {
     const checkIfMobile = () => {
-      const mobileView = window.innerWidth < 768;
-      setIsMobile(mobileView);
+      if (typeof window !== "undefined") {
+        const mobileView = window.innerWidth < 768;
+        setIsMobile(mobileView);
+      }
+    };
+
+    const updateAspectRatio = () => {
+      if (typeof window !== "undefined") {
+        setScreenAspectRatio(window.innerWidth / window.innerHeight);
+      }
     };
     
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
+    if (typeof window !== "undefined") {
+      checkIfMobile();
+      updateAspectRatio(); // Initial calculation for aspect ratio
+      window.addEventListener('resize', checkIfMobile);
+      window.addEventListener('resize', updateAspectRatio); // Add listener for aspect ratio
+    }
     
     return () => {
-      window.removeEventListener('resize', checkIfMobile);
+      if (typeof window !== "undefined") {
+        window.removeEventListener('resize', checkIfMobile);
+        window.removeEventListener('resize', updateAspectRatio); // Remove listener for aspect ratio
+      }
     };
   }, []);
 
@@ -349,7 +360,7 @@ export function NewGallery() {
         className="relative h-[800vh]"
       >
         {/* Sticky container */}
-        <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center">
+        <div className="sticky top-0 left-0 -mt-12 w-full h-screen overflow-hidden flex items-top justify-center">
           {/* Phase 1: Scaling content - Regular gallery */}
           <motion.div
             ref={sectionRef}
@@ -365,15 +376,16 @@ export function NewGallery() {
                 {currentGalleryImages.slice(0, 4).map((image) => (
                   <div 
                     key={image.id} 
-                    className={`relative min-w-[30vw] aspect-video backdrop-blur-sm mt-12`}
+                    className={`relative ${isMobile ? 'min-w-[33vw]' : 'min-w-[32vw]'} backdrop-blur-sm mt-12`}
+                    style={{ aspectRatio: screenAspectRatio }}
                   >
                     <div className="relative w-full h-full overflow-hidden">
-                      <div className="aspect-video w-full h-full relative">
+                      <div className="w-full h-full relative">
                         <Image
                           src={isMobile ? image.src.mobile : image.src.desktop}
                           alt={image.alt}
                           fill
-                          sizes="(max-width: 768px) 100vw, 30vw"
+                          sizes="(max-width: 768px) 100vw, 50vw"
                           className="object-cover"
                           style={{ objectPosition: '50% 10%' }}
                           quality={100}
@@ -388,19 +400,20 @@ export function NewGallery() {
                 {currentGalleryImages.slice(0, 4).map((image) => (
                   <div 
                     key={`dup-${image.id}`} 
-                    className={`relative min-w-[70vw] md:min-w-[30vw] backdrop-blur-sm`}
+                    className={`relative ${isMobile ? 'min-w-[33vw]' : 'min-w-[32vw]'} backdrop-blur-sm`}
+                    style={{ aspectRatio: screenAspectRatio }}
                   >
                     <div className="relative w-full h-full overflow-hidden">
-                      <div className="aspect-video w-full h-full relative">
+                      <div className="w-full h-full relative">
                         <Image
                           src={isMobile ? image.src.mobile : image.src.desktop}
                           alt={image.alt}
                           fill
-                          sizes="(max-width: 768px) 100vw, 30vw"
+                          sizes="(max-width: 768px) 100vw, 50vw"
                           className="object-cover"
                           style={{ objectPosition: '50% 10%' }}
                           quality={100}
-                          loading="lazy"
+                          loading="eager"
                           unoptimized={image.src.desktop.endsWith('.gif')}
                         />
                       </div>
@@ -417,15 +430,16 @@ export function NewGallery() {
                     return (
                       <div 
                         key="custom-middle-image" 
-                        className={`relative flex-1 min-w-[33vw] aspect-video backdrop-blur-sm`}
+                        className={`relative flex-1 ${isMobile ? 'min-w-[33vw]' : 'min-w-[32vw]'} backdrop-blur-sm`}
+                        style={{ aspectRatio: screenAspectRatio }}
                       >
                         <div className="relative w-full h-full overflow-hidden">
-                          <div className="aspect-video w-full h-full relative">
+                          <div className="w-full h-full relative">
                             <Image
-                              src="/projectImages/desktop/comm-analytics.png" 
+                              src={isMobile ? "/projectImages/mobile/comm-analytics.png" : "/projectImages/desktop/comm-analytics.png"}
                               alt="Ethan's Portrait"
                               fill
-                              sizes="40vw"
+                              sizes="(max-width: 768px) 100vw, 50vw"
                               className="object-cover"
                               style={{ objectPosition: '50% 50%' }}
                               quality={100}
@@ -441,18 +455,19 @@ export function NewGallery() {
                   return (
                     <div 
                       key={image.id} 
-                      className={`relative flex-1 min-w-[33vw] aspect-video backdrop-blur-sm`}
+                      className={`relative flex-1 ${isMobile ? 'min-w-[33vw]' : 'min-w-[32vw]'} backdrop-blur-sm`}
+                      style={{ aspectRatio: screenAspectRatio }}
                     >
                       <div className="relative w-full h-full overflow-hidden">
-                        <div className="aspect-video w-full h-full relative">
+                        <div className="w-full h-full relative">
                           <Image
                             src={isMobile ? image.src.mobile : image.src.desktop}
                             alt={image.alt}
                             fill
-                            sizes="(max-width: 768px) 100vw, 33vw"
+                            sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-cover"
                             style={{ objectPosition: '50% 10%' }}
-                            quality={90}
+                            quality={100}
                             loading="eager"
                             unoptimized={image.src.desktop.endsWith('.gif')}
                           />
@@ -471,15 +486,16 @@ export function NewGallery() {
                 {currentGalleryImages.filter(img => [6,8,9].includes(img.id)).map((image) => (
                   <div 
                     key={`dup-${image.id}`} 
-                    className={`relative min-w-[33vw] aspect-video backdrop-blur-sm`}
+                    className={`relative ${isMobile ? 'min-w-[33vw]' : 'min-w-[32vw]'} backdrop-blur-sm`}
+                    style={{ aspectRatio: screenAspectRatio }}
                   >
                     <div className="relative w-full h-full overflow-hidden">
-                      <div className="aspect-video w-full h-full relative">
+                      <div className="w-full h-full relative">
                         <Image
                           src={isMobile ? image.src.mobile : image.src.desktop}
                           alt={image.alt}
                           fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
+                          sizes="(max-width: 768px) 100vw, 50vw"
                           className="object-cover"
                           style={{ objectPosition: '50% 10%' }}
                           quality={100}
@@ -492,15 +508,16 @@ export function NewGallery() {
                 {currentGalleryImages.slice(6, 8).concat(currentGalleryImages.slice(0, 2)).map((image) => (
                   <div 
                     key={`bottom-${image.id}`} 
-                    className={`relative min-w-[30vw] aspect-video backdrop-blur-sm`}
+                    className={`relative ${isMobile ? 'min-w-[33vw]' : 'min-w-[32vw]'} backdrop-blur-sm`}
+                    style={{ aspectRatio: screenAspectRatio }}
                   >
                     <div className="relative w-full h-full overflow-hidden">
-                      <div className="aspect-video w-full h-full relative">
+                      <div className="w-full h-full relative">
                         <Image
                           src={isMobile ? image.src.mobile : image.src.desktop}
                           alt={image.alt}
                           fill
-                          sizes="(max-width: 768px) 100vw, 30vw"
+                          sizes="(max-width: 768px) 100vw, 50vw"
                           className="object-cover"
                           style={{ objectPosition: '50% 10%' }}
                           quality={100}
@@ -612,7 +629,7 @@ export function NewGallery() {
                 {/* Fullscreen image container */}
                 <div className={`relative w-screen h-screen backdrop-blur-sm`}>
                   <div className="relative w-full h-full overflow-hidden rounded-lg">
-                    <div className="aspect-video w-full h-full max-h-full flex items-center justify-center">
+                    <div className={`${isMobile ? 'w-full h-screen' : 'aspect-video w-full h-full'} max-h-full flex items-center justify-center`}>
                       <div className="relative w-full h-full">
                         <Image
                           src={isMobile ? image.src.mobile : image.src.desktop}
