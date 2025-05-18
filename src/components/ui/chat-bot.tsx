@@ -695,8 +695,8 @@ export function ChatBot({ className = "" }: { className?: string }) {
             
             if (!res.ok) throw new Error(data.error || "Failed to get response");
             responseMessage = data.reply;
-          } catch (_error) {
-            // Fallback response if API fails
+          } catch {
+            // Fallback response if API fails - no need to capture the error
             responseMessage = "I'm not sure I understand your question. Could you rephrase or ask about a specific project like the Analytics Hub, Design System, or GenFEI chatbot?";
           }
           
