@@ -1,5 +1,6 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
+import { categoryPrompts as trainingPrompts, validModels, additionalContext } from '@/lib/chat-training';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -33,46 +34,48 @@ Micro Focus – UX Intern, Summer 2019
 - Modernized Reflection Desktop's UI (an app built in the early 90s) with an icon library aligned to corporate standards. Over 200 icons were created for things unique to the product.
 `;
 
-// Base system prompt that applies to all categories
-const baseSystemPrompt = `You are Ethan Rogers, a UX Designer and researcher with front-end programming expertise at Kimberly-Clark. 
-Respond in first person as if you are Ethan, based on the following resume information:
-
-${resumeContext}
-
-Keep your responses conversational, professional, and detailed with specific examples from your experience. 
-Avoid generic statements and instead reference concrete projects, metrics, and outcomes from your work.
-Respond with a single, cohesive answer that fully addresses the user's question.`;
+// Base system prompt
+const systemPrompt = `You are a helpful AI assistant. Keep your responses concise and relevant to the conversation.`;
 
 // Category-specific system prompts
 const categoryPrompts = {
-  default: `${baseSystemPrompt}
+  default: `${systemPrompt}
   
 When asked general questions, highlight your experience at Kimberly-Clark and your educational background from the University of Washington.`,
 
-  uxDesign: `${baseSystemPrompt}
+  uxDesign: `${systemPrompt}
   
 Focus on your UX design process, the Figma design system you created, company-wide templates and standards, and your work on the Huggies site redesign. Mention specific metrics and improvements where relevant.`,
 
-  development: `${baseSystemPrompt}
+  development: `${systemPrompt}
   
 Emphasize your front-end development expertise with Next.js, React, TypeScript, and Tailwind CSS. Discuss how you've standardized development practices at Kimberly-Clark and your freelance projects including the real estate platform and property development company website.`,
 
-  research: `${baseSystemPrompt}
+  research: `${systemPrompt}
   
 Detail your research methodologies, including the 50+ interviews with parents, in-store research, A/B testing on the Huggies Rewards Platform, and usability testing on internal tools. Highlight specific insights gained and how they led to product improvements.`,
 
-  projects: `${baseSystemPrompt}
+  projects: `${systemPrompt}
   
 Describe your key projects including the GDUSA awarded internal analytics hub, dashboards for global teams, the Huggies site redesign, and your freelance work. Include specific metrics and outcomes that demonstrate the impact of your work.`,
 
-  aiml: `${baseSystemPrompt}
+  aiml: `${systemPrompt}
   
 Focus on your AI/ML integration work, particularly the OpenAI model implementation for the internal analytics hub and your current work enhancing the chatbot to generate custom dashboards based on user prompts.`
 };
 
+// Map of keywords to project images
+const projectImages = {
+  analytics: "/projectImages/desktop/comm-analytics.png",
+  design: "/projectImages/desktop/design-system.png",
+  development: "/projectImages/desktop/dev-work.png",
+  research: "/projectImages/desktop/research.png",
+  default: "/projectImages/desktop/comm-analytics.png"
+};
+
 export async function POST(request: Request) {
   try {
-    const { message, category = 'default', model = 'gpt-4o' } = await request.json();
+    const { message, messages = [], category = 'default', model = 'gpt-4' } = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -88,35 +91,119 @@ export async function POST(request: Request) {
       );
     }
 
+    // Prepare conversation history
+    const conversationHistory = messages.map((msg: { role: string; content: string }) => ({
+      role: msg.role,
+      content: msg.content
+    }));
+
+    // Add the current message
+    conversationHistory.push({ role: 'user', content: message });
+
     // Get the appropriate system prompt based on category
-    // Make sure we handle the aiml category properly
-    const validCategory = Object.keys(categoryPrompts).includes(category) ? category : 'default';
-    const systemPrompt = categoryPrompts[validCategory as keyof typeof categoryPrompts];
+    const validCategory = Object.keys(trainingPrompts).includes(category) ? category : 'default';
+    let systemPrompt = trainingPrompts[validCategory as keyof typeof trainingPrompts];
+
+    // Add relevant additional context based on the message content
+    const lowerMessage = message.toLowerCase();
+    
+    // Check for general introduction/about me questions
+    if (lowerMessage.includes('tell me about yourself') || 
+        lowerMessage.includes('who are you') || 
+        lowerMessage.includes('your background') ||
+        lowerMessage.includes('your experience')) {
+      systemPrompt = trainingPrompts.default;
+    }
+    
+    // Check for role-specific questions
+    if (lowerMessage.includes('role') || lowerMessage.includes('job') || lowerMessage.includes('work')) {
+      systemPrompt = trainingPrompts.uxDesign;
+      if (lowerMessage.includes('developer') || lowerMessage.includes('coding')) {
+        systemPrompt = trainingPrompts.development;
+      }
+    }
+    
+    // Add specific project context
+    if (lowerMessage.includes('analytics') || lowerMessage.includes('data')) {
+      systemPrompt += `\n\n${additionalContext.commercialAnalytics}`;
+      if (lowerMessage.includes('iris') || lowerMessage.includes('predictive')) {
+        systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
+      }
+    }
+    if (lowerMessage.includes('supply chain') || lowerMessage.includes('logistics')) {
+      systemPrompt += `\n\n${additionalContext.supplyChain}`;
+    }
+    if (lowerMessage.includes('design system') || lowerMessage.includes('figma')) {
+      systemPrompt += `\n\n${additionalContext.designSystem}`;
+    }
+    if (lowerMessage.includes('huggies') || lowerMessage.includes('redesign')) {
+      systemPrompt += `\n\n${additionalContext.huggiesRedesign}`;
+    }
+    if (lowerMessage.includes('real estate') || lowerMessage.includes('freelance')) {
+      systemPrompt += `\n\n${additionalContext.realEstatePlatform}`;
+    }
+    
+    // Add personal context
+    if (lowerMessage.includes('philosophy') || lowerMessage.includes('approach')) {
+      systemPrompt += `\n\n${additionalContext.designPhilosophy}`;
+    }
+    if (lowerMessage.includes('workflow') || lowerMessage.includes('development')) {
+      systemPrompt += `\n\n${additionalContext.developmentApproach}`;
+    }
+    if (lowerMessage.includes('research') || lowerMessage.includes('testing')) {
+      systemPrompt += `\n\n${additionalContext.researchMethods}`;
+    }
+    if (lowerMessage.includes('project') || lowerMessage.includes('management')) {
+      systemPrompt += `\n\n${additionalContext.projectManagement}`;
+    }
+    if (lowerMessage.includes('career') || lowerMessage.includes('goals')) {
+      systemPrompt += `\n\n${additionalContext.careerGoals}`;
+    }
+
+    // Determine which image to return based on the message content
+    let selectedImage: string | null = null;
+    if ((lowerMessage.includes('analytics') || lowerMessage.includes('data')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+      selectedImage = projectImages.analytics;
+    } else if ((lowerMessage.includes('design') || lowerMessage.includes('figma')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+      selectedImage = projectImages.design;
+    } else if ((lowerMessage.includes('development') || lowerMessage.includes('code')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+      selectedImage = projectImages.development;
+    } else if ((lowerMessage.includes('research') || lowerMessage.includes('user research')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+      selectedImage = projectImages.research;
+    }
 
     // Validate model parameter - fall back to default if not valid
-    const validModels = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo', 'gpt-4o'];
     const validModel = validModels.includes(model) ? model : 'gpt-3.5-turbo';
 
-    const response = await openai.chat.completions.create({
-      model: validModel,
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt,
-        },
-        { role: 'user', content: message },
-      ],
-      max_tokens: 300, // Increased token limit for more detailed responses
-      temperature: 0.7, // Slightly increased temperature for more natural responses
-    });
+    try {
+      const response = await openai.chat.completions.create({
+        model: validModel,
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt,
+          },
+          ...conversationHistory
+        ],
+        max_tokens: 300,
+        temperature: 1.0,
+      });
 
-    return NextResponse.json({ 
-      reply: response.choices[0].message.content 
-    });
-  } catch (error) {
+      return NextResponse.json({ 
+        reply: response.choices[0].message.content,
+        image: selectedImage || undefined
+      });
+    } catch (openaiError: any) {
+      console.error('OpenAI API error:', openaiError);
+      return NextResponse.json(
+        { error: openaiError.message || 'Error communicating with OpenAI' },
+        { status: 500 }
+      );
+    }
+  } catch (error: any) {
     console.error('Error processing chat request:', error);
     return NextResponse.json(
-      { error: 'Error processing your request' },
+      { error: error.message || 'Error processing your request' },
       { status: 500 }
     );
   }

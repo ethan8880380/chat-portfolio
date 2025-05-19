@@ -10,15 +10,28 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useChatContext } from "@/context/ChatContext";
 
 export function Header() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { setShouldExpandChat } = useChatContext();
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Function to handle scrolling to the about section
+  const scrollToAbout = () => {
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
 
   if (!mounted) {
     return (
@@ -39,15 +52,24 @@ export function Header() {
           </Link>
           <NavigationMenu >
             <NavigationMenuList className="gap-0">
-              <NavigationMenuItem>
-                <Link href="/projects" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    About
-                  </NavigationMenuLink>
-                </Link>
+            <NavigationMenuItem>
+                <button 
+                  onClick={() => setShouldExpandChat(true)} 
+                  className={navigationMenuTriggerStyle()}
+                >
+                  Chatbot
+                </button>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/about" legacyBehavior passHref>
+                <button 
+                  onClick={scrollToAbout} 
+                  className={navigationMenuTriggerStyle()}
+                >
+                  About
+                </button>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="#experience" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Contact Me
                   </NavigationMenuLink>
@@ -64,7 +86,6 @@ export function Header() {
           </button>
         </div>
         </div>
-        
       </div>
     </header>
   );

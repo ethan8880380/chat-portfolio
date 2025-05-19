@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ChatProvider } from "@/context/ChatContext";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -36,7 +37,9 @@ export default function RootLayout({
             blurType="linear" 
             tint="rgba(0, 0, 0, 0.01)" 
           />
-          {children}
+          <ChatProvider>
+            {children}
+          </ChatProvider>
         </ThemeProvider>
       </body>
     </html>

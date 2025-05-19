@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cog, PencilRuler, LayoutGrid, Lightbulb, Mail } from "lucide-react";
+import { Cog, PencilRuler, LayoutGrid, Lightbulb, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Specialization {
@@ -14,7 +14,7 @@ interface Specialization {
 const specializations: Specialization[] = [
   {
     id: 1,
-    title: "Enterprise UX",
+    title: "UX Design",
     icon: <Cog className="w-6 h-6" />,
     description: "Specialized in designing complex enterprise applications that balance advanced functionality with usability."
   },
@@ -22,7 +22,7 @@ const specializations: Specialization[] = [
     id: 2,
     title: "Consumer Web",
     icon: <LayoutGrid className="w-6 h-6" />,
-    description: "Created engaging user experiences for consumer-facing websites with a focus on conversion and brand consistency."
+    description: "Created engaging user experiences for consumer-facing websites with a mobile first approach."
   },
   {
     id: 3,
@@ -32,15 +32,15 @@ const specializations: Specialization[] = [
   },
   {
     id: 4,
-    title: "Innovation",
+    title: "Frontend Development",
     icon: <Lightbulb className="w-6 h-6" />,
-    description: "Pioneered new approaches to UX challenges, including AI-powered interfaces and novel visualization techniques."
+    description: "Experienced in NextJS, TailwindCSS, and React. Tranforming designs into applications exactly as they look in Figma."
   }
 ];
 
 export function Experience() {
   return (
-    <section id="experience" className="py-12 px-6">
+    <section id="experience" className="py-12 px-6 pb-24">
       <div className="">
 
 
@@ -64,17 +64,55 @@ export function Experience() {
           ))}
         </div>
         {/* Experience */}
-        <div className="flex flex-row gap-4 items-center justify-between p-4 px-6 rounded-lg bg-foreground/10 mt-8">
-            <div className="flex flex-row gap-2">
-              <h2 className="text-xl font-bold">Want to know more about my work experience?</h2>
-              <p className="text-xl max-w-2xl">Let&apos;s connect and discuss how I can help you with your next project.</p>
+      </div>
+      <div className="grid grid-cols-2 gap-8 mt-8">
+        <div className="flex flex-col gap-4 p-8 rounded-lg bg-foreground/10">
+          <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
+            <User className="w-6 h-6" />
+          </div>
+          <div className="flex flex-row gap-12">
+            <div className="flex flex-col gap-2">
+              <h1 className="text-lg font-bold">Email</h1>
+              <p className="text-lg text-muted-foreground underline">
+                <a href="mailto:ethan0380@gmail.com" className="hover:text-primary">ethan0380@gmail.com</a>
+              </p>
             </div>
-            <Button variant="outline" size="lg" asChild>
-              <a href="/contact">
-                <Mail className="w-4 h-4" />
-                <span>Contact me</span>
-              </a>
-            </Button>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-lg font-bold">Phone</h1>
+              <p className="text-lg text-muted-foreground underline">
+                <a href="tel:253-888-0380" className="hover:text-primary">253-888-0380</a>
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-lg font-bold">Location</h1>
+              <p className="text-lg text-muted-foreground">Seattle, WA</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 p-8 rounded-lg bg-foreground/10">
+          <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
+            <User className="w-6 h-6" />
+          </div>
+          <div className="flex flex-row gap-12">
+            <div className="flex flex-col gap-2">
+              <h1 className="text-lg font-bold">Linkedin</h1>
+              <p className="text-lg text-muted-foreground underline">
+                <a href="https://www.linkedin.com/in/ethan-rogers/" className="hover:text-primary">My LinkedIn</a>
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-lg font-bold">Github</h1>
+              <p className="text-lg text-muted-foreground underline">
+                <a href="https://github.com/ethan8880380" className="hover:text-primary">My Github</a>
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-lg font-bold">Resume</h1>
+              <p className="text-lg text-muted-foreground underline">
+                <a href="/ethan-rogers-resume.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-primary">Download Resume</a>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
