@@ -7,9 +7,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Base system prompt
-const systemPrompt = `You are a helpful AI assistant. Keep your responses concise and relevant to the conversation.`;
-
 export async function POST(request: Request) {
   try {
     const { message, messages = [], category = 'default', model = 'gpt-4' } = await request.json();
