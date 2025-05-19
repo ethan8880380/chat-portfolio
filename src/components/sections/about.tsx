@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
@@ -50,54 +50,69 @@ export const AboutSection = (props: AboutSectionProps) => {
     scale: useTransform(scrollYProgress, [0, 0.5], [1, 0.95]),
   };
 
-  // Inline the transforms directly to avoid React Hook rule issues
-  const imageTransforms = [
+  // Create all transform hooks at the top level, unconditionally
+  // Mobile transforms
+  const mobileTranslateX1 = useTransform(scrollYProgress, [0, 1], ["20%", "120%"]);
+  const mobileTranslateY1 = useTransform(scrollYProgress, [0, 1], ["15%", "100%"]);
+  const mobileRotateZ1 = useTransform(scrollYProgress, [0, 1], ["0.6deg", "4deg"]);
+  const mobileTranslateX2 = useTransform(scrollYProgress, [0, 1], ["-20%", "-120%"]);
+  const mobileTranslateY2 = useTransform(scrollYProgress, [0, 1], ["-15%", "-100%"]);
+  const mobileRotateZ2 = useTransform(scrollYProgress, [0, 1], ["-3deg", "4deg"]);
+  const mobileTranslateX3 = useTransform(scrollYProgress, [0, 1], ["25%", "150%"]);
+  const mobileTranslateY3 = useTransform(scrollYProgress, [0, 1], ["-10%", "-60%"]);
+  const mobileRotateZ3 = useTransform(scrollYProgress, [0, 1], ["-0.6deg", "-6deg"]);
+  const mobileTranslateX4 = useTransform(scrollYProgress, [0, 1], ["-25%", "-150%"]);
+  const mobileTranslateY4 = useTransform(scrollYProgress, [0, 1], ["12%", "80%"]);
+  const mobileRotateZ4 = useTransform(scrollYProgress, [0, 1], ["4.6deg", "8deg"]);
+
+  // Desktop transforms
+  const desktopTranslateX1 = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const desktopTranslateY1 = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
+  const desktopRotateZ1 = useTransform(scrollYProgress, [0, 1], ["0deg", "-4deg"]);
+  const desktopTranslateX2 = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
+  const desktopTranslateY2 = useTransform(scrollYProgress, [0, 1], ["0%", "-90%"]);
+  const desktopRotateZ2 = useTransform(scrollYProgress, [0, 1], ["4deg", "4deg"]);
+  const desktopTranslateX3 = useTransform(scrollYProgress, [0, 1], ["0%", "140%"]);
+  const desktopTranslateY3 = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
+  const desktopRotateZ3 = useTransform(scrollYProgress, [0, 1], ["0deg", "-12deg"]);
+  const desktopTranslateX4 = useTransform(scrollYProgress, [0, 1], ["0%", "-140%"]);
+  const desktopTranslateY4 = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
+  const desktopRotateZ4 = useTransform(scrollYProgress, [0, 1], ["8deg", "8deg"]);
+
+  // Create image transforms by selecting the appropriate pre-calculated values
+  const imageTransforms = useMemo(() => [
     {},
-    isMobile
-      ? {
-          translateX: useTransform(scrollYProgress, [0, 1], ["20%", "120%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["15%", "100%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["0.6deg", "4deg"]),
-        }
-      : {
-          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "60%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["0deg", "-4deg"]),
-        },
-    isMobile
-      ? {
-          translateX: useTransform(scrollYProgress, [0, 1], ["-20%", "-120%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["-15%", "-100%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["-3deg", "4deg"]),
-        }
-      : {
-          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "-90%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["4deg", "4deg"]),
-        },
-    isMobile
-      ? {
-          translateX: useTransform(scrollYProgress, [0, 1], ["25%", "150%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["-10%", "-60%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["-0.6deg", "-6deg"]),
-        }
-      : {
-          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "140%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["0deg", "-12deg"]),
-        },
-    isMobile
-      ? {
-          translateX: useTransform(scrollYProgress, [0, 1], ["-25%", "-150%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["12%", "80%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["4.6deg", "8deg"]),
-        }
-      : {
-          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "-140%"]),
-          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "60%"]),
-          rotateZ: useTransform(scrollYProgress, [0, 1], ["8deg", "8deg"]),
-        },
-  ];
+    {
+      translateX: isMobile ? mobileTranslateX1 : desktopTranslateX1,
+      translateY: isMobile ? mobileTranslateY1 : desktopTranslateY1,
+      rotateZ: isMobile ? mobileRotateZ1 : desktopRotateZ1,
+    },
+    {
+      translateX: isMobile ? mobileTranslateX2 : desktopTranslateX2,
+      translateY: isMobile ? mobileTranslateY2 : desktopTranslateY2,
+      rotateZ: isMobile ? mobileRotateZ2 : desktopRotateZ2,
+    },
+    {
+      translateX: isMobile ? mobileTranslateX3 : desktopTranslateX3,
+      translateY: isMobile ? mobileTranslateY3 : desktopTranslateY3,
+      rotateZ: isMobile ? mobileRotateZ3 : desktopRotateZ3,
+    },
+    {
+      translateX: isMobile ? mobileTranslateX4 : desktopTranslateX4,
+      translateY: isMobile ? mobileTranslateY4 : desktopTranslateY4,
+      rotateZ: isMobile ? mobileRotateZ4 : desktopRotateZ4,
+    },
+  ], [
+    isMobile,
+    mobileTranslateX1, mobileTranslateY1, mobileRotateZ1, 
+    mobileTranslateX2, mobileTranslateY2, mobileRotateZ2,
+    mobileTranslateX3, mobileTranslateY3, mobileRotateZ3,
+    mobileTranslateX4, mobileTranslateY4, mobileRotateZ4,
+    desktopTranslateX1, desktopTranslateY1, desktopRotateZ1,
+    desktopTranslateX2, desktopTranslateY2, desktopRotateZ2,
+    desktopTranslateX3, desktopTranslateY3, desktopRotateZ3,
+    desktopTranslateX4, desktopTranslateY4, desktopRotateZ4
+  ]);
   
   const handleChatOpen = () => {
     setShouldExpandChat(true);
