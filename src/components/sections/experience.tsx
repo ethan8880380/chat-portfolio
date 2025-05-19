@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cog, PencilRuler, LayoutGrid, Lightbulb, Mail, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Cog, PencilRuler, LayoutGrid, Lightbulb, User } from "lucide-react";
 
 interface Specialization {
   id: number;

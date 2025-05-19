@@ -2,9 +2,8 @@ import { Header } from "@/components/sections/header";
 import { BasiocHero } from "@/components/sections/basioc-hero";
 import { NewGallery } from "@/components/sections/new-gallery";
 import { Experience } from "@/components/sections/experience";
-import { Footer } from "@/components/sections/footer";
 import { AboutSection } from "@/components/sections/about";
-import { Spacer } from "@/components/sections/spacer";
+
 export default function Home() {
   return (
     <>

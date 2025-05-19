@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 import { useChatContext } from "@/context/ChatContext";
+import Image from "next/image";
 
 type ImageProps = {
   src: string;
@@ -44,33 +45,58 @@ export const AboutSection = (props: AboutSectionProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const halfViewportHeight = typeof window !== "undefined" ? window.innerHeight * 0.5 : 100;
-
   const containerMotion = {
     opacity: useTransform(scrollYProgress, [0, 0.3, 0.5], [1, 1, 0]),
     scale: useTransform(scrollYProgress, [0, 0.5], [1, 0.95]),
   };
 
-  const createTransform = (x: string[], y: string[], rotate: string[]) => ({
-    translateX: useTransform(scrollYProgress, [0, 1], x),
-    translateY: useTransform(scrollYProgress, [0, 1], y),
-    rotateZ: useTransform(scrollYProgress, [0, 1], rotate),
-  });
-
+  // Inline the transforms directly to avoid React Hook rule issues
   const imageTransforms = [
     {},
     isMobile
-      ? createTransform(["20%", "120%"], ["15%", "100%"], ["0.6deg", "4deg"])
-      : createTransform(["0%", "100%"], ["0%", "60%"], ["0deg", "-4deg"]),
+      ? {
+          translateX: useTransform(scrollYProgress, [0, 1], ["20%", "120%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["15%", "100%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["0.6deg", "4deg"]),
+        }
+      : {
+          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "60%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["0deg", "-4deg"]),
+        },
     isMobile
-      ? createTransform(["-20%", "-120%"], ["-15%", "-100%"], ["-3deg", "4deg"])
-      : createTransform(["0%", "-50%"], ["0%", "-90%"], ["4deg", "4deg"]),
+      ? {
+          translateX: useTransform(scrollYProgress, [0, 1], ["-20%", "-120%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["-15%", "-100%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["-3deg", "4deg"]),
+        }
+      : {
+          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "-90%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["4deg", "4deg"]),
+        },
     isMobile
-      ? createTransform(["25%", "150%"], ["-10%", "-60%"], ["-0.6deg", "-6deg"])
-      : createTransform(["0%", "140%"], ["0%", "-40%"], ["0deg", "-12deg"]),
+      ? {
+          translateX: useTransform(scrollYProgress, [0, 1], ["25%", "150%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["-10%", "-60%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["-0.6deg", "-6deg"]),
+        }
+      : {
+          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "140%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["0deg", "-12deg"]),
+        },
     isMobile
-      ? createTransform(["-25%", "-150%"], ["12%", "80%"], ["4.6deg", "8deg"])
-      : createTransform(["0%", "-140%"], ["0%", "60%"], ["8deg", "8deg"]),
+      ? {
+          translateX: useTransform(scrollYProgress, [0, 1], ["-25%", "-150%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["12%", "80%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["4.6deg", "8deg"]),
+        }
+      : {
+          translateX: useTransform(scrollYProgress, [0, 1], ["0%", "-140%"]),
+          translateY: useTransform(scrollYProgress, [0, 1], ["0%", "60%"]),
+          rotateZ: useTransform(scrollYProgress, [0, 1], ["8deg", "8deg"]),
+        },
   ];
   
   const handleChatOpen = () => {
@@ -111,7 +137,13 @@ export const AboutSection = (props: AboutSectionProps) => {
               className="absolute w-full max-w-[45vw] md:max-w-[35vw] lg:max-w-[30vw] shadow-2xl"
               style={imageTransforms[index]}
             >
-              <img src={image.src} alt={image.alt} className="size-full object-cover rounded-lg" />
+              <Image 
+                src={image.src} 
+                alt={image.alt || ""} 
+                className="size-full object-cover rounded-lg"
+                width={500}
+                height={500} 
+              />
             </motion.div>
           ))}
         </div>

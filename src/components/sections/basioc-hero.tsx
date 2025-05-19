@@ -4,7 +4,7 @@ import { ChatBot } from "@/components/ui/chat-bot";
 import { useChatContext } from "@/context/ChatContext";
 
 export function BasiocHero() {
-  const { isChatOpen } = useChatContext();
+  const { } = useChatContext();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 items-center justify-center p-6 mt-[10vh] md:mt-[20vh]">

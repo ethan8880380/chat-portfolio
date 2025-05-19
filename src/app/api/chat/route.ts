@@ -193,17 +193,17 @@ export async function POST(request: Request) {
         reply: response.choices[0].message.content,
         image: selectedImage || undefined
       });
-    } catch (openaiError: any) {
+    } catch (openaiError: unknown) {
       console.error('OpenAI API error:', openaiError);
       return NextResponse.json(
-        { error: openaiError.message || 'Error communicating with OpenAI' },
+        { error: openaiError instanceof Error ? openaiError.message : 'Error communicating with OpenAI' },
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error processing chat request:', error);
     return NextResponse.json(
-      { error: error.message || 'Error processing your request' },
+      { error: error instanceof Error ? error.message : 'Error processing your request' },
       { status: 500 }
     );
   }
