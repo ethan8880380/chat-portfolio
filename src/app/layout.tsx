@@ -4,6 +4,7 @@ import "./globals.css";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ChatProvider } from "@/context/ChatContext";
+import { Analytics } from "@vercel/analytics/next"
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -23,6 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Analytics />
       <body className={`${outfit.variable} font-outfit antialiased`}>
         <ThemeProvider
           attribute="class"
