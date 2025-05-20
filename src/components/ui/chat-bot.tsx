@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { SendIcon } from "lucide-react";
+import Image from "next/image";
 import { useChatContext } from "@/context/ChatContext";
+import { TextAnimate } from "@/components/ui/text-animate";
 
 interface Message {
   role: 'user' | 'bot';
@@ -13,111 +15,65 @@ interface Message {
   seen?: boolean;
 }
 
-// Word-by-word animation with staggered timing and word highlighting
-const WordByWordTypewriter = ({ 
-  text, 
-  speed = 40,
-  onComplete
-}: { 
-  text: string; 
-  speed?: number;
-  onComplete?: () => void;
-}) => {
-  const [visibleWords, setVisibleWords] = useState<string[]>([]);
+// Simple typing animation component using framer-motion directly
+const TypingAnimation = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
+  const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
-  const [showCursor, setShowCursor] = useState(true);
   const prefersReducedMotion = useReducedMotion();
   
-  // Process text into words to display
-  const words = useMemo(() => text.split(/(\s+)/).filter(w => w.length > 0), [text]);
-  
-  // When animation completes, call the onComplete callback
   useEffect(() => {
-    if (isComplete && onComplete) {
-      const timer = setTimeout(() => {
-        onComplete();
-      }, 300);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isComplete, onComplete]);
-  
-  // Simple blinking cursor effect
-  useEffect(() => {
-    if (isComplete) return;
-    
-    const cursorInterval = setInterval(() => {
-      setShowCursor(prev => !prev);
-    }, 500);
-    
-    return () => clearInterval(cursorInterval);
-  }, [isComplete]);
-  
-  // Word by word typing effect
-  useEffect(() => {
-    // Show full text immediately if reduced motion is preferred
     if (prefersReducedMotion) {
-      setVisibleWords(words);
+      setDisplayedText(text);
       setIsComplete(true);
+      if (onComplete) onComplete();
       return;
     }
     
-    // Reset state when text changes
-    setVisibleWords([]);
+    setDisplayedText("");
     setIsComplete(false);
     
     let currentIndex = 0;
-    const timers: NodeJS.Timeout[] = [];
     
-    // Add word by word with calculated delays
-    const addNextWord = () => {
-      if (currentIndex < words.length) {
-        const word = words[currentIndex];
-        const currentWord = word;
+    // Function to determine typing speed based on character
+    const getTypingDelay = (char: string) => {
+      // Slower at punctuation to simulate natural pauses
+      if (/[.,!?;:]/.test(char)) return 400 + Math.random() * 200;
+      // Pause slightly at spaces
+      if (/\s/.test(char)) return 100 + Math.random() * 50;
+      // Regular characters have slightly variable speed
+      return 70 + Math.random() * 40;
+    };
+    
+    const typeNextCharacter = () => {
+      if (currentIndex < text.length) {
+        const char = text[currentIndex];
+        setDisplayedText(prev => prev + char);
+        currentIndex++;
         
-        // Calculate delay based on word length and type
-        const isPunctuation = /^[.,!?;:]/.test(word);
-        const wordDelay = word.trim() === '' ? speed * 0.5 : 
-                          isPunctuation ? speed * 1.5 : 
-                          Math.max(speed, word.length * speed * 0.15);
-        
-        // Add this word to visible words
-        const timer = setTimeout(() => {
-          setVisibleWords(prev => [...prev, currentWord]);
-          
-          // Move to next word
-          currentIndex++;
-          
-          if (currentIndex < words.length) {
-            addNextWord();
-          } else {
-            // All words added
-            setTimeout(() => setIsComplete(true), 500);
-          }
-        }, wordDelay);
-        
-        timers.push(timer);
+        // Get delay for next character
+        const delay = getTypingDelay(char);
+        setTimeout(typeNextCharacter, delay);
+      } else {
+        setIsComplete(true);
+        if (onComplete) {
+          // Give a moment before calling onComplete
+          setTimeout(onComplete, 500);
+        }
       }
     };
     
-    // Start adding words
-    addNextWord();
+    // Start typing with initial delay
+    setTimeout(typeNextCharacter, 300);
     
     return () => {
-      timers.forEach(clearTimeout);
+      // This is a cleanup function but for setTimeout chain we can't easily cancel
     };
-  }, [text, words, prefersReducedMotion, speed]);
-  
-  if (prefersReducedMotion) {
-    return <p className="text-base leading-relaxed">{text}</p>;
-  }
+  }, [text, prefersReducedMotion, onComplete]);
   
   return (
-    <p className="font-medium text-base leading-relaxed">
-      {visibleWords.map((word, index) => (
-        <span key={index}>{word}</span>
-      ))}
-      {!isComplete && showCursor && (
+    <p className="text-base leading-relaxed font-medium">
+      {displayedText}
+      {!isComplete && (
         <span className="inline-block w-[2px] h-[1.2em] bg-primary animate-pulse ml-[1px] align-middle" />
       )}
     </p>
@@ -130,6 +86,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasOpenedBefore, setHasOpenedBefore] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -187,6 +144,9 @@ export function ChatBot({ className = "" }: { className?: string }) {
       );
     }
   }, [isExpanded, messages.length]);
+  
+  // Handle animation completion for the last bot message
+  // Removed since we're handling this in the TypingAnimation component
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,11 +190,11 @@ export function ChatBot({ className = "" }: { className?: string }) {
         seen: false
       }]);
       
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error("Error:", err);
       setMessages(prev => [...prev, { 
         role: 'bot', 
-        content: err instanceof Error ? err.message : "Sorry, I encountered an error. Please try again.",
+        content: err.message || "Sorry, I encountered an error. Please try again.",
         seen: true
       }]);
     } finally {
@@ -259,8 +219,10 @@ export function ChatBot({ className = "" }: { className?: string }) {
 
   // Handle closing the chat with a slight delay to allow exit animations
   const handleClose = () => {
+    setIsClosing(true); // Set closing state to true
     setTimeout(() => {
       setIsExpanded(false);
+      setIsClosing(false);
     }, 150); // Short delay to allow exit animations to start
   };
 
@@ -391,7 +353,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                 animate={{ opacity: 0.6, backdropFilter: "blur(10px)" }}
                 exit={{ opacity: 0, backdropFilter: "blur(0px)", transition: { duration: 0.2 } }}
                 transition={linearTransition}
-                className="fixed inset-0 bg-background backdrop-blur-none"
+                className="fixed inset-0 bg-background backdrop-blur-xl"
                 style={{
                   transition: "backdrop-filter 0.3s ease-out, background-color 0.3s ease-out"
                 }}
@@ -404,7 +366,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                   scale: !hasOpenedBefore ? springTransition : linearTransition,
                   exit: { duration: 0.15 }
                 }}
-                className="fixed inset-0 m-0 md:m-4 md:mx-auto md:inset-[5%] lg:inset-[10%] max-h-[100vh] md:max-h-[80vh] max-w-none md:max-w-[70vw] z-50"
+                className="fixed inset-0 m-0 border border-border rounded-xl md:m-4 md:mx-auto md:inset-[5%] lg:inset-[10%] max-h-[100vh] md:max-h-[80vh] max-w-none md:max-w-[70vw] z-50"
                 initial={!hasOpenedBefore ? { scale: 0.9, opacity: 0 } : { scale: 1, opacity: 1 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
@@ -454,8 +416,8 @@ export function ChatBot({ className = "" }: { className?: string }) {
                             message.role === 'user' ? 'bg-background text-foreground border' : 'text-foreground/80'
                           }`}>
                             {message.role === 'bot' && message === messages[messages.length - 1] && !message.seen ? (
-                              <WordByWordTypewriter 
-                                text={message.content}
+                              <TypingAnimation 
+                                text={message.content} 
                                 onComplete={() => {
                                   // Mark the message as seen when animation completes
                                   setMessages(prev => 
