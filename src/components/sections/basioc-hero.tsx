@@ -11,7 +11,7 @@ export function BasiocHero() {
         {/* <div className="col-span-4 flex items-center justify-center mb-4">
           <div className='border border-blue-500 bg-blue-500/20 text-blue-700 dark:text-blue-400 px-3 py-2 rounded-full w-fit just text-center'>Open to Work!</div>
         </div> */}
-        <p className="col-span-4 text-foreground text-2xl md:text-5xl font-medium text-left md:text-center mb-16 leading-[1.5] max-w-[80%] mx-auto">
+        <p className="col-span-4 text-foreground heading-base text-center max-w-[80%] mx-auto mb-16">
             UX Designer and researcher with significant front-end programming expertise, building award-winning, customer-facing, and internal platforms
         </p>
         <div className="col-span-1"></div>

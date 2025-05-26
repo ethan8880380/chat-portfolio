@@ -3,8 +3,10 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, easeInOut, useSpring } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { projectsData } from "@/data/projects";
 
 // Combined gallery images with mobile and desktop image sources
 const galleryImages = [
@@ -17,7 +19,8 @@ const galleryImages = [
     alt: "Design System",
     title: "Enterprise Design System",
     description: "Company-wide enterprise design system for Kimberly-Clark. Research, design, and development all done by me.",
-    color: "bg-purple-500"
+    color: "bg-purple-500",
+    slug: "enterprise-design-system"
   },
   { 
     id: 2, 
@@ -28,7 +31,8 @@ const galleryImages = [
     alt: "AI Chatbot",
     title: "GenFEI Chatbot",
     description: "Complex AI chatbot connected to a multiple different knowledge bases. Design, Frontend Development.",
-    color: "bg-green-500"
+    color: "bg-green-500",
+    slug: "genfei-chatbot"
   },
   { 
     id: 3, 
@@ -39,7 +43,8 @@ const galleryImages = [
     alt: "Analytic Dashboard",
     title: "IRIS",
     description: "Complex analytic dashboard focusing on new ways to visualize data and plan promotions.",
-    color: "bg-yellow-500"
+    color: "bg-yellow-500",
+    slug: "iris-analytics"
   },
   { 
     id: 4, 
@@ -50,7 +55,8 @@ const galleryImages = [
     alt: "Consumer Website",
     title: "Web Templates",
     description: "Standardized web templates for Kimberly-Clark consumer websites.",
-    color: "bg-red-500"
+    color: "bg-red-500",
+    slug: "web-templates"
   },
   { 
     id: 5, 
@@ -61,7 +67,8 @@ const galleryImages = [
     alt: "Pull Ups Research",
     title: "Pull Ups Research",
     description: "Research and Prototypes for a PullUps potty training mobile app.",
-    color: "bg-indigo-500"
+    color: "bg-indigo-500",
+    slug: "pullups-research"
   },
   { 
     id: 6, 
@@ -72,7 +79,8 @@ const galleryImages = [
     alt: "Real Estate Website",
     title: "BuyerSpring",
     description: "Real estate website focused on a new way to buy and sell homes.",
-    color: "bg-pink-500"
+    color: "bg-pink-500",
+    slug: "buyerspring"
   },
   { 
     id: 7, 
@@ -83,7 +91,8 @@ const galleryImages = [
     alt: "Huggies Website",
     title: "Huggies Website",
     description: "Redesigned the Huggies website to be more user-friendly and engaging.",
-    color: "bg-orange-500"
+    color: "bg-orange-500",
+    slug: "huggies-website"
   },
   { 
     id: 8, 
@@ -94,7 +103,8 @@ const galleryImages = [
     alt: "Defoor Development",
     title: "Defoor Development",
     description: "Custom website for Defoor Property Development showcasing their work and services.",
-    color: "bg-red-500"
+    color: "bg-red-500",
+    slug: "defoor-development"
   }
 ];
 
@@ -565,10 +575,12 @@ export function NewGallery() {
                     </div>
                     
                     <div className="mt-auto">
-                      <Button variant="ghost" className="hidden">
-                        View Project
-                        <ArrowUpRight className="h-5 w-5 ml-2" />
-                      </Button>
+                      <Link href={`/projects/${projectsData[0].slug}`}>
+                        <Button variant="ghost" className="group p-0 hover:bg-transparent">
+                          View Project
+                          <ArrowUpRight className="h-5 w-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>
@@ -602,10 +614,12 @@ export function NewGallery() {
                       </div>
                       
                       <div className="mt-auto">
-                        <button className="hidden">
-                          View Project
-                          <ArrowUpRight className="h-5 w-5 ml-2" />
-                        </button>
+                        <Link href={`/projects/${galleryImages[index].slug}`}>
+                          <Button variant="ghost" className="group p-0 hover:bg-transparent">
+                            View Project
+                            <ArrowUpRight className="h-5 w-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </motion.div>

@@ -127,7 +127,7 @@ export const AboutSection = (props: AboutSectionProps) => {
         <div className="py-16 text-center md:py-24 lg:py-28">
           <div className="max-w-6xl mx-auto w-full">
             <p className="mb-3 text-foreground/50 font-semibold md:mb-4">{tagline}</p>
-            <h1 className="mb-5 text-foreground text-2xl md:text-5xl font-medium">{heading}</h1>
+            <h1 className="heading-base mb-6">{heading}</h1>
             <p className="relative z-20 md:text-lg text-foreground/70">{description}</p>
             <div className="relative z-20 mt-6 flex items-center justify-center gap-x-4 md:mt-8">
               <Button onClick={handleChatOpen} size="lg">

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+.heading-base {
+  @apply text-2xl md:text-5xl font-medium leading-[2];
+}
+
+.heading-secondary {
+  @apply text-2xl md:text-3xl font-medium leading-[2];
+}
+
+.text-regular {
+  @apply text-muted-foreground md:text-xl leading-relaxed;
+}
 
 
 @layer base {

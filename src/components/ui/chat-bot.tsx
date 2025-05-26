@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { SendIcon } from "lucide-react";
-import Image from "next/image";
 import { useChatContext } from "@/context/ChatContext";
-import { TextAnimate } from "@/components/ui/text-animate";
 
 interface Message {
   role: 'user' | 'bot';
@@ -86,7 +84,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasOpenedBefore, setHasOpenedBefore] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -190,11 +188,12 @@ export function ChatBot({ className = "" }: { className?: string }) {
         seen: false
       }]);
       
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error:", err);
+      const errorMessage = err instanceof Error ? err.message : "Sorry, I encountered an error. Please try again.";
       setMessages(prev => [...prev, { 
         role: 'bot', 
-        content: err.message || "Sorry, I encountered an error. Please try again.",
+        content: errorMessage,
         seen: true
       }]);
     } finally {
@@ -219,10 +218,8 @@ export function ChatBot({ className = "" }: { className?: string }) {
 
   // Handle closing the chat with a slight delay to allow exit animations
   const handleClose = () => {
-    setIsClosing(true); // Set closing state to true
     setTimeout(() => {
       setIsExpanded(false);
-      setIsClosing(false);
     }, 150); // Short delay to allow exit animations to start
   };
 

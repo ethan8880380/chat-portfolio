@@ -52,7 +52,14 @@ export function Header() {
           </Link>
           <NavigationMenu >
             <NavigationMenuList className="gap-0">
-            <NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/work" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    Work
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
                 <button 
                   onClick={() => setShouldExpandChat(true)} 
                   className={navigationMenuTriggerStyle()}
