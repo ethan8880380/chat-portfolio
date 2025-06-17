@@ -94,22 +94,22 @@ export async function POST(request: Request) {
       
       // Add specific project context
       if (lowerMessage.includes('analytics') || lowerMessage.includes('data')) {
-        systemPrompt += `\n\n${additionalContext.commercialAnalytics}`;
+        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
         if (lowerMessage.includes('iris') || lowerMessage.includes('predictive')) {
           systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
         }
       }
       if (lowerMessage.includes('supply chain') || lowerMessage.includes('logistics')) {
-        systemPrompt += `\n\n${additionalContext.supplyChain}`;
+        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
       }
       if (lowerMessage.includes('design system') || lowerMessage.includes('figma')) {
-        systemPrompt += `\n\n${additionalContext.designSystem}`;
+        systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem}`;
       }
       if (lowerMessage.includes('huggies') || lowerMessage.includes('redesign')) {
-        systemPrompt += `\n\n${additionalContext.huggiesRedesign}`;
+        systemPrompt += `\n\n${additionalContext.huggiesWebsite}`;
       }
       if (lowerMessage.includes('real estate') || lowerMessage.includes('freelance')) {
-        systemPrompt += `\n\n${additionalContext.realEstatePlatform}`;
+        systemPrompt += `\n\n${additionalContext.buyerspring}`;
       }
       
       // Add personal context

@@ -1,6 +1,5 @@
 import { Header } from "@/components/sections/header";
 import { BasiocHero } from "@/components/sections/basioc-hero";
-import { NewGallery } from "@/components/sections/new-gallery";
 import { Experience } from "@/components/sections/experience";
 import { AboutSection } from "@/components/sections/about";
 import { projectsData } from "@/data/projects";

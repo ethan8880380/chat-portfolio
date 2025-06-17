@@ -10,12 +10,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { useChatContext } from "@/context/ChatContext";
 
 export function Header() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const { setShouldExpandChat } = useChatContext();
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {

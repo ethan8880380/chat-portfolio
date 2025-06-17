@@ -1,5 +1,4 @@
 import { Header } from "@/components/sections/header";
-import { ChatBot } from "@/components/ui/chat-bot";
 import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
 
 export default function ChatPage() {

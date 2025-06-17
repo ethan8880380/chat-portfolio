@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import {
     ImageIcon,
     FileUp,
-    Figma,
     MonitorIcon,
     CircleUserRound,
     ArrowUpIcon,

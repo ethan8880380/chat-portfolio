@@ -1,6 +1,5 @@
 "use client";
 
-import { ChatBot } from "@/components/ui/chat-bot";
 import { useChatContext } from "@/context/ChatContext";
 import { Button } from "../ui/button";
 import Link from "next/link";
