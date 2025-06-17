@@ -3,6 +3,8 @@ import { BasiocHero } from "@/components/sections/basioc-hero";
 import { NewGallery } from "@/components/sections/new-gallery";
 import { Experience } from "@/components/sections/experience";
 import { AboutSection } from "@/components/sections/about";
+import { projectsData } from "@/data/projects";
+import { WorkProjects } from "@/components/sections/work-projects";
 
 export default function Home() {
   return (
@@ -24,7 +26,10 @@ export default function Home() {
         <BasiocHero />
         
         {/* Gallery Section with Title */}
-        <NewGallery />
+        <div className="px-4 md:px-6">
+          <WorkProjects projects={projectsData} />
+        </div>
+        {/* <NewGallery /> */}
         <AboutSection />
         <Experience />
         {/* <Cta38 /> */}

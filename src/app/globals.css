@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .heading-base {
-  @apply text-2xl md:text-5xl font-medium leading-[2];
+  @apply text-2xl md:text-5xl font-medium leading-loose;
 }
 
 .heading-secondary {

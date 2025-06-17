@@ -9,7 +9,7 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
-    const { message, messages = [], category = 'default', model = 'gpt-4' } = await request.json();
+    const { message, messages = [], category = 'default', model = 'gpt-4', selectedProject } = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -38,60 +38,96 @@ export async function POST(request: Request) {
     const validCategory = Object.keys(trainingPrompts).includes(category) ? category : 'default';
     let systemPrompt = trainingPrompts[validCategory as keyof typeof trainingPrompts];
 
-    // Add relevant additional context based on the message content
-    const lowerMessage = message.toLowerCase();
-    
-    // Check for general introduction/about me questions
-    if (lowerMessage.includes('tell me about yourself') || 
-        lowerMessage.includes('who are you') || 
-        lowerMessage.includes('your background') ||
-        lowerMessage.includes('your experience')) {
-      systemPrompt = trainingPrompts.default;
-    }
-    
-    // Check for role-specific questions
-    if (lowerMessage.includes('role') || lowerMessage.includes('job') || lowerMessage.includes('work')) {
-      systemPrompt = trainingPrompts.uxDesign;
-      if (lowerMessage.includes('developer') || lowerMessage.includes('coding')) {
-        systemPrompt = trainingPrompts.development;
+    // Add project-specific context if a project is selected
+    if (selectedProject) {
+      systemPrompt += `\n\nIMPORTANT: The user has selected to focus on the "${selectedProject}" project. Only answer questions about this specific project and redirect any off-topic questions back to this project. If asked about other projects or general topics, politely redirect the conversation back to the selected project.`;
+      
+      // Add specific project context
+      switch (selectedProject) {
+        case 'commercial-analytics-hub':
+          systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
+          break;
+        case 'enterprise-design-system':
+          systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem}`;
+          break;
+        case 'genfei-chatbot':
+          systemPrompt += `\n\n${additionalContext.genfeiChatbot}`;
+          break;
+        case 'iris-analytics':
+          systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
+          break;
+        case 'web-templates':
+          systemPrompt += `\n\n${additionalContext.webTemplates}`;
+          break;
+        case 'pullups-research':
+          systemPrompt += `\n\n${additionalContext.pullupsResearch}`;
+          break;
+        case 'buyerspring':
+          systemPrompt += `\n\n${additionalContext.buyerspring}`;
+          break;
+        case 'huggies-website':
+          systemPrompt += `\n\n${additionalContext.huggiesWebsite}`;
+          break;
+        case 'defoor-development':
+          systemPrompt += `\n\n${additionalContext.defoorDevelopment}`;
+          break;
       }
-    }
-    
-    // Add specific project context
-    if (lowerMessage.includes('analytics') || lowerMessage.includes('data')) {
-      systemPrompt += `\n\n${additionalContext.commercialAnalytics}`;
-      if (lowerMessage.includes('iris') || lowerMessage.includes('predictive')) {
-        systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
+    } else {
+      // Add relevant additional context based on the message content (existing logic)
+      const lowerMessage = message.toLowerCase();
+      
+      // Check for general introduction/about me questions
+      if (lowerMessage.includes('tell me about yourself') || 
+          lowerMessage.includes('who are you') || 
+          lowerMessage.includes('your background') ||
+          lowerMessage.includes('your experience')) {
+        systemPrompt = trainingPrompts.default;
       }
-    }
-    if (lowerMessage.includes('supply chain') || lowerMessage.includes('logistics')) {
-      systemPrompt += `\n\n${additionalContext.supplyChain}`;
-    }
-    if (lowerMessage.includes('design system') || lowerMessage.includes('figma')) {
-      systemPrompt += `\n\n${additionalContext.designSystem}`;
-    }
-    if (lowerMessage.includes('huggies') || lowerMessage.includes('redesign')) {
-      systemPrompt += `\n\n${additionalContext.huggiesRedesign}`;
-    }
-    if (lowerMessage.includes('real estate') || lowerMessage.includes('freelance')) {
-      systemPrompt += `\n\n${additionalContext.realEstatePlatform}`;
-    }
-    
-    // Add personal context
-    if (lowerMessage.includes('philosophy') || lowerMessage.includes('approach')) {
-      systemPrompt += `\n\n${additionalContext.designPhilosophy}`;
-    }
-    if (lowerMessage.includes('workflow') || lowerMessage.includes('development')) {
-      systemPrompt += `\n\n${additionalContext.developmentApproach}`;
-    }
-    if (lowerMessage.includes('research') || lowerMessage.includes('testing')) {
-      systemPrompt += `\n\n${additionalContext.researchMethods}`;
-    }
-    if (lowerMessage.includes('project') || lowerMessage.includes('management')) {
-      systemPrompt += `\n\n${additionalContext.projectManagement}`;
-    }
-    if (lowerMessage.includes('career') || lowerMessage.includes('goals')) {
-      systemPrompt += `\n\n${additionalContext.careerGoals}`;
+      
+      // Check for role-specific questions
+      if (lowerMessage.includes('role') || lowerMessage.includes('job') || lowerMessage.includes('work')) {
+        systemPrompt = trainingPrompts.uxDesign;
+        if (lowerMessage.includes('developer') || lowerMessage.includes('coding')) {
+          systemPrompt = trainingPrompts.development;
+        }
+      }
+      
+      // Add specific project context
+      if (lowerMessage.includes('analytics') || lowerMessage.includes('data')) {
+        systemPrompt += `\n\n${additionalContext.commercialAnalytics}`;
+        if (lowerMessage.includes('iris') || lowerMessage.includes('predictive')) {
+          systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
+        }
+      }
+      if (lowerMessage.includes('supply chain') || lowerMessage.includes('logistics')) {
+        systemPrompt += `\n\n${additionalContext.supplyChain}`;
+      }
+      if (lowerMessage.includes('design system') || lowerMessage.includes('figma')) {
+        systemPrompt += `\n\n${additionalContext.designSystem}`;
+      }
+      if (lowerMessage.includes('huggies') || lowerMessage.includes('redesign')) {
+        systemPrompt += `\n\n${additionalContext.huggiesRedesign}`;
+      }
+      if (lowerMessage.includes('real estate') || lowerMessage.includes('freelance')) {
+        systemPrompt += `\n\n${additionalContext.realEstatePlatform}`;
+      }
+      
+      // Add personal context
+      if (lowerMessage.includes('philosophy') || lowerMessage.includes('approach')) {
+        systemPrompt += `\n\n${additionalContext.designPhilosophy}`;
+      }
+      if (lowerMessage.includes('workflow') || lowerMessage.includes('development')) {
+        systemPrompt += `\n\n${additionalContext.developmentApproach}`;
+      }
+      if (lowerMessage.includes('research') || lowerMessage.includes('testing')) {
+        systemPrompt += `\n\n${additionalContext.researchMethods}`;
+      }
+      if (lowerMessage.includes('project') || lowerMessage.includes('management')) {
+        systemPrompt += `\n\n${additionalContext.projectManagement}`;
+      }
+      if (lowerMessage.includes('career') || lowerMessage.includes('goals')) {
+        systemPrompt += `\n\n${additionalContext.careerGoals}`;
+      }
     }
 
     // Map of keywords to project images
@@ -103,16 +139,40 @@ export async function POST(request: Request) {
       default: "/projectImages/desktop/comm-analytics.png"
     };
 
-    // Determine which image to return based on the message content
+    // Determine which image to return based on the message content or selected project
     let selectedImage: string | null = null;
-    if ((lowerMessage.includes('analytics') || lowerMessage.includes('data')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-      selectedImage = projectImages.analytics;
-    } else if ((lowerMessage.includes('design') || lowerMessage.includes('figma')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-      selectedImage = projectImages.design;
-    } else if ((lowerMessage.includes('development') || lowerMessage.includes('code')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-      selectedImage = projectImages.development;
-    } else if ((lowerMessage.includes('research') || lowerMessage.includes('user research')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-      selectedImage = projectImages.research;
+    if (selectedProject) {
+      // Return project-specific image based on selected project
+      switch (selectedProject) {
+        case 'commercial-analytics-hub':
+        case 'iris-analytics':
+          selectedImage = projectImages.analytics;
+          break;
+        case 'enterprise-design-system':
+        case 'huggies-website':
+        case 'web-templates':
+          selectedImage = projectImages.design;
+          break;
+        case 'genfei-chatbot':
+        case 'buyerspring':
+        case 'defoor-development':
+          selectedImage = projectImages.development;
+          break;
+        case 'pullups-research':
+          selectedImage = projectImages.research;
+          break;
+      }
+    } else {
+      const lowerMessage = message.toLowerCase();
+      if ((lowerMessage.includes('analytics') || lowerMessage.includes('data')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+        selectedImage = projectImages.analytics;
+      } else if ((lowerMessage.includes('design') || lowerMessage.includes('figma')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+        selectedImage = projectImages.design;
+      } else if ((lowerMessage.includes('development') || lowerMessage.includes('code')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+        selectedImage = projectImages.development;
+      } else if ((lowerMessage.includes('research') || lowerMessage.includes('user research')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
+        selectedImage = projectImages.research;
+      }
     }
 
     // Validate model parameter - fall back to default if not valid

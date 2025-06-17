@@ -2,21 +2,24 @@
 
 import { ChatBot } from "@/components/ui/chat-bot";
 import { useChatContext } from "@/context/ChatContext";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 export function BasiocHero() {
   const { } = useChatContext();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 items-center justify-center p-6 mt-[10vh] md:mt-[20vh]">
-        {/* <div className="col-span-4 flex items-center justify-center mb-4">
-          <div className='border border-blue-500 bg-blue-500/20 text-blue-700 dark:text-blue-400 px-3 py-2 rounded-full w-fit just text-center'>Open to Work!</div>
-        </div> */}
-        <p className="col-span-4 text-foreground heading-base text-center max-w-[80%] mx-auto mb-16">
+    <div className="grid grid-cols-1 md:grid-cols-4 items-center justify-center p-6 mt-[8vh] md:mt-[10vh]">
+        <p className="col-span-3 text-foreground heading-base text-left mb-12">
             UX Designer and researcher with significant front-end programming expertise, building award-winning, customer-facing, and internal platforms
         </p>
         <div className="col-span-1"></div>
-        <div className="col-span-2 mb-8 md:mb-[20vh]">
-          <ChatBot className="w-full" />
+        <div className="col-span-2 mb-8 md:mb-[10vh]">
+          <Button size="lg" className="mr-3">
+            <Link href="/chat">
+              AI Powered Chatbot
+            </Link>
+          </Button>
         </div>
     </div>
   );

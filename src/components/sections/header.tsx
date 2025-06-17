@@ -22,17 +22,6 @@ export function Header() {
     setMounted(true);
   }, []);
 
-  // Function to handle scrolling to the about section
-  const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
-
   if (!mounted) {
     return (
       <header className="sticky top-0 z-40 w-full bg-background border-b supports-[backdrop-filter]:bg-background/60 px-3 font-inter">
@@ -60,25 +49,16 @@ export function Header() {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <button 
-                  onClick={() => setShouldExpandChat(true)} 
-                  className={navigationMenuTriggerStyle()}
-                >
-                  Chatbot
-                </button>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <button 
-                  onClick={scrollToAbout} 
-                  className={navigationMenuTriggerStyle()}
-                >
-                  About
-                </button>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="#experience" legacyBehavior passHref>
+              <Link href="/chat" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Contact Me
+                    Chatbot
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="mailto:ethan0380@gmail.com" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    email me
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
