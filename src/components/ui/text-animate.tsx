@@ -1,410 +1,120 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion, MotionProps, Variants } from "motion/react";
-import { ElementType, memo } from "react";
+import { motion, Variants } from "framer-motion";
+import { ReactElement, createElement } from "react";
 
-type AnimationType = "text" | "word" | "character" | "line";
-type AnimationVariant =
-  | "fadeIn"
-  | "blurIn"
-  | "blurInUp"
-  | "blurInDown"
-  | "slideUp"
-  | "slideDown"
-  | "slideLeft"
-  | "slideRight"
-  | "scaleUp"
-  | "scaleDown";
-
-interface TextAnimateProps extends MotionProps {
-  /**
-   * The text content to animate
-   */
+interface TextAnimateProps {
   children: string;
-  /**
-   * The class name to be applied to the component
-   */
   className?: string;
-  /**
-   * The class name to be applied to each segment
-   */
-  segmentClassName?: string;
-  /**
-   * The delay before the animation starts
-   */
   delay?: number;
-  /**
-   * The duration of the animation
-   */
   duration?: number;
-  /**
-   * Custom motion variants for the animation
-   */
   variants?: Variants;
-  /**
-   * The element type to render
-   */
-  as?: ElementType;
-  /**
-   * How to split the text ("text", "word", "character")
-   */
-  by?: AnimationType;
-  /**
-   * Whether to start animation when component enters viewport
-   */
+  as?: keyof JSX.IntrinsicElements;
+  by?: "text" | "word" | "character" | "line";
   startOnView?: boolean;
-  /**
-   * Whether to animate only once
-   */
   once?: boolean;
-  /**
-   * The animation preset to use
-   */
   animation?: AnimationVariant;
 }
 
-const staggerTimings: Record<AnimationType, number> = {
-  text: 0.06,
-  word: 0.05,
-  character: 0.03,
-  line: 0.06,
-};
+type AnimationVariant = "fadeIn" | "blurInUp" | "slideUp" | "scaleUp" | "slideLeft";
 
-const defaultContainerVariants = {
-  hidden: { opacity: 1 },
-  show: {
-    opacity: 1,
-    transition: {
-      delayChildren: 0,
-      staggerChildren: 0.05,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      staggerChildren: 0.05,
-      staggerDirection: -1,
-    },
-  },
-};
-
-const defaultItemVariants: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-  },
-  exit: {
-    opacity: 0,
-  },
-};
-
-const defaultItemAnimationVariants: Record<
-  AnimationVariant,
-  { container: Variants; item: Variants }
-> = {
+const defaultVariants: Record<AnimationVariant, Variants> = {
   fadeIn: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { opacity: 0, y: 20 },
-      show: {
-        opacity: 1,
-        y: 0,
-        transition: {
-          duration: 0.3,
-        },
-      },
-      exit: {
-        opacity: 0,
-        y: 20,
-        transition: { duration: 0.3 },
-      },
-    },
-  },
-  blurIn: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { opacity: 0, filter: "blur(10px)" },
-      show: {
-        opacity: 1,
-        filter: "blur(0px)",
-        transition: {
-          duration: 0.3,
-        },
-      },
-      exit: {
-        opacity: 0,
-        filter: "blur(10px)",
-        transition: { duration: 0.3 },
-      },
-    },
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
   },
   blurInUp: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
-      show: {
-        opacity: 1,
-        filter: "blur(0px)",
-        y: 0,
-        transition: {
-          y: { duration: 0.3 },
-          opacity: { duration: 0.4 },
-          filter: { duration: 0.3 },
-        },
-      },
-      exit: {
-        opacity: 0,
-        filter: "blur(10px)",
-        y: 20,
-        transition: {
-          y: { duration: 0.3 },
-          opacity: { duration: 0.4 },
-          filter: { duration: 0.3 },
-        },
-      },
-    },
-  },
-  blurInDown: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { opacity: 0, filter: "blur(10px)", y: -20 },
-      show: {
-        opacity: 1,
-        filter: "blur(0px)",
-        y: 0,
-        transition: {
-          y: { duration: 0.3 },
-          opacity: { duration: 0.4 },
-          filter: { duration: 0.3 },
-        },
-      },
-    },
+    initial: { opacity: 0, filter: "blur(4px)", y: 10 },
+    animate: { opacity: 1, filter: "blur(0px)", y: 0 },
   },
   slideUp: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { y: 20, opacity: 0 },
-      show: {
-        y: 0,
-        opacity: 1,
-        transition: {
-          duration: 0.3,
-        },
-      },
-      exit: {
-        y: -20,
-        opacity: 0,
-        transition: {
-          duration: 0.3,
-        },
-      },
-    },
-  },
-  slideDown: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { y: -20, opacity: 0 },
-      show: {
-        y: 0,
-        opacity: 1,
-        transition: { duration: 0.3 },
-      },
-      exit: {
-        y: 20,
-        opacity: 0,
-        transition: { duration: 0.3 },
-      },
-    },
-  },
-  slideLeft: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { x: 20, opacity: 0 },
-      show: {
-        x: 0,
-        opacity: 1,
-        transition: { duration: 0.3 },
-      },
-      exit: {
-        x: -20,
-        opacity: 0,
-        transition: { duration: 0.3 },
-      },
-    },
-  },
-  slideRight: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { x: -20, opacity: 0 },
-      show: {
-        x: 0,
-        opacity: 1,
-        transition: { duration: 0.3 },
-      },
-      exit: {
-        x: 20,
-        opacity: 0,
-        transition: { duration: 0.3 },
-      },
-    },
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
   },
   scaleUp: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { scale: 0.5, opacity: 0 },
-      show: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-          duration: 0.3,
-          scale: {
-            type: "spring",
-            damping: 15,
-            stiffness: 300,
-          },
-        },
-      },
-      exit: {
-        scale: 0.5,
-        opacity: 0,
-        transition: { duration: 0.3 },
-      },
-    },
+    initial: { opacity: 0, scale: 0.8 },
+    animate: { opacity: 1, scale: 1 },
   },
-  scaleDown: {
-    container: defaultContainerVariants,
-    item: {
-      hidden: { scale: 1.5, opacity: 0 },
-      show: {
-        scale: 1,
-        opacity: 1,
-        transition: {
-          duration: 0.3,
-          scale: {
-            type: "spring",
-            damping: 15,
-            stiffness: 300,
-          },
-        },
-      },
-      exit: {
-        scale: 1.5,
-        opacity: 0,
-        transition: { duration: 0.3 },
-      },
-    },
+  slideLeft: {
+    initial: { opacity: 0, x: 20 },
+    animate: { opacity: 1, x: 0 },
   },
 };
 
-const TextAnimateBase = ({
+export function TextAnimate({
   children,
+  className = "",
   delay = 0,
-  duration = 0.3,
+  duration = 0.15,
   variants,
-  className,
-  segmentClassName,
-  as: Component = "p",
+  as = "p",
+  by = "word",
   startOnView = true,
   once = false,
-  by = "word",
   animation = "fadeIn",
-  ...props
-}: TextAnimateProps) => {
-  const MotionComponent = motion.create(Component);
+}: TextAnimateProps): ReactElement {
+  const animationVariants = variants || defaultVariants[animation];
 
-  let segments: string[] = [];
-  switch (by) {
-    case "word":
-      segments = children.split(/(\s+)/);
-      break;
-    case "character":
-      segments = children.split("");
-      break;
-    case "line":
-      segments = children.split("\n");
-      break;
-    case "text":
-    default:
-      segments = [children];
-      break;
-  }
+  const splitText = (text: string, splitBy: string): string[] => {
+    switch (splitBy) {
+      case "character":
+        return text.split("");
+      case "word":
+        return text.split(" ");
+      case "line":
+        return text.split("\n");
+      case "text":
+      default:
+        return [text];
+    }
+  };
 
-  const finalVariants = variants
-    ? {
-        container: {
-          hidden: { opacity: 0 },
-          show: {
-            opacity: 1,
-            transition: {
-              opacity: { duration: 0.01, delay },
-              delayChildren: delay,
-              staggerChildren: duration / segments.length,
-            },
-          },
-          exit: {
-            opacity: 0,
-            transition: {
-              staggerChildren: duration / segments.length,
-              staggerDirection: -1,
-            },
-          },
-        },
-        item: variants,
-      }
-    : animation
-      ? {
-          container: {
-            ...defaultItemAnimationVariants[animation].container,
-            show: {
-              ...defaultItemAnimationVariants[animation].container.show,
-              transition: {
-                delayChildren: delay,
-                staggerChildren: duration / segments.length,
-              },
-            },
-            exit: {
-              ...defaultItemAnimationVariants[animation].container.exit,
-              transition: {
-                staggerChildren: duration / segments.length,
-                staggerDirection: -1,
-              },
-            },
-          },
-          item: defaultItemAnimationVariants[animation].item,
+  const textArray = splitText(children, by);
+  const isCharacter = by === "character";
+  const isWord = by === "word";
+  const isLine = by === "line";
+
+  const containerVariants: Variants = {
+    initial: {},
+    animate: {
+      transition: {
+        staggerChildren: duration * 0.3,
+        delayChildren: delay,
+      },
+    },
+  };
+
+  return createElement(
+    motion[as as keyof typeof motion] as any,
+    {
+      className,
+      variants: containerVariants,
+      initial: "initial",
+      animate: "animate",
+      viewport: startOnView ? { once } : undefined,
+      ...(startOnView && { whileInView: "animate" }),
+    },
+    textArray.map((segment, index) => (
+      <motion.span
+        key={index}
+        variants={animationVariants}
+        transition={{
+          duration,
+          ease: [0.25, 0.1, 0.25, 1],
+        }}
+        className={
+          isCharacter
+            ? "inline-block"
+            : isWord
+            ? "inline-block mr-1"
+            : isLine
+            ? "block"
+            : "inline-block"
         }
-      : { container: defaultContainerVariants, item: defaultItemVariants };
-
-  return (
-    <AnimatePresence mode="popLayout">
-      <MotionComponent
-        variants={finalVariants.container as Variants}
-        initial="hidden"
-        whileInView={startOnView ? "show" : undefined}
-        animate={startOnView ? undefined : "show"}
-        exit="exit"
-        className={cn("whitespace-pre-wrap", className)}
-        viewport={{ once }}
-        {...props}
       >
-        {segments.map((segment, i) => (
-          <motion.span
-            key={`${by}-${segment}-${i}`}
-            variants={finalVariants.item}
-            custom={i * staggerTimings[by]}
-            className={cn(
-              by === "line" ? "block" : "inline-block whitespace-pre",
-              by === "character" && "",
-              segmentClassName,
-            )}
-          >
-            {segment}
-          </motion.span>
-        ))}
-      </MotionComponent>
-    </AnimatePresence>
+        {segment}
+        {isCharacter && segment === " " ? "\u00A0" : ""}
+      </motion.span>
+    ))
   );
-};
-
-// Export the memoized version
-export const TextAnimate = memo(TextAnimateBase);
+}

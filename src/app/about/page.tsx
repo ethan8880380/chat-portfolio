@@ -5,8 +5,8 @@ export default function About() {
     
     <main className="min-h-screen">
         <Header />
-      <section className="px-6 pt-40">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+      <section className="px-3 md:px-6 pt-40">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-12">
           <div className="col-span-2 space-y-6">
             <h1 className="text-4xl font-semibold">About Me</h1>
             <p className="text-lg leading-relaxed">
@@ -30,8 +30,8 @@ export default function About() {
         </div>
       </section>
 
-      <section className="px-6 py-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="px-3 md:px-6 py-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           <div className="space-y-4">
             <h3 className="text-xl font-medium">Design Skills</h3>
             <ul className="space-y-2">

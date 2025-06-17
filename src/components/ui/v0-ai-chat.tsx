@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { TextAnimate } from "@/components/ui/text-animate";
 import { cn } from "@/lib/utils";
 import {
     ImageIcon,
@@ -75,49 +76,46 @@ function useAutoResizeTextarea({
     return { textareaRef, adjustHeight };
 }
 
-// Typing animation component
-const TypingAnimation = ({ text, onComplete }: { text: string; onComplete?: () => void }) => {
-    const [displayedText, setDisplayedText] = useState("");
-    const [isComplete, setIsComplete] = useState(false);
-    
-    useEffect(() => {
-        setDisplayedText("");
-        setIsComplete(false);
-        
-        let currentIndex = 0;
-        
-        const getTypingDelay = (char: string) => {
-            if (/[.,!?;:]/.test(char)) return 400 + Math.random() * 200;
-            if (/\s/.test(char)) return 100 + Math.random() * 50;
-            return 70 + Math.random() * 40;
-        };
-        
-        const typeNextCharacter = () => {
-            if (currentIndex < text.length) {
-                const char = text[currentIndex];
-                setDisplayedText(prev => prev + char);
-                currentIndex++;
-                
-                const delay = getTypingDelay(char);
-                setTimeout(typeNextCharacter, delay);
-            } else {
-                setIsComplete(true);
-                if (onComplete) {
-                    setTimeout(onComplete, 500);
-                }
-            }
-        };
-        
-        setTimeout(typeNextCharacter, 300);
-    }, [text, onComplete]);
-    
+// Faster and smoother loading animation
+const LoadingAnimation = () => {
     return (
-        <p className="text-foreground text-sm leading-relaxed">
-            {displayedText}
-            {!isComplete && (
-                <span className="inline-block w-[2px] h-[1.2em] bg-white animate-pulse ml-[1px] align-middle" />
-            )}
-        </p>
+        <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2 }}
+            className="flex justify-start mb-6"
+        >
+            <div className="px-6 py-4">
+                {/* Faster pulsing dot */}
+                <div className="relative">
+                    <motion.div
+                        animate={{
+                            scale: [1, 1.3, 1],
+                            opacity: [0.8, 1, 0.8],
+                        }}
+                        transition={{
+                            duration: 1,
+                            repeat: Infinity,
+                            ease: [0.4, 0, 0.6, 1] // Smoother easing
+                        }}
+                        className="w-3 h-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg"
+                    />
+                    <motion.div
+                        animate={{
+                            scale: [0, 1.8, 0],
+                            opacity: [0, 0.5, 0],
+                        }}
+                        transition={{
+                            duration: 1,
+                            repeat: Infinity,
+                            ease: [0.4, 0, 0.6, 1]
+                        }}
+                        className="absolute inset-0 w-3 h-3 bg-blue-400 rounded-full"
+                    />
+                </div>
+            </div>
+        </motion.div>
     );
 };
 
@@ -125,6 +123,7 @@ export function VercelV0Chat() {
     const [value, setValue] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [showingResponse, setShowingResponse] = useState(false);
     const [showProjectDropdown, setShowProjectDropdown] = useState(false);
     const [selectedProject, setSelectedProject] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -175,6 +174,7 @@ export function VercelV0Chat() {
         setValue("");
         adjustHeight(true);
         setIsLoading(true);
+        setShowingResponse(false);
 
         // Add user message
         setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
@@ -196,15 +196,23 @@ export function VercelV0Chat() {
                 throw new Error(data.error || "Failed to get response");
             }
             
-            // Add bot response
+            // Add bot response with smooth transition
             setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+            
+            // Smooth transition: fade out loading, then fade in response
+            setTimeout(() => {
+                setIsLoading(false);
+                setTimeout(() => {
+                    setShowingResponse(true);
+                }, 150); // Small delay for smooth transition
+            }, 300); // Allow loading animation to fade out
             
         } catch (err) {
             console.error("Error:", err);
             const errorMessage = err instanceof Error ? err.message : "Sorry, I encountered an error. Please try again.";
             setMessages(prev => [...prev, { role: 'assistant', content: errorMessage }]);
-        } finally {
             setIsLoading(false);
+            setShowingResponse(true);
         }
     };
 
@@ -225,12 +233,14 @@ export function VercelV0Chat() {
 
     const handleQuickAction = (prompt: string) => {
         setValue(prompt);
+        setShowingResponse(false);
         handleSubmit(prompt);
     };
 
     const handleProjectSelect = (projectId: string) => {
         setSelectedProject(projectId);
         setShowProjectDropdown(false);
+        setShowingResponse(false);
         
         // Clear messages when switching projects
         setMessages([]);
@@ -246,13 +256,14 @@ export function VercelV0Chat() {
     const clearProjectSelection = () => {
         setSelectedProject(null);
         setMessages([]);
+        setShowingResponse(false);
     };
 
     // If no messages, show centered layout
     if (messages.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-full min-h-[calc(100vh-80px)] w-full max-w-4xl mx-auto p-4 space-y-8">
-                <h1 className="text-4xl font-bold text-foreground">
+                <h1 className="text-4xl font-bold text-foreground text-center">
                     What do you want to know about me?
                 </h1>
 
@@ -290,16 +301,7 @@ export function VercelV0Chat() {
 
                         <div className="flex items-center justify-between p-3">
                             <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    className="group p-2 hover:bg-neutral-800 rounded-lg transition-colors flex items-center gap-1"
-                                    disabled={isLoading}
-                                >
-                                    <Paperclip className="w-4 h-4 text-white" />
-                                    <span className="text-xs text-zinc-400 hidden group-hover:inline transition-opacity">
-                                        Attach
-                                    </span>
-                                </button>
+                                {/* Removed attach button */}
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
@@ -371,7 +373,7 @@ export function VercelV0Chat() {
         <div className="flex flex-col h-[calc(100vh-80px)] w-full -mt-6">
             {/* Messages Display - Full width scrolling */}
             <div className="flex-1 w-full overflow-y-auto pb-24">
-                <div className="max-w-4xl mx-auto space-y-4 py-4 pt-24">
+                <div className="max-w-4xl mx-auto space-y-4 py-4 pt-24 px-4 md:px-0">
                     <AnimatePresence>
                         {messages.map((message, i) => (
                             <motion.div
@@ -386,30 +388,28 @@ export function VercelV0Chat() {
                                         ? 'bg-foreground text-background px-4 py-2' 
                                         : 'text-foreground'
                                 }`}>
-                                    {message.role === 'assistant' && message === messages[messages.length - 1] && isLoading ? (
-                                        <TypingAnimation text={message.content} />
+                                    {message.role === 'assistant' && message === messages[messages.length - 1] && showingResponse && !isLoading ? (
+                                        <TextAnimate 
+                                            animation="blurInUp" 
+                                            by="word" 
+                                            duration={0.08}
+                                            delay={0.2}
+                                            className="text-lg leading-relaxed"
+                                            startOnView={false}
+                                        >
+                                            {message.content}
+                                        </TextAnimate>
+                                    ) : message.role === 'assistant' && message === messages[messages.length - 1] && (isLoading || !showingResponse) ? (
+                                        // Don't show text content while loading or transitioning
+                                        null
                                     ) : (
                                         <p className="text-lg leading-relaxed">{message.content}</p>
                                     )}
                                 </div>
                             </motion.div>
                         ))}
+                        {isLoading && <LoadingAnimation />}
                     </AnimatePresence>
-                    {isLoading && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex justify-start"
-                        >
-                            <div className="bg-neutral-200 dark:bg-neutral-700 rounded-lg px-4 py-2">
-                                <div className="flex space-x-1">
-                                    <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce"></div>
-                                    <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                                    <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
                     <div ref={messagesEndRef} />
                 </div>
             </div>
@@ -474,7 +474,7 @@ export function VercelV0Chat() {
                                     {showProjectDropdown && (
                                         <div 
                                             ref={dropdownRef}
-                                            className="absolute bottom-full mb-2 left-0 w-80 bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl z-[100]"
+                                            className="absolute bottom-full mb-2 right-0 w-80 max-w-[calc(100vw-2rem)] bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl z-[100]"
                                         >
                                             <div className="p-3 border-b border-neutral-700">
                                                 <div className="flex items-center justify-between">
@@ -572,7 +572,7 @@ function ActionButton({ icon, label, onClick, disabled }: ActionButtonProps) {
             )}
         >
             {icon}
-            <span className="hidden sm:inline">{label}</span>
+            <span>{label}</span>
         </button>
     );
 }

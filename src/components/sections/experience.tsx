@@ -39,12 +39,12 @@ const specializations: Specialization[] = [
 
 export function Experience() {
   return (
-    <section id="experience" className="py-12 px-6 pb-24">
+    <section id="experience" className="py-12 px-3 md:px-6 pb-24">
       <div className="">
 
 
         {/* Specializations */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {specializations.map((specialization, index) => (
             <motion.div
               key={specialization.id}
@@ -52,7 +52,7 @@ export function Experience() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="bg-foreground/10 rounded-lg p-8 transition-colors"
+              className="bg-foreground/10 rounded-lg p-6 md:p-8 transition-colors"
             >
               <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
                 {specialization.icon}
@@ -64,50 +64,50 @@ export function Experience() {
         </div>
         {/* Experience */}
       </div>
-      <div className="grid grid-cols-2 gap-8 mt-8">
-        <div className="flex flex-col gap-4 p-8 rounded-lg bg-foreground/10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-8">
+        <div className="flex flex-col gap-4 p-6 md:p-8 rounded-lg bg-foreground/10">
           <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
             <User className="w-6 h-6" />
           </div>
-          <div className="flex flex-row gap-12">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-12">
             <div className="flex flex-col gap-2">
               <h1 className="text-lg font-bold">Email</h1>
-              <p className="text-lg text-muted-foreground underline">
+              <p className="text-sm md:text-lg text-muted-foreground underline">
                 <a href="mailto:ethan0380@gmail.com" className="hover:text-primary">ethan0380@gmail.com</a>
               </p>
             </div>
             <div className="flex flex-col gap-2">
               <h1 className="text-lg font-bold">Phone</h1>
-              <p className="text-lg text-muted-foreground underline">
+              <p className="text-sm md:text-lg text-muted-foreground underline">
                 <a href="tel:253-888-0380" className="hover:text-primary">253-888-0380</a>
               </p>
             </div>
             <div className="flex flex-col gap-2">
               <h1 className="text-lg font-bold">Location</h1>
-              <p className="text-lg text-muted-foreground">Seattle, WA</p>
+              <p className="text-sm md:text-lg text-muted-foreground">Seattle, WA</p>
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-4 p-8 rounded-lg bg-foreground/10">
+        <div className="flex flex-col gap-4 p-6 md:p-8 rounded-lg bg-foreground/10">
           <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
             <User className="w-6 h-6" />
           </div>
-          <div className="flex flex-row gap-12">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-12">
             <div className="flex flex-col gap-2">
               <h1 className="text-lg font-bold">Linkedin</h1>
-              <p className="text-lg text-muted-foreground underline">
+              <p className="text-sm md:text-lg text-muted-foreground underline">
                 <a href="https://www.linkedin.com/in/ethan-rogers/" className="hover:text-primary">My LinkedIn</a>
               </p>
             </div>
             <div className="flex flex-col gap-2">
               <h1 className="text-lg font-bold">Github</h1>
-              <p className="text-lg text-muted-foreground underline">
+              <p className="text-sm md:text-lg text-muted-foreground underline">
                 <a href="https://github.com/ethan8880380" className="hover:text-primary">My Github</a>
               </p>
             </div>
             <div className="flex flex-col gap-2">
               <h1 className="text-lg font-bold">Resume</h1>
-              <p className="text-lg text-muted-foreground underline">
+              <p className="text-sm md:text-lg text-muted-foreground underline">
                 <a href="/ethan-rogers-resume.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-primary">Download Resume</a>
               </p>
             </div>
