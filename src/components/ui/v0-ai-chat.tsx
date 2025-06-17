@@ -10,7 +10,6 @@ import {
     MonitorIcon,
     CircleUserRound,
     ArrowUpIcon,
-    Paperclip,
     PlusIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

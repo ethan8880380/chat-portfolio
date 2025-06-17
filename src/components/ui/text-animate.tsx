@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import { ReactElement, createElement } from "react";
+import React, { ReactElement, createElement } from "react";
 
 interface TextAnimateProps {
   children: string;
@@ -85,7 +85,15 @@ export function TextAnimate({
   };
 
   return createElement(
-    motion[as as keyof typeof motion] as any,
+    motion[as as keyof typeof motion] as React.ComponentType<{
+      className?: string;
+      variants?: Variants;
+      initial?: string;
+      animate?: string;
+      viewport?: { once: boolean };
+      whileInView?: string;
+      children?: React.ReactNode;
+    }>,
     {
       className,
       variants: containerVariants,
