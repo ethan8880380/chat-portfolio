@@ -183,11 +183,36 @@ export function ChatBot({ className = "" }: { className?: string }) {
       clearTimeout(timeoutId);
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ error: 'Unknown error occurred' }));
-        throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
+        // Check if response is JSON
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await res.json().catch(() => ({ error: 'Unknown error occurred' }));
+          throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
+        } else {
+          // Handle non-JSON responses (like HTML error pages)
+          const errorText = await res.text().catch(() => 'Unknown error occurred');
+          throw new Error(`Server error (${res.status}): ${res.statusText}`);
+        }
       }
 
-      const data = await res.json();
+      // Check if response is JSON before parsing
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        throw new Error('Invalid response format from server');
+      }
+      
+      // Validate response structure
+      if (!data || typeof data.reply !== 'string') {
+        throw new Error('Invalid response structure from server');
+      }
       
       // Add bot response
       setMessages(prev => [...prev, { 

@@ -2,6 +2,18 @@ import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 import { categoryPrompts as trainingPrompts, validModels, additionalContext } from '@/lib/chat-training';
 
+// Handle OPTIONS requests for CORS
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
 // Initialize OpenAI client with timeout
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -12,22 +24,41 @@ export async function POST(request: Request) {
   // Add request timeout handling
   const startTime = Date.now();
   
+  // Add CORS headers for better error handling
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+  
   try {
     const { message, messages = [], category = 'default', model = 'gpt-4', selectedProject } = await request.json();
 
     if (!message) {
       return NextResponse.json(
         { error: 'Message is required' },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 
     if (!process.env.OPENAI_API_KEY) {
+      console.error('OpenAI API key is not configured');
       return NextResponse.json(
         { error: 'OpenAI API key is not configured' },
-        { status: 500 }
+        { status: 500, headers }
       );
     }
+
+    // Log some debugging info (without exposing sensitive data)
+    console.log('Chat API called with:', {
+      messageLength: message.length,
+      messagesCount: messages.length,
+      category,
+      model: validModel,
+      hasSelectedProject: !!selectedProject,
+      hasOpenAIKey: !!process.env.OPENAI_API_KEY
+    });
 
     // Prepare conversation history
     const conversationHistory = messages.map((msg: { role: string; content: string }) => ({
@@ -213,7 +244,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ 
           reply: response.choices[0].message.content,
           image: selectedImage || undefined
-        });
+        }, { headers });
       } else {
         throw new Error('Invalid response format from OpenAI');
       }
@@ -226,13 +257,13 @@ export async function POST(request: Request) {
       if (openaiError instanceof Error && openaiError.message === 'Request timeout') {
         return NextResponse.json(
           { error: 'Request timed out. Please try again.' },
-          { status: 408 }
+          { status: 408, headers }
         );
       }
       
       return NextResponse.json(
         { error: openaiError instanceof Error ? openaiError.message : 'Error communicating with OpenAI' },
-        { status: 500 }
+        { status: 500, headers }
       );
     }
   } catch (error: unknown) {
@@ -241,7 +272,7 @@ export async function POST(request: Request) {
     console.error(`Request failed after ${responseTime}ms`);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Error processing your request' },
-      { status: 500 }
+      { status: 500, headers }
     );
   }
 } 
