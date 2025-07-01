@@ -163,6 +163,10 @@ export function ChatBot({ className = "" }: { className?: string }) {
     }]);
 
     try {
+      // Create a timeout for the fetch request
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -173,13 +177,17 @@ export function ChatBot({ className = "" }: { className?: string }) {
             content: msg.content
           }))
         }),
+        signal: controller.signal,
       });
 
-      const data = await res.json();
-      
+      clearTimeout(timeoutId);
+
       if (!res.ok) {
-        throw new Error(data.error || "Failed to get response");
+        const errorData = await res.json().catch(() => ({ error: 'Unknown error occurred' }));
+        throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
       }
+
+      const data = await res.json();
       
       // Add bot response
       setMessages(prev => [...prev, { 
@@ -190,7 +198,18 @@ export function ChatBot({ className = "" }: { className?: string }) {
       
     } catch (err) {
       console.error("Error:", err);
-      const errorMessage = err instanceof Error ? err.message : "Sorry, I encountered an error. Please try again.";
+      let errorMessage = "Sorry, I encountered an error. Please try again.";
+      
+      if (err instanceof Error) {
+        if (err.name === 'AbortError') {
+          errorMessage = "Request timed out. Please try again.";
+        } else if (err.message.includes('timeout')) {
+          errorMessage = "Request timed out. Please try again.";
+        } else {
+          errorMessage = err.message;
+        }
+      }
+      
       setMessages(prev => [...prev, { 
         role: 'bot', 
         content: errorMessage,

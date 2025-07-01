@@ -2,12 +2,16 @@ import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 import { categoryPrompts as trainingPrompts, validModels, additionalContext } from '@/lib/chat-training';
 
-// Initialize OpenAI client
+// Initialize OpenAI client with timeout
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  timeout: 25000, // 25 second timeout
 });
 
 export async function POST(request: Request) {
+  // Add request timeout handling
+  const startTime = Date.now();
+  
   try {
     const { message, messages = [], category = 'default', model = 'gpt-4', selectedProject } = await request.json();
 
@@ -38,42 +42,42 @@ export async function POST(request: Request) {
     const validCategory = Object.keys(trainingPrompts).includes(category) ? category : 'default';
     let systemPrompt = trainingPrompts[validCategory as keyof typeof trainingPrompts];
 
-    // Add project-specific context if a project is selected
+    // Add project-specific context if a project is selected (simplified)
     if (selectedProject) {
-      systemPrompt += `\n\nIMPORTANT: The user has selected to focus on the "${selectedProject}" project. Only answer questions about this specific project and redirect any off-topic questions back to this project. If asked about other projects or general topics, politely redirect the conversation back to the selected project.`;
+      systemPrompt += `\n\nFocus on the "${selectedProject}" project. Only answer questions about this specific project and redirect any off-topic questions back to this project.`;
       
-      // Add specific project context
+      // Add specific project context (truncated for performance)
       switch (selectedProject) {
         case 'commercial-analytics-hub':
-          systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
+          systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub.substring(0, 500)}...`;
           break;
         case 'enterprise-design-system':
-          systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem}`;
+          systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem.substring(0, 500)}...`;
           break;
         case 'genfei-chatbot':
-          systemPrompt += `\n\n${additionalContext.genfeiChatbot}`;
+          systemPrompt += `\n\n${additionalContext.genfeiChatbot.substring(0, 500)}...`;
           break;
         case 'iris-analytics':
-          systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
+          systemPrompt += `\n\n${additionalContext.irisAnalytics.substring(0, 500)}...`;
           break;
         case 'web-templates':
-          systemPrompt += `\n\n${additionalContext.webTemplates}`;
+          systemPrompt += `\n\n${additionalContext.webTemplates.substring(0, 500)}...`;
           break;
         case 'pullups-research':
-          systemPrompt += `\n\n${additionalContext.pullupsResearch}`;
+          systemPrompt += `\n\n${additionalContext.pullupsResearch.substring(0, 500)}...`;
           break;
         case 'buyerspring':
-          systemPrompt += `\n\n${additionalContext.buyerspring}`;
+          systemPrompt += `\n\n${additionalContext.buyerspring.substring(0, 500)}...`;
           break;
         case 'huggies-website':
-          systemPrompt += `\n\n${additionalContext.huggiesWebsite}`;
+          systemPrompt += `\n\n${additionalContext.huggiesWebsite.substring(0, 500)}...`;
           break;
         case 'defoor-development':
-          systemPrompt += `\n\n${additionalContext.defoorDevelopment}`;
+          systemPrompt += `\n\n${additionalContext.defoorDevelopment.substring(0, 500)}...`;
           break;
       }
     } else {
-      // Add relevant additional context based on the message content (existing logic)
+      // Add relevant additional context based on the message content (simplified)
       const lowerMessage = message.toLowerCase();
       
       // Check for general introduction/about me questions
@@ -92,41 +96,41 @@ export async function POST(request: Request) {
         }
       }
       
-      // Add specific project context
+      // Add specific project context (truncated for performance)
       if (lowerMessage.includes('analytics') || lowerMessage.includes('data')) {
-        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
+        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub.substring(0, 300)}...`;
         if (lowerMessage.includes('iris') || lowerMessage.includes('predictive')) {
-          systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
+          systemPrompt += `\n\n${additionalContext.irisAnalytics.substring(0, 300)}...`;
         }
       }
       if (lowerMessage.includes('supply chain') || lowerMessage.includes('logistics')) {
-        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
+        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub.substring(0, 300)}...`;
       }
       if (lowerMessage.includes('design system') || lowerMessage.includes('figma')) {
-        systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem}`;
+        systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem.substring(0, 300)}...`;
       }
       if (lowerMessage.includes('huggies') || lowerMessage.includes('redesign')) {
-        systemPrompt += `\n\n${additionalContext.huggiesWebsite}`;
+        systemPrompt += `\n\n${additionalContext.huggiesWebsite.substring(0, 300)}...`;
       }
       if (lowerMessage.includes('real estate') || lowerMessage.includes('freelance')) {
-        systemPrompt += `\n\n${additionalContext.buyerspring}`;
+        systemPrompt += `\n\n${additionalContext.buyerspring.substring(0, 300)}...`;
       }
       
-      // Add personal context
+      // Add personal context (truncated for performance)
       if (lowerMessage.includes('philosophy') || lowerMessage.includes('approach')) {
-        systemPrompt += `\n\n${additionalContext.designPhilosophy}`;
+        systemPrompt += `\n\n${additionalContext.designPhilosophy.substring(0, 200)}...`;
       }
       if (lowerMessage.includes('workflow') || lowerMessage.includes('development')) {
-        systemPrompt += `\n\n${additionalContext.developmentApproach}`;
+        systemPrompt += `\n\n${additionalContext.developmentApproach.substring(0, 200)}...`;
       }
       if (lowerMessage.includes('research') || lowerMessage.includes('testing')) {
-        systemPrompt += `\n\n${additionalContext.researchMethods}`;
+        systemPrompt += `\n\n${additionalContext.researchMethods.substring(0, 200)}...`;
       }
       if (lowerMessage.includes('project') || lowerMessage.includes('management')) {
-        systemPrompt += `\n\n${additionalContext.projectManagement}`;
+        systemPrompt += `\n\n${additionalContext.projectManagement.substring(0, 200)}...`;
       }
       if (lowerMessage.includes('career') || lowerMessage.includes('goals')) {
-        systemPrompt += `\n\n${additionalContext.careerGoals}`;
+        systemPrompt += `\n\n${additionalContext.careerGoals.substring(0, 200)}...`;
       }
     }
 
@@ -178,33 +182,57 @@ export async function POST(request: Request) {
     // Validate model parameter - fall back to default if not valid
     const validModel = validModels.includes(model) ? model : 'gpt-3.5-turbo';
 
-    try {
-      const response = await openai.chat.completions.create({
-        model: validModel,
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt,
-          },
-          ...conversationHistory
-        ],
-        max_tokens: 300,
-        temperature: 1.0,
-      });
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout')), 20000); // 20 second timeout
+    });
 
+    try {
+      const response = await Promise.race([
+        openai.chat.completions.create({
+          model: validModel,
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt,
+            },
+            ...conversationHistory
+          ],
+          max_tokens: 300,
+          temperature: 1.0,
+        }),
+        timeoutPromise
+      ]);
+
+      const responseTime = Date.now() - startTime;
+      console.log(`Chat API response time: ${responseTime}ms`);
+      
       return NextResponse.json({ 
         reply: response.choices[0].message.content,
         image: selectedImage || undefined
       });
     } catch (openaiError: unknown) {
+      const responseTime = Date.now() - startTime;
       console.error('OpenAI API error:', openaiError);
+      console.error(`Request failed after ${responseTime}ms`);
+      
+      // Handle timeout specifically
+      if (openaiError instanceof Error && openaiError.message === 'Request timeout') {
+        return NextResponse.json(
+          { error: 'Request timed out. Please try again.' },
+          { status: 408 }
+        );
+      }
+      
       return NextResponse.json(
         { error: openaiError instanceof Error ? openaiError.message : 'Error communicating with OpenAI' },
         { status: 500 }
       );
     }
   } catch (error: unknown) {
+    const responseTime = Date.now() - startTime;
     console.error('Error processing chat request:', error);
+    console.error(`Request failed after ${responseTime}ms`);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Error processing your request' },
       { status: 500 }
