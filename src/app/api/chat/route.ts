@@ -200,6 +200,7 @@ export async function POST(request: Request) {
           ],
           max_tokens: 300,
           temperature: 1.0,
+          stream: false, // Explicitly disable streaming
         }),
         timeoutPromise
       ]) as Awaited<ReturnType<typeof openai.chat.completions.create>>;
@@ -207,10 +208,15 @@ export async function POST(request: Request) {
       const responseTime = Date.now() - startTime;
       console.log(`Chat API response time: ${responseTime}ms`);
       
-      return NextResponse.json({ 
-        reply: response.choices[0].message.content,
-        image: selectedImage || undefined
-      });
+      // Check if response has choices property (non-streaming response)
+      if ('choices' in response && response.choices && response.choices.length > 0) {
+        return NextResponse.json({ 
+          reply: response.choices[0].message.content,
+          image: selectedImage || undefined
+        });
+      } else {
+        throw new Error('Invalid response format from OpenAI');
+      }
     } catch (openaiError: unknown) {
       const responseTime = Date.now() - startTime;
       console.error('OpenAI API error:', openaiError);
