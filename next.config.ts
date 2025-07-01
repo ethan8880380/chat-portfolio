@@ -21,9 +21,7 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
-  experimental: {
-    serverComponentsExternalPackages: ['openai'],
-  },
+  serverExternalPackages: ['openai'],
   async headers() {
     return [
       {

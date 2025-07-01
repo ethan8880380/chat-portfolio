@@ -190,7 +190,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
           throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
         } else {
           // Handle non-JSON responses (like HTML error pages)
-          const errorText = await res.text().catch(() => 'Unknown error occurred');
+          await res.text().catch(() => 'Unknown error occurred');
           throw new Error(`Server error (${res.status}): ${res.statusText}`);
         }
       }

@@ -16,7 +16,7 @@ export async function POST(request: Request) {
         'Access-Control-Allow-Headers': 'Content-Type',
       }
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Test endpoint error' },
       { 
