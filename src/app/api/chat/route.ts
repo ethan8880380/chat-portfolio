@@ -183,7 +183,7 @@ export async function POST(request: Request) {
     const validModel = validModels.includes(model) ? model : 'gpt-3.5-turbo';
 
     // Create a timeout promise
-    const timeoutPromise = new Promise((_, reject) => {
+    const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error('Request timeout')), 20000); // 20 second timeout
     });
 
@@ -202,7 +202,7 @@ export async function POST(request: Request) {
           temperature: 1.0,
         }),
         timeoutPromise
-      ]);
+      ]) as Awaited<ReturnType<typeof openai.chat.completions.create>>;
 
       const responseTime = Date.now() - startTime;
       console.log(`Chat API response time: ${responseTime}ms`);
