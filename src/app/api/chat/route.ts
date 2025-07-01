@@ -50,16 +50,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Log some debugging info (without exposing sensitive data)
-    console.log('Chat API called with:', {
-      messageLength: message.length,
-      messagesCount: messages.length,
-      category,
-      model: validModel,
-      hasSelectedProject: !!selectedProject,
-      hasOpenAIKey: !!process.env.OPENAI_API_KEY
-    });
-
     // Prepare conversation history
     const conversationHistory = messages.map((msg: { role: string; content: string }) => ({
       role: msg.role,
@@ -212,6 +202,16 @@ export async function POST(request: Request) {
 
     // Validate model parameter - fall back to default if not valid
     const validModel = validModels.includes(model) ? model : 'gpt-3.5-turbo';
+
+    // Log some debugging info (without exposing sensitive data)
+    console.log('Chat API called with:', {
+      messageLength: message.length,
+      messagesCount: messages.length,
+      category,
+      model: validModel,
+      hasSelectedProject: !!selectedProject,
+      hasOpenAIKey: !!process.env.OPENAI_API_KEY
+    });
 
     // Create a timeout promise
     const timeoutPromise = new Promise<never>((_, reject) => {
