@@ -218,53 +218,71 @@ export async function POST(request: Request) {
       setTimeout(() => reject(new Error('Request timeout')), 20000); // 20 second timeout
     });
 
-    try {
-      const response = await Promise.race([
-        openai.chat.completions.create({
-          model: validModel,
-          messages: [
-            {
-              role: 'system',
-              content: systemPrompt,
-            },
-            ...conversationHistory
-          ],
-          max_tokens: 300,
-          temperature: 1.0,
-          stream: false, // Explicitly disable streaming
-        }),
-        timeoutPromise
-      ]) as Awaited<ReturnType<typeof openai.chat.completions.create>>;
+    // Retry mechanism for OpenAI API calls
+    let lastError: Error | null = null;
+    const maxRetries = 2;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`OpenAI API attempt ${attempt}/${maxRetries}`);
+        
+        const response = await Promise.race([
+          openai.chat.completions.create({
+            model: validModel,
+            messages: [
+              {
+                role: 'system',
+                content: systemPrompt,
+              },
+              ...conversationHistory
+            ],
+            max_tokens: 300,
+            temperature: 1.0,
+            stream: false, // Explicitly disable streaming
+          }),
+          timeoutPromise
+        ]) as Awaited<ReturnType<typeof openai.chat.completions.create>>;
 
-      const responseTime = Date.now() - startTime;
-      console.log(`Chat API response time: ${responseTime}ms`);
-      
-      // Check if response has choices property (non-streaming response)
-      if ('choices' in response && response.choices && response.choices.length > 0) {
-        return NextResponse.json({ 
-          reply: response.choices[0].message.content,
-          image: selectedImage || undefined
-        }, { headers });
-      } else {
-        throw new Error('Invalid response format from OpenAI');
+              const responseTime = Date.now() - startTime;
+        console.log(`Chat API response time: ${responseTime}ms`);
+        
+        // Check if response has choices property (non-streaming response)
+        if ('choices' in response && response.choices && response.choices.length > 0) {
+          return NextResponse.json({ 
+            reply: response.choices[0].message.content,
+            image: selectedImage || undefined
+          }, { headers });
+        } else {
+          throw new Error('Invalid response format from OpenAI');
+        }
+      } catch (openaiError: unknown) {
+        const responseTime = Date.now() - startTime;
+        console.error(`OpenAI API error on attempt ${attempt}:`, openaiError);
+        console.error(`Request failed after ${responseTime}ms`);
+        
+        lastError = openaiError instanceof Error ? openaiError : new Error('Unknown OpenAI error');
+        
+        // Handle timeout specifically - don't retry timeouts
+        if (openaiError instanceof Error && openaiError.message === 'Request timeout') {
+          return NextResponse.json(
+            { error: 'Request timed out. Please try again.' },
+            { status: 408, headers }
+          );
+        }
+        
+        // If this is the last attempt, return the error
+        if (attempt === maxRetries) {
+          return NextResponse.json(
+            { error: lastError.message },
+            { status: 500, headers }
+          );
+        }
+        
+        // Wait a bit before retrying (exponential backoff)
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 3000);
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
-    } catch (openaiError: unknown) {
-      const responseTime = Date.now() - startTime;
-      console.error('OpenAI API error:', openaiError);
-      console.error(`Request failed after ${responseTime}ms`);
-      
-      // Handle timeout specifically
-      if (openaiError instanceof Error && openaiError.message === 'Request timeout') {
-        return NextResponse.json(
-          { error: 'Request timed out. Please try again.' },
-          { status: 408, headers }
-        );
-      }
-      
-      return NextResponse.json(
-        { error: openaiError instanceof Error ? openaiError.message : 'Error communicating with OpenAI' },
-        { status: 500, headers }
-      );
     }
   } catch (error: unknown) {
     const responseTime = Date.now() - startTime;

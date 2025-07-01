@@ -165,11 +165,16 @@ export function ChatBot({ className = "" }: { className?: string }) {
     try {
       // Create a timeout for the fetch request
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 second timeout
 
+      console.log('Sending chat request...');
+      
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify({ 
           message: userMessage,
           messages: messages.map(msg => ({
@@ -181,23 +186,44 @@ export function ChatBot({ className = "" }: { className?: string }) {
       });
 
       clearTimeout(timeoutId);
+      
+      console.log('Response status:', res.status, res.statusText);
+      console.log('Response headers:', Object.fromEntries(res.headers.entries()));
 
       if (!res.ok) {
+        console.error('Response not OK:', res.status, res.statusText);
+        
         // Check if response is JSON
         const contentType = res.headers.get('content-type');
+        console.log('Content-Type:', contentType);
+        
         if (contentType && contentType.includes('application/json')) {
-          const errorData = await res.json().catch(() => ({ error: 'Unknown error occurred' }));
-          throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
+          try {
+            const errorData = await res.json();
+            throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
+          } catch (parseError) {
+            console.error('Failed to parse error JSON:', parseError);
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
         } else {
           // Handle non-JSON responses (like HTML error pages)
-          await res.text().catch(() => 'Unknown error occurred');
-          throw new Error(`Server error (${res.status}): ${res.statusText}`);
+          try {
+            const errorText = await res.text();
+            console.error('Non-JSON error response:', errorText.substring(0, 200));
+            throw new Error(`Server error (${res.status}): ${res.statusText}`);
+          } catch (textError) {
+            console.error('Failed to read error response:', textError);
+            throw new Error(`Server error (${res.status}): ${res.statusText}`);
+          }
         }
       }
 
       // Check if response is JSON before parsing
       const contentType = res.headers.get('content-type');
+      console.log('Success response Content-Type:', contentType);
+      
       if (!contentType || !contentType.includes('application/json')) {
+        console.error('Expected JSON but got:', contentType);
         throw new Error('Server returned non-JSON response');
       }
 
@@ -222,7 +248,39 @@ export function ChatBot({ className = "" }: { className?: string }) {
       }]);
       
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error with main chat endpoint:", err);
+      
+      // Try fallback to test endpoint if main endpoint fails
+      if (err instanceof Error && (err.message.includes('504') || err.message.includes('timeout') || err.message.includes('non-JSON'))) {
+        console.log('Trying fallback test endpoint...');
+        
+        try {
+          const testRes = await fetch("/api/test-chat", {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({ 
+              message: userMessage
+            }),
+          });
+
+          if (testRes.ok) {
+            const testData = await testRes.json();
+            setMessages(prev => [...prev, { 
+              role: 'bot', 
+              content: testData.reply + "\n\n(Note: This is a test response. The main chat service is temporarily unavailable.)",
+              seen: true
+            }]);
+            setIsLoading(false);
+            return;
+          }
+        } catch (fallbackError) {
+          console.error("Fallback endpoint also failed:", fallbackError);
+        }
+      }
+      
       let errorMessage = "Sorry, I encountered an error. Please try again.";
       
       if (err instanceof Error) {
