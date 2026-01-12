@@ -1,69 +1,96 @@
 "use client";
+
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { ProjectData } from "@/data/projects";
 
 interface ProjectCardProps {
   project: ProjectData;
-  showYear?: boolean;
   maxTags?: number;
   imageSizes?: string;
 }
 
 export function ProjectCard({ 
   project, 
-  showYear = false, 
   maxTags = 3,
-  imageSizes = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+  imageSizes = "(max-width: 768px) 100vw, 50vw"
 }: ProjectCardProps) {
-    
   return (
-    <Card className="group overflow-hidden">
-      <div className="aspect-video relative overflow-hidden">
-        <Image
-          src={project.images.hero}
-          alt={project.title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes={imageSizes}
-          quality={80}
-        />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-      </div>
-      
-      <CardContent className="py-6 px-0">
-        <div className="flex flex-wrap gap-2 mb-3">
-          {project.tags.slice(0, maxTags).map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-        
-        <h3 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">
-          {project.title}
-        </h3>
-        
-        <p className="text-muted-foreground text-md mb-4 line-clamp-3">
-          {project.shortDescription}
-        </p>
-        
-        <div className="flex items-center justify-between">
-          {showYear && (
-            <span className="text-sm text-muted-foreground">{project.year}</span>
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.7 }}
+      className="h-full"
+    >
+      <Link href={`/projects/${project.slug}`} className="group block h-full">
+        <div 
+          className={`
+            relative overflow-hidden rounded-2xl bg-white/[0.02] border border-white/[0.05]
+            hover:border-white/[0.1] transition-all h-full aspect-video
+          `}
+        >
+          {/* Background Image */}
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src={project.images.hero}
+              alt={project.title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+              sizes={imageSizes}
+              quality={90}
+            />
+          </div>
+
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+          {/* Shimmer Effect */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <div className="absolute inset-0 shimmer" />
+          </div>
+
+          {/* Content */}
+          <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-end">
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {project.tags.slice(0, maxTags).map((tag) => (
+                <span 
+                  key={tag} 
+                  className="px-2.5 py-1 text-xs font-mono rounded-full bg-white/10 backdrop-blur-sm text-white/80 border border-white/10"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Title & Description */}
+            <h3 className="font-semibold text-white mb-2 group-hover:text-[#0087ef] transition-colors text-xl md:text-2xl">
+              {project.title}
+            </h3>
+            
+            <p className="text-white/60 line-clamp-2 text-sm md:text-base">
+              {project.shortDescription}
+            </p>
+
+            {/* Arrow */}
+            <div className="mt-4 flex items-center gap-2 text-white/60 group-hover:text-[#0087ef] transition-colors">
+              <span className="text-xs font-mono uppercase tracking-wider">View Project</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* Award Badge */}
+          {project.tags.includes("Award-Winning") && (
+            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0087ef]/20 backdrop-blur-sm border border-[#0087ef]/30">
+              <Sparkles className="w-3.5 h-3.5 text-[#0087ef]" />
+              <span className="text-xs font-mono text-[#0087ef]">GDUSA Award</span>
+            </div>
           )}
-          <Link href={`/projects/${project.slug}`} className={showYear ? "" : "w-full"}>
-            <Button variant="ghost" size="sm" className="group/btn p-0 hover:bg-transparent">
-              View Project
-              <ArrowUpRight className="h-4 w-4 ml-1 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-            </Button>
-          </Link>
         </div>
-      </CardContent>
-    </Card>
+      </Link>
+    </motion.div>
   );
-} 
+}

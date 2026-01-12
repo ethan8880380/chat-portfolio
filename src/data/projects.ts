@@ -108,7 +108,7 @@ export const projectsData: ProjectData[] = [
     shortDescription: "Complex analytic dashboard innovating the analytics experience at Kimberly-Clark. Focus on Raw Insights and Predictive Analytics.",
     fullDescription: "IRIS is an innovative analytics platform that reimagines how promotional data is visualized and analyzed. The dashboard provides actionable insights through advanced data visualization techniques and predictive analytics.",
     images: {
-      hero: "/projectImages/desktop/IRIS.png",
+      hero: "/projectImages/desktop/iris.png",
       gallery: [
         "/projectImages/projectContent/iri-1.png",
         "/projectImages/projectContent/iri-2.png",

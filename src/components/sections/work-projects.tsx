@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ProjectCard } from "@/components/ui/project-card";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { ProjectData } from "@/data/projects";
 
 interface WorkProjectsProps {
@@ -9,44 +11,93 @@ interface WorkProjectsProps {
 }
 
 export function WorkProjects({ projects }: WorkProjectsProps) {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+      {projects.map((project, index) => (
+        <WorkProjectCard 
+          key={project.slug}
+          project={project} 
+          index={index}
+        />
+      ))}
+    </div>
+  );
+}
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-      },
-    },
-  };
+interface WorkProjectCardProps {
+  project: ProjectData;
+  index: number;
+}
 
+function WorkProjectCard({ project, index }: WorkProjectCardProps) {
   return (
     <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      transition={{ duration: 0.7, delay: index * 0.1 }}
     >
-      {projects.map((project) => (
-        <motion.div key={project.id} variants={itemVariants}>
-          <ProjectCard 
-            project={project}
-            maxTags={3}
-            imageSizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+      <Link href={`/projects/${project.slug}`} className="group block">
+        <div 
+          className="relative overflow-hidden rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-white/[0.1] transition-all aspect-video"
+        >
+          {/* Background Image */}
+          <Image
+            src={project.images.hero}
+            alt={project.title}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            quality={90}
           />
-        </motion.div>
-      ))}
+
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+          {/* Shimmer Effect */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <div className="absolute inset-0 shimmer" />
+          </div>
+
+          {/* Content */}
+          <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-end">
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {project.tags.slice(0, 3).map((tag) => (
+                <span 
+                  key={tag} 
+                  className="px-2.5 py-1 text-xs font-mono rounded-full bg-white/10 backdrop-blur-sm text-white/80 border border-white/10"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Title & Description */}
+            <h3 className="text-xl md:text-2xl font-semibold text-white mb-2 group-hover:text-[#0087ef] transition-colors">
+              {project.title}
+            </h3>
+            
+            <p className="text-white/60 line-clamp-2 text-sm md:text-base">
+              {project.shortDescription}
+            </p>
+
+            {/* Arrow */}
+            <div className="mt-4 flex items-center gap-2 text-white/60 group-hover:text-[#0087ef] transition-colors">
+              <span className="text-xs font-mono uppercase tracking-wider">View Project</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* Award Badge */}
+          {project.tags.includes("Award-Winning") && (
+            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0087ef]/20 backdrop-blur-sm border border-[#0087ef]/30">
+              <Sparkles className="w-3.5 h-3.5 text-[#0087ef]" />
+              <span className="text-xs font-mono text-[#0087ef]">GDUSA Award</span>
+            </div>
+          )}
+        </div>
+      </Link>
     </motion.div>
   );
-} 
+}

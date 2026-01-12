@@ -10,6 +10,7 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
+  			sans: ["var(--font-outfit)", "system-ui", "sans-serif"],
   			inter: ["var(--font-inter)", "system-ui", "sans-serif"],
   			outfit: ["var(--font-outfit)", "system-ui", "sans-serif"],
   			helvetica: ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],

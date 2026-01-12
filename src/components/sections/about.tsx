@@ -2,10 +2,9 @@
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Mail } from "lucide-react";
-import { useChatContext } from "@/context/ChatContext";
+import { Mail, GraduationCap } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 type ImageProps = {
   src: string;
@@ -22,7 +21,6 @@ type Props = {
 export type AboutSectionProps = React.ComponentPropsWithoutRef<"section"> & Partial<Props>;
 
 export const AboutSection = (props: AboutSectionProps) => {
-  const { setShouldExpandChat } = useChatContext();
   const { tagline, heading, description, images } = {
     ...AboutSectionDefaults,
     ...props,
@@ -113,33 +111,77 @@ export const AboutSection = (props: AboutSectionProps) => {
     desktopTranslateX3, desktopTranslateY3, desktopRotateZ3,
     desktopTranslateX4, desktopTranslateY4, desktopRotateZ4
   ]);
-  
-  const handleChatOpen = () => {
-    setShouldExpandChat(true);
-  };
 
   return (
-    <section ref={aboutRef} id="about" className="relative flex flex-col min-h-screen">
+    <section ref={aboutRef} id="about" className="relative flex flex-col min-h-screen bg-black -mt-7">
       <motion.div
         className="sticky top-1/4 -translate-y-1/2 z-0 mx-auto flex min-h-0 items-center justify-center md:min-h-[auto]"
         style={containerMotion}
       >
-        <div className="py-16 text-center md:py-24 lg:py-28">
-          <div className="max-w-6xl mx-auto w-full">
-            <p className="mb-3 text-foreground/50 font-semibold md:mb-4">{tagline}</p>
-            <h1 className="heading-base mb-6">{heading}</h1>
-            <p className="relative z-20 md:text-lg text-foreground/70">{description}</p>
-            <div className="relative z-20 mt-6 flex items-center justify-center gap-x-4 md:mt-8">
-              <Button onClick={handleChatOpen} size="lg">
+        <div className="py-16 text-center md:py-24 lg:py-28 px-4 md:px-6">
+          <div className="max-w-4xl mx-auto w-full">
+            <motion.span 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-6 block"
+            >
+              {tagline}
+            </motion.span>
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-3xl md:text-6xl font-semibold leading-tight tracking-tight mb-6 text-white"
+            >
+              {heading}
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="relative z-20 text-lg md:text-xl text-white/60 leading-relaxed max-w-3xl mx-auto"
+            >
+              {description}
+            </motion.p>
+            
+            {/* Education Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="relative z-20 mt-8 inline-flex items-center gap-3 px-5 py-3 rounded-full bg-white/[0.03] border border-white/[0.08]"
+            >
+              <GraduationCap className="w-5 h-5 text-[#0087ef]" />
+              <span className="text-sm text-white/70">
+                <span className="text-white font-medium">University of Washington</span> · BDes Interaction Design
+              </span>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="relative z-20 mt-8 flex items-center justify-center gap-4"
+            >
+              <Link 
+                href="/chat"
+                className="px-8 py-4 rounded-full bg-white text-black font-semibold hover:bg-white/90 transition-all"
+              >
                 View Chatbot
-              </Button>
-              <a href="mailto:ethan0380@gmail.com" className="inline-block">
-                <Button variant="outline" size="lg">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Email Me
-                </Button>
-              </a>
-            </div>
+              </Link>
+              <Link 
+                href="/contact" 
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white/[0.03] border border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-[#0087ef]/30 transition-all"
+              >
+                <Mail className="w-4 h-4" />
+                Contact Me
+              </Link>
+            </motion.div>
           </div>
         </div>
       </motion.div>
@@ -152,13 +194,17 @@ export const AboutSection = (props: AboutSectionProps) => {
               className="absolute w-full max-w-[45vw] md:max-w-[35vw] lg:max-w-[30vw] shadow-2xl"
               style={imageTransforms[index]}
             >
-              <Image 
-                src={image.src} 
-                alt={image.alt || ""} 
-                className="size-full object-cover rounded-lg"
-                width={500}
-                height={500} 
-              />
+              <div className="relative rounded-2xl overflow-hidden border border-white/10">
+                <Image 
+                  src={image.src} 
+                  alt={image.alt || ""} 
+                  className="size-full object-cover"
+                  width={500}
+                  height={500} 
+                />
+                {/* Image Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              </div>
             </motion.div>
           ))}
         </div>
@@ -171,34 +217,32 @@ export const AboutSection = (props: AboutSectionProps) => {
 
 export const AboutSectionDefaults: Props = {
   tagline: "About Me",
-  heading: "Excelent Designer, Mediocre Golfer",
+  heading: "Excellent Designer, Mediocre Golfer",
   description:
-    "I spend my workdays crafting thoughtful, user-centered digital experiences. " +
-    "Outside of work, you'll usually find me on the golf course (enthusiastically average, at best), " +
-    "playing tennis, managing my fantasy football team, diving into baseball stats, or exploring " +
-    "new skills and technologies. I'm also proud to have been a lifelong fan and Alumni of the " +
-    "University of Washington, Go Huskies! Whether I'm designing screens or slicing drives, I'm " +
-    "always up for the challenge—and always learning something new. View my chatbot to learn more about me and my work.",
+    "I spend my workdays crafting thoughtful, user-centered digital experiences at Kimberly-Clark. " +
+    "Outside of work, you'll usually find me on the golf course, " +
+    "playing tennis, or diving into baseball stats. I'm a proud lifelong fan and Alumni of the " +
+    "University of Washington—Go Huskies!",
   images: [
     {
       src: "/projectImages/about/baby.png",
-      alt: "Relume placeholder image 1",
+      alt: "Baby photo",
     },
     {
       src: "/projectImages/about/guitar.png",
-      alt: "Relume placeholder image 2",
+      alt: "Playing guitar",
     },
     {
       src: "/projectImages/about/golf.png",
-      alt: "Relume placeholder image 3",
+      alt: "Golfing",
     },
     {
       src: "/projectImages/about/me.png",
-      alt: "Relume placeholder image 4",
+      alt: "Profile photo",
     },
     {
       src: "/projectImages/about/husky.png",
-      alt: "Relume placeholder image 5",
+      alt: "UW Husky",
     },
   ],
 };

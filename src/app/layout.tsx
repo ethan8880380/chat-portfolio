@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ChatProvider } from "@/context/ChatContext";
 import { Analytics } from "@vercel/analytics/next"
@@ -13,8 +12,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Ethan Rogers | Portfolio",
-  description: "Personal portfolio of Ethan Rogers",
+  title: "Ethan Rogers | UX Designer & Engineer",
+  description: "UX Designer and researcher with significant front-end programming expertise, building award-winning platforms.",
 };
 
 export default function RootLayout({
@@ -23,22 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${outfit.variable}`}>
       <Analytics />
-      <body className={`${outfit.variable} font-outfit antialiased`}>
+      <body className={`${outfit.className} antialiased bg-white`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
-          {/* Progressive blur effects with z-index below header (40) */}
-          <ProgressiveBlur 
-            blurStrength={32} 
-            gradientHeight={12} 
-            blurType="linear" 
-            tint="rgba(0, 0, 0, 0.01)" 
-          />
           <ChatProvider>
             {children}
           </ChatProvider>

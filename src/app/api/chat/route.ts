@@ -198,8 +198,18 @@ export async function POST(request: Request) {
       });
     } catch (openaiError: unknown) {
       console.error('OpenAI API error:', openaiError);
+      const errorMessage = openaiError instanceof Error ? openaiError.message : '';
+      
+      // Handle quota/rate limit errors with a friendly fallback
+      if (errorMessage.includes('429') || errorMessage.includes('quota')) {
+        return NextResponse.json({ 
+          reply: "Thanks for your interest! The AI chatbot is currently unavailable. Feel free to reach out directly at ethan0380@gmail.com or explore my projects in the Work section.",
+          image: undefined
+        });
+      }
+      
       return NextResponse.json(
-        { error: openaiError instanceof Error ? openaiError.message : 'Error communicating with OpenAI' },
+        { error: 'Error communicating with OpenAI' },
         { status: 500 }
       );
     }

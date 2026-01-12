@@ -1,8 +1,6 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { ProjectData } from "@/data/projects";
 
 interface ProjectContentProps {
@@ -33,63 +31,61 @@ export function ProjectContent({ project }: ProjectContentProps) {
   };
 
   return (
-    <section className="bg-background">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
+    <section className="bg-black py-16">
+      <div className="px-4 md:px-6 max-w-7xl mx-auto">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="col-span-3"
         >
           {/* Overview */}
           <motion.div variants={itemVariants} className="mb-16">
-            <h2 className="heading-secondary mb-6">Project Overview</h2>
-            <p className="text-regular">
+            <h2 className="text-2xl md:text-3xl font-semibold text-white mb-6">Project Overview</h2>
+            <p className="text-lg text-white/60 leading-relaxed">
               {project.fullDescription}
             </p>
           </motion.div>
 
           {/* Project Details Grid */}
-          <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8 mb-16">
+          <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6 mb-16">
             {/* Technologies */}
             {project.technologies && project.technologies.length > 0 && (
-              <Card className="bg-muted/50 rounded-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-4">Technologies Used</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <Badge key={tech} variant="outline">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <h3 className="text-xl font-semibold text-white mb-4">Technologies Used</h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech) => (
+                    <span 
+                      key={tech} 
+                      className="px-3 py-1 text-sm rounded-full bg-white/10 text-white/70 border border-white/10"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Role & Responsibilities */}
-            <Card className="bg-muted/50 rounded-lg">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">My Role</h3>
-                <ul className="space-y-2">
-                  {project.role.map((role) => (
-                    <li key={role} className="flex items-center">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3" />
-                      {role}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+              <h3 className="text-xl font-semibold text-white mb-4">My Role</h3>
+              <ul className="space-y-2">
+                {project.role.map((role) => (
+                  <li key={role} className="flex items-center text-white/60">
+                    <div className="w-2 h-2 bg-[#0087ef] rounded-full mr-3" />
+                    {role}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </motion.div>
 
           {/* Challenge, Solution, Results with integrated images */}
           <div className="space-y-16">
             {project.challenges && (
               <motion.div variants={itemVariants}>
-                <h2 className="heading-secondary mb-6">The Challenge</h2>
-                <p className="text-regular">
+                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-6">The Challenge</h2>
+                <p className="text-lg text-white/60 leading-relaxed">
                   {project.challenges}
                 </p>
               </motion.div>
@@ -98,7 +94,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
             {/* First Gallery Image */}
             {project.images.gallery && project.images.gallery[0] && (
               <motion.div variants={itemVariants} className="my-16">
-                <div className="relative overflow-hidden rounded-lg bg-muted group">
+                <div className="relative overflow-hidden rounded-2xl bg-white/[0.02] group">
                   <div className="aspect-video relative">
                     <Image
                       src={project.images.gallery[0]}
@@ -108,7 +104,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
                       sizes="(max-width: 768px) 100vw, 80vw"
                       quality={90}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                   </div>
                 </div>
               </motion.div>
@@ -116,8 +112,8 @@ export function ProjectContent({ project }: ProjectContentProps) {
 
             {project.solution && (
               <motion.div variants={itemVariants}>
-                <h2 className="heading-secondary mb-6">The Solution</h2>
-                <p className="text-regular">
+                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-6">The Solution</h2>
+                <p className="text-lg text-white/60 leading-relaxed">
                   {project.solution}
                 </p>
               </motion.div>
@@ -126,7 +122,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
             {/* Second Gallery Image */}
             {project.images.gallery && project.images.gallery[1] && (
               <motion.div variants={itemVariants} className="my-16">
-                <div className="relative overflow-hidden rounded-lg bg-muted group">
+                <div className="relative overflow-hidden rounded-2xl bg-white/[0.02] group">
                   <div className="aspect-video relative">
                     <Image
                       src={project.images.gallery[1]}
@@ -136,7 +132,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
                       sizes="(max-width: 768px) 100vw, 80vw"
                       quality={90}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                   </div>
                 </div>
               </motion.div>
@@ -144,8 +140,8 @@ export function ProjectContent({ project }: ProjectContentProps) {
 
             {project.results && (
               <motion.div variants={itemVariants}>
-                <h2 className="heading-secondary mb-6">The Results</h2>
-                <p className="text-regular">
+                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-6">The Results</h2>
+                <p className="text-lg text-white/60 leading-relaxed">
                   {project.results}
                 </p>
               </motion.div>
@@ -155,17 +151,15 @@ export function ProjectContent({ project }: ProjectContentProps) {
           {/* Testimonial */}
           {project.testimonial && (
             <motion.div variants={itemVariants} className="mt-16">
-              <Card className="bg-muted/50">
-                <CardContent className="p-8 md:p-12">
-                  <blockquote className="text-xl md:text-2xl font-medium italic text-center mb-6">
-                    &ldquo;{project.testimonial.quote}&rdquo;
-                  </blockquote>
-                  <div className="text-center">
-                    <p className="font-semibold">{project.testimonial.author}</p>
-                    <p className="text-muted-foreground">{project.testimonial.position}</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="p-8 md:p-12 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                <blockquote className="text-xl md:text-2xl font-medium italic text-center mb-6 text-white">
+                  &ldquo;{project.testimonial.quote}&rdquo;
+                </blockquote>
+                <div className="text-center">
+                  <p className="font-semibold text-white">{project.testimonial.author}</p>
+                  <p className="text-white/50">{project.testimonial.position}</p>
+                </div>
+              </div>
             </motion.div>
           )}
         </motion.div>

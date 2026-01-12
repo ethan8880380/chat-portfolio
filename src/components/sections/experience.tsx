@@ -1,117 +1,108 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cog, PencilRuler, LayoutGrid, Lightbulb, User } from "lucide-react";
+import { 
+  Cog, 
+  PencilRuler, 
+  LayoutGrid, 
+  Lightbulb
+} from "lucide-react";
 
 interface Specialization {
   id: number;
   title: string;
   icon: React.ReactNode;
   description: string;
+  stats?: string;
 }
 
 const specializations: Specialization[] = [
   {
     id: 1,
-    title: "UX Design",
+    title: "Enterprise UX",
     icon: <Cog className="w-6 h-6" />,
-    description: "Specialized in designing complex enterprise applications that balance advanced functionality with usability."
+    description: "Complex analytics dashboards and internal platforms serving thousands of users daily.",
+    stats: "1,500+ daily users",
   },
   {
     id: 2,
     title: "Consumer Web",
     icon: <LayoutGrid className="w-6 h-6" />,
-    description: "Created engaging user experiences for consumer-facing websites with a mobile first approach."
+    description: "Mobile-first experiences for global consumer brands with measurable engagement lifts.",
+    stats: "+75% retention",
   },
   {
     id: 3,
-    title: "Product Design",
+    title: "Design Systems",
     icon: <PencilRuler className="w-6 h-6" />,
-    description: "End-to-end product design including research, wireframing, prototyping, and design implementation."
+    description: "Scalable component libraries with Figma variables matched to Tailwind classes.",
+    stats: "50% faster dev",
   },
   {
     id: 4,
-    title: "Frontend Development",
+    title: "Frontend Dev",
     icon: <Lightbulb className="w-6 h-6" />,
-    description: "Experienced in NextJS, TailwindCSS, and React. Tranforming designs into applications exactly as they look in Figma."
+    description: "Next.js, React, and Tailwind expertise. Pixel-perfect implementation from Figma.",
+    stats: "4+ years",
   }
 ];
 
 export function Experience() {
   return (
-    <section id="experience" className="py-12 px-3 md:px-6 pb-24">
-      <div className="">
+    <section id="experience" className="py-24 px-4 md:px-6 relative">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#0087ef]/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#0087ef]/5 rounded-full blur-[100px]" />
+      </div>
 
+      <div className="max-w-7xl mx-auto relative">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-16"
+        >
+          <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
+            Expertise
+          </span>
+          <h2 className="heading-base text-white">
+            What I Do
+          </h2>
+        </motion.div>
 
-        {/* Specializations */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+        {/* Specializations Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {specializations.map((specialization, index) => (
             <motion.div
               key={specialization.id}
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="bg-foreground/10 rounded-lg p-6 md:p-8 transition-colors"
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="group relative rounded-2xl p-6 bg-white/[0.02] border border-white/[0.05] hover:border-[#0087ef]/30 transition-all duration-500 overflow-hidden"
             >
-              <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
+              {/* Gradient Border on Hover */}
+              <div className="absolute inset-0 bg-[#0087ef]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Icon */}
+              <div className="relative z-10 w-12 h-12 rounded-xl bg-[#0087ef]/20 flex items-center justify-center mb-6 text-white">
                 {specialization.icon}
               </div>
-              <h4 className="text-xl font-medium mb-3">{specialization.title}</h4>
-              <p className="text-foreground/80">{specialization.description}</p>
+
+              <div className="relative z-10">
+                <h4 className="text-xl font-semibold mb-2 text-white">{specialization.title}</h4>
+                {specialization.stats && (
+                  <span className="inline-block text-xs font-mono px-2 py-1 rounded-full bg-[#0087ef]/20 text-[#0087ef] mb-3">
+                    {specialization.stats}
+                  </span>
+                )}
+                <p className="text-white/50 leading-relaxed">{specialization.description}</p>
+              </div>
             </motion.div>
           ))}
-        </div>
-        {/* Experience */}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-8">
-        <div className="flex flex-col gap-4 p-6 md:p-8 rounded-lg bg-foreground/10">
-          <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
-            <User className="w-6 h-6" />
-          </div>
-          <div className="flex flex-col md:flex-row gap-6 md:gap-12">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-lg font-bold">Email</h1>
-              <p className="text-sm md:text-lg text-muted-foreground underline">
-                <a href="mailto:ethan0380@gmail.com" className="hover:text-primary">ethan0380@gmail.com</a>
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h1 className="text-lg font-bold">Phone</h1>
-              <p className="text-sm md:text-lg text-muted-foreground underline">
-                <a href="tel:253-888-0380" className="hover:text-primary">253-888-0380</a>
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h1 className="text-lg font-bold">Location</h1>
-              <p className="text-sm md:text-lg text-muted-foreground">Seattle, WA</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col gap-4 p-6 md:p-8 rounded-lg bg-foreground/10">
-          <div className="p-3 mb-6 rounded-md bg-foreground/10 w-fit text-primary">
-            <User className="w-6 h-6" />
-          </div>
-          <div className="flex flex-col md:flex-row gap-6 md:gap-12">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-lg font-bold">Linkedin</h1>
-              <p className="text-sm md:text-lg text-muted-foreground underline">
-                <a href="https://www.linkedin.com/in/ethan-rogers/" className="hover:text-primary">My LinkedIn</a>
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h1 className="text-lg font-bold">Github</h1>
-              <p className="text-sm md:text-lg text-muted-foreground underline">
-                <a href="https://github.com/ethan8880380" className="hover:text-primary">My Github</a>
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h1 className="text-lg font-bold">Resume</h1>
-              <p className="text-sm md:text-lg text-muted-foreground underline">
-                <a href="/ethan-rogers-resume.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-primary">Download Resume</a>
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
