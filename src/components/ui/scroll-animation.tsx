@@ -148,9 +148,9 @@ export function ScrollAnimation({
 
     // Cleanup function
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => {
-        if (trigger.trigger === element || trigger.trigger === trigger) {
-          trigger.kill();
+      ScrollTrigger.getAll().forEach(st => {
+        if (st.trigger === element) {
+          st.kill();
         }
       });
     };
@@ -188,7 +188,7 @@ export function ScrollGradientTrigger({
     if (!trigger) return;
 
     // Create gradient animation similar to your image
-    const tl = gsap.timeline({
+    const _tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".gradient_trigger.top",
         start: "top bottom",
