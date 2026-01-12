@@ -187,17 +187,6 @@ export function ScrollGradientTrigger({
     const trigger = triggerRef.current;
     if (!trigger) return;
 
-    // Create gradient animation similar to your image
-    const _tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".gradient_trigger.top",
-        start: "top bottom",
-        end: "bottom bottom",
-        scrub: true,
-        markers: false,
-      }
-    });
-
     // You can add gradient animations here
     // This would work with a gradient background element
 
