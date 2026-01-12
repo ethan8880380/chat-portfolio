@@ -4,14 +4,13 @@ import { EnhancedFooter } from "@/components/sections/enhanced-footer";
 
 export default function ChatPage() {
   return (
-    <main className="min-h-screen flex flex-col bg-black">
+    <main className="h-screen flex flex-col bg-ink overflow-hidden">
       <StaticHeader theme="dark" />
-      <section className="flex-1 flex pt-24">
-        <div className="w-full">
+      <section className="flex-1 flex pt-24 overflow-hidden">
+        <div className="w-full h-full">
           <VercelV0Chat />
         </div>
       </section>
-      <EnhancedFooter />
     </main>
   );
 }

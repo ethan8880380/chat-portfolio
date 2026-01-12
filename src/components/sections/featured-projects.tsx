@@ -4,11 +4,15 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Sparkles } from "lucide-react";
-import { projectsData } from "@/data/projects";
+import { ProjectData } from "@/data/projects";
 
-const featuredProjects = projectsData.slice(0, 4);
+interface FeaturedProjectsProps {
+  projects: ProjectData[];
+}
 
-export function FeaturedProjects() {
+export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
+  // Projects are already filtered by "Featured" checkbox from Notion
+  const featuredProjects = projects;
   return (
     <section id="projects" className="py-24 px-4 md:px-6 relative">
       {/* Background */}
@@ -29,7 +33,7 @@ export function FeaturedProjects() {
           <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
             Selected Work
           </span>
-          <h2 className="heading-base text-white">
+          <h2 className="heading-base text-chalk">
             Featured Projects
           </h2>
         </motion.div>
@@ -55,9 +59,9 @@ export function FeaturedProjects() {
         >
           <Link 
             href="/work" 
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white/[0.03] border border-white/[0.08] hover:border-[#0087ef]/30 hover:bg-[#0087ef]/5 transition-all group"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] hover:border-[#0087ef]/30 hover:bg-[#0087ef]/5 transition-all group"
           >
-            <span className="text-lg font-medium text-white">View All Projects</span>
+            <span className="text-lg font-medium text-chalk">View All Projects</span>
             <ArrowUpRight className="w-5 h-5 text-[#0087ef] group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </Link>
         </motion.div>
@@ -67,7 +71,7 @@ export function FeaturedProjects() {
 }
 
 interface FeaturedProjectCardProps {
-  project: typeof projectsData[0];
+  project: ProjectData;
   index: number;
 }
 
@@ -81,7 +85,7 @@ function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps) {
     >
       <Link href={`/projects/${project.slug}`} className="group block">
         <div 
-          className="relative overflow-hidden rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-white/[0.1] transition-all aspect-video"
+          className="relative overflow-hidden rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05] hover:border-chalk/[0.1] transition-all aspect-video"
         >
           {/* Background Image */}
           <Image
@@ -94,7 +98,7 @@ function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps) {
           />
 
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent" />
 
           {/* Shimmer Effect */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -108,7 +112,7 @@ function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps) {
               {project.tags.slice(0, 3).map((tag) => (
                 <span 
                   key={tag} 
-                  className="px-2.5 py-1 text-xs font-mono rounded-full bg-white/10 backdrop-blur-sm text-white/80 border border-white/10"
+                  className="px-2.5 py-1 text-xs font-mono rounded-full bg-chalk/10 backdrop-blur-sm text-chalk/80 border border-chalk/10"
                 >
                   {tag}
                 </span>
@@ -116,16 +120,16 @@ function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps) {
             </div>
 
             {/* Title & Description */}
-            <h3 className="text-xl md:text-2xl font-semibold text-white mb-2 group-hover:text-[#0087ef] transition-colors">
+            <h3 className="text-xl md:text-2xl font-semibold text-chalk mb-2 group-hover:text-[#0087ef] transition-colors">
               {project.title}
             </h3>
             
-            <p className="text-white/60 line-clamp-2 text-sm md:text-base">
+            <p className="text-chalk/60 line-clamp-2 text-sm md:text-base">
               {project.shortDescription}
             </p>
 
             {/* Arrow */}
-            <div className="mt-4 flex items-center gap-2 text-white/60 group-hover:text-[#0087ef] transition-colors">
+            <div className="mt-4 flex items-center gap-2 text-chalk/60 group-hover:text-[#0087ef] transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider">View Project</span>
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </div>

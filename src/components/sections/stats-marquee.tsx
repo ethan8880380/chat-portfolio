@@ -81,19 +81,19 @@ export function StatsMarquee() {
                 flex-shrink-0 flex items-center gap-4 px-6 py-4 rounded-2xl border
                 ${stat.highlight 
                   ? "bg-[#0087ef]/10 border-[#0087ef]/30" 
-                  : "bg-white/[0.02] border-white/[0.05]"
+                  : "bg-chalk/[0.02] border-chalk/[0.05]"
                 }
                 backdrop-blur-sm
               `}
             >
-              <div className={`p-2.5 rounded-xl ${stat.highlight ? "bg-[#0087ef]/20" : "bg-white/5"}`}>
-                <stat.icon className={`w-5 h-5 ${stat.highlight ? "text-[#0087ef]" : "text-white/70"}`} />
+              <div className={`p-2.5 rounded-xl ${stat.highlight ? "bg-[#0087ef]/20" : "bg-chalk/5"}`}>
+                <stat.icon className={`w-5 h-5 ${stat.highlight ? "text-[#0087ef]" : "text-chalk/70"}`} />
               </div>
               <div>
-                <p className={`text-2xl font-bold ${stat.highlight ? "text-[#0087ef]" : "text-white"}`}>
+                <p className={`text-2xl font-bold ${stat.highlight ? "text-[#0087ef]" : "text-chalk"}`}>
                   {stat.value}
                 </p>
-                <p className="text-xs text-white/50 font-mono uppercase tracking-wider">
+                <p className="text-xs text-chalk/50 font-mono uppercase tracking-wider">
                   {stat.label}
                 </p>
               </div>
@@ -119,7 +119,7 @@ export function StatsMarquee() {
           {[...skills, ...skills, ...skills, ...skills].map((skill, index) => (
             <div
               key={index}
-              className="flex-shrink-0 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-white/70 text-sm font-medium whitespace-nowrap hover:bg-white/[0.06] hover:text-white transition-all cursor-default"
+              className="flex-shrink-0 px-5 py-2.5 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] text-chalk/70 text-sm font-medium whitespace-nowrap hover:bg-chalk/[0.06] hover:text-chalk transition-all cursor-default"
             >
               {skill}
             </div>

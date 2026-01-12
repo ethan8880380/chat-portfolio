@@ -113,7 +113,7 @@ export function WorkTimeline() {
           <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
             Experience
           </span>
-          <h2 className="heading-base text-white">
+          <h2 className="heading-base text-chalk">
             Where I've Worked
           </h2>
         </motion.div>
@@ -121,7 +121,7 @@ export function WorkTimeline() {
         {/* Timeline */}
         <div className="relative">
           {/* Center Line - visible on md+ */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2">
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-chalk/10 -translate-x-1/2">
             <motion.div 
               className="absolute top-0 left-0 w-full bg-[#0087ef]"
               style={{ height: lineHeight }}
@@ -129,7 +129,7 @@ export function WorkTimeline() {
           </div>
           
           {/* Mobile Line - visible on small screens */}
-          <div className="md:hidden absolute left-[7px] top-0 bottom-0 w-px bg-white/10">
+          <div className="md:hidden absolute left-[7px] top-0 bottom-0 w-px bg-chalk/10">
             <motion.div 
               className="absolute top-0 left-0 w-full bg-[#0087ef]"
               style={{ height: lineHeight }}
@@ -157,7 +157,7 @@ export function WorkTimeline() {
                 >
                   {/* Timeline Dot - Mobile */}
                   <div className="md:hidden absolute top-0 left-0 w-4 h-4 rounded-full bg-[#0087ef] shadow-lg shadow-[#0087ef]/30">
-                    <div className="absolute inset-0.5 rounded-full bg-black" />
+                    <div className="absolute inset-0.5 rounded-full bg-ink" />
                     <div className="absolute inset-1.5 rounded-full bg-[#0087ef]" />
                   </div>
 
@@ -167,12 +167,12 @@ export function WorkTimeline() {
                     shadow-lg shadow-[#0087ef]/30
                     ${isEven ? "right-0 translate-x-[calc(100%+24px)]" : "left-0 -translate-x-[calc(100%+24px)]"}
                   `}>
-                    <div className="absolute inset-0.5 rounded-full bg-black" />
+                    <div className="absolute inset-0.5 rounded-full bg-ink" />
                     <div className="absolute inset-1.5 rounded-full bg-[#0087ef]" />
                   </div>
 
                   {/* Card */}
-                  <div className="group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-white/[0.1] transition-all hover:bg-white/[0.04]">
+                  <div className="group relative p-6 rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05] hover:border-chalk/[0.1] transition-all hover:bg-chalk/[0.04]">
                     {/* Shimmer Effect */}
                     <div className="absolute inset-0 rounded-2xl overflow-hidden">
                       <div className="absolute inset-0 shimmer" />
@@ -182,15 +182,15 @@ export function WorkTimeline() {
                       {/* Header - Always left aligned */}
                       <div className="flex items-start gap-4 mb-4">
                         <div className="p-2.5 rounded-xl bg-[#0087ef]/20">
-                          <Icon className="w-5 h-5 text-white" />
+                          <Icon className="w-5 h-5 text-chalk" />
                         </div>
                         <div className="flex-1">
-                          <span className="text-xs font-mono text-white/40 uppercase tracking-wider">
+                          <span className="text-xs font-mono text-chalk/40 uppercase tracking-wider">
                             {item.period}
                           </span>
-                          <h3 className="text-xl font-semibold text-white mt-1">{item.title}</h3>
+                          <h3 className="text-xl font-semibold text-chalk mt-1">{item.title}</h3>
                           <p className="text-[#0087ef] font-medium">{item.company}</p>
-                          <p className="text-white/40 text-sm flex items-center gap-1 mt-1">
+                          <p className="text-chalk/40 text-sm flex items-center gap-1 mt-1">
                             <MapPin className="w-3 h-3" />
                             {item.location}
                           </p>
@@ -198,7 +198,7 @@ export function WorkTimeline() {
                       </div>
 
                       {/* Description - Always left aligned */}
-                      <p className="text-white/60 mb-4">
+                      <p className="text-chalk/60 mb-4">
                         {item.description}
                       </p>
 
@@ -207,7 +207,7 @@ export function WorkTimeline() {
                         {item.highlights.map((highlight, i) => (
                           <li 
                             key={i} 
-                            className="text-sm text-white/50 flex items-start gap-2"
+                            className="text-sm text-chalk/50 flex items-start gap-2"
                           >
                             <span className="text-[#0087ef] mt-1.5">•</span>
                             <span>{highlight}</span>

@@ -31,8 +31,8 @@ export function Testimonials() {
     <section className="py-24 px-4 md:px-6 relative">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-chalk/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-chalk/10 to-transparent" />
       </div>
 
       <div className="max-w-7xl mx-auto relative">
@@ -47,7 +47,7 @@ export function Testimonials() {
           <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
             Testimonials
           </span>
-          <h2 className="heading-base text-white">
+          <h2 className="heading-base text-chalk">
             What People Say
           </h2>
         </motion.div>
@@ -91,7 +91,7 @@ function TestimonialCard({ testimonial, index, featured }: TestimonialCardProps)
         relative p-6 md:p-8 rounded-2xl overflow-hidden
         ${featured 
           ? "bg-[#0087ef]/10 border border-[#0087ef]/20" 
-          : "bg-white/[0.02] border border-white/[0.05]"
+          : "bg-chalk/[0.02] border border-chalk/[0.05]"
         }
       `}
     >
@@ -104,13 +104,13 @@ function TestimonialCard({ testimonial, index, featured }: TestimonialCardProps)
         {/* Quote Icon */}
         <div className={`
           w-10 h-10 rounded-xl flex items-center justify-center mb-6
-          ${featured ? "bg-[#0087ef]/20" : "bg-white/5"}
+          ${featured ? "bg-[#0087ef]/20" : "bg-chalk/5"}
         `}>
-          <Quote className={`w-5 h-5 ${featured ? "text-[#0087ef]" : "text-white/40"}`} />
+          <Quote className={`w-5 h-5 ${featured ? "text-[#0087ef]" : "text-chalk/40"}`} />
         </div>
 
         {/* Quote Text */}
-        <blockquote className="text-lg md:text-xl leading-relaxed mb-8 text-white/80">
+        <blockquote className="text-lg md:text-xl leading-relaxed mb-8 text-chalk/80">
           "{testimonial.quote}"
         </blockquote>
 
@@ -120,18 +120,18 @@ function TestimonialCard({ testimonial, index, featured }: TestimonialCardProps)
           <div className={`
             w-12 h-12 rounded-full flex items-center justify-center text-base font-semibold
             ${featured 
-              ? "bg-[#0087ef] text-white" 
-              : "bg-white/10 text-white/70"
+              ? "bg-[#0087ef] text-chalk" 
+              : "bg-chalk/10 text-chalk/70"
             }
           `}>
             {testimonial.author.split(" ").map((n) => n[0]).join("")}
           </div>
           
           <div>
-            <p className="font-semibold text-white">
+            <p className="font-semibold text-chalk">
               {testimonial.author}
             </p>
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-chalk/50">
               {testimonial.position}
               {testimonial.company && ` · ${testimonial.company}`}
             </p>
@@ -140,7 +140,7 @@ function TestimonialCard({ testimonial, index, featured }: TestimonialCardProps)
 
         {/* Project Badge */}
         {testimonial.project && (
-          <div className="absolute top-6 right-6 text-xs font-mono px-3 py-1 rounded-full bg-white/5 text-white/40 border border-white/10">
+          <div className="absolute top-6 right-6 text-xs font-mono px-3 py-1 rounded-full bg-chalk/5 text-chalk/40 border border-chalk/10">
             {testimonial.project}
           </div>
         )}

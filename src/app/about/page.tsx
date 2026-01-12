@@ -17,7 +17,7 @@ const images = [
 ];
 
 const funFacts = [
-  { icon: Trophy, label: "Handicap", value: "12", description: "It's a journey" },
+  { icon: Trophy, label: "Handicap", value: "<20", description: "I can hit the ball a long way though" },
   { icon: Heart, label: "Team", value: "Mariners", description: "Pain is temporary" },
   { icon: Music, label: "Hobby", value: "Guitar", description: "Campfire certified" },
   { icon: GraduationCap, label: "Class of", value: "'22", description: "Go Huskies" },
@@ -25,7 +25,7 @@ const funFacts = [
 
 export default function About() {
   return (
-    <main className="min-h-screen bg-black overflow-hidden">
+    <main className="min-h-screen bg-ink overflow-hidden">
       <StaticHeader theme="dark" />
       
       {/* Hero Section */}
@@ -44,7 +44,7 @@ export default function About() {
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 + index * 0.15 }}
-              className="absolute w-64 h-64 rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
+              className="absolute w-64 h-64 rounded-2xl overflow-hidden border border-chalk/10 shadow-2xl"
               style={{
                 rotate: `${image.rotate}deg`,
                 top: index === 0 ? '12%' : index === 1 ? '15%' : index === 2 ? '50%' : '55%',
@@ -57,7 +57,7 @@ export default function About() {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent" />
             </motion.div>
           ))}
         </div>
@@ -68,18 +68,18 @@ export default function About() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-semibold text-white mb-8 leading-[0.9] tracking-tight"
+            className="text-5xl md:text-7xl lg:text-8xl font-semibold text-chalk mb-8 leading-[0.9] tracking-tight"
           >
             Design meets
             <br />
-            <span className="text-white/30">engineering</span>
+            <span className="text-chalk/30">engineering</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl md:text-2xl text-white/60 leading-relaxed max-w-2xl mx-auto mb-10"
+            className="text-xl md:text-2xl text-chalk/60 leading-relaxed max-w-2xl mx-auto mb-10"
           >
             I bridge the gap between design and development—creating award-winning digital 
             experiences from concept to code. 4+ years building enterprise platforms that 
@@ -93,17 +93,17 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-wrap items-center justify-center gap-4 mb-12"
           >
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08]">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-chalk/[0.03] border border-chalk/[0.08]">
               <MapPin className="w-4 h-4 text-[#0087ef]" />
-              <span className="text-sm text-white/70">Seattle, WA</span>
+              <span className="text-sm text-chalk/70">Seattle, WA</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08]">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-chalk/[0.03] border border-chalk/[0.08]">
               <Briefcase className="w-4 h-4 text-[#0087ef]" />
-              <span className="text-sm text-white/70">Kimberly-Clark</span>
+              <span className="text-sm text-chalk/70">Kimberly-Clark</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08]">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-chalk/[0.03] border border-chalk/[0.08]">
               <GraduationCap className="w-4 h-4 text-[#0087ef]" />
-              <span className="text-sm text-white/70">University of Washington</span>
+              <span className="text-sm text-chalk/70">University of Washington</span>
             </div>
           </motion.div>
 
@@ -114,12 +114,12 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="flex flex-col items-center gap-2"
           >
-            <span className="text-xs font-mono uppercase tracking-wider text-white/30">Scroll to explore</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-chalk/30">Scroll to explore</span>
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              <ArrowDown className="w-5 h-5 text-white/30" />
+              <ArrowDown className="w-5 h-5 text-chalk/30" />
             </motion.div>
           </motion.div>
         </div>
@@ -145,7 +145,7 @@ export default function About() {
                   className="object-cover"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
               </div>
               {/* Floating accent */}
               <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-2xl bg-[#0087ef]/20 blur-2xl" />
@@ -164,10 +164,10 @@ export default function About() {
                 <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
                   The Story
                 </span>
-                <h2 className="text-3xl md:text-4xl font-semibold text-white mb-6">
+                <h2 className="text-3xl md:text-4xl font-semibold text-chalk mb-6">
                   I make things that work beautifully
                 </h2>
-                <div className="space-y-4 text-lg text-white/60 leading-relaxed">
+                <div className="space-y-4 text-lg text-chalk/60 leading-relaxed">
                   <p>
                     Four years ago, I joined Kimberly-Clark with a simple mission: make enterprise software 
                     that doesn't make people want to throw their laptop out the window. Turns out, that's 
@@ -189,14 +189,14 @@ export default function About() {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/work"
-                  className="px-8 py-4 rounded-full bg-white text-black font-semibold hover:bg-white/90 transition-all"
+                  className="px-8 py-4 rounded-full bg-chalk text-ink font-semibold hover:bg-chalk/90 transition-all"
                 >
                   View My Work
                 </Link>
                 <Link
                   href="/ethan-rogers-resume.pdf"
                   target="_blank"
-                  className="px-8 py-4 rounded-full bg-white/[0.03] border border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-[#0087ef]/30 transition-all"
+                  className="px-8 py-4 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] text-chalk hover:bg-chalk/[0.06] hover:border-[#0087ef]/30 transition-all"
                 >
                   Download Resume
                 </Link>
@@ -209,7 +209,7 @@ export default function About() {
       {/* Fun Facts Section */}
       <section className="py-24 px-4 md:px-6 relative">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-chalk/10 to-transparent" />
         </div>
         
         <div className="max-w-7xl mx-auto">
@@ -222,7 +222,7 @@ export default function About() {
             <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
               Off the Clock
             </span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white">
+            <h2 className="text-3xl md:text-4xl font-semibold text-chalk">
               When I'm Not Designing
             </h2>
           </motion.div>
@@ -235,18 +235,18 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-[#0087ef]/30 transition-all text-center"
+                className="group relative p-6 rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05] hover:border-[#0087ef]/30 transition-all text-center"
               >
                 <div className="w-12 h-12 rounded-xl bg-[#0087ef]/20 flex items-center justify-center mx-auto mb-4">
                   <fact.icon className="w-6 h-6 text-[#0087ef]" />
                 </div>
-                <span className="text-xs font-mono uppercase tracking-wider text-white/40 block mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-chalk/40 block mb-2">
                   {fact.label}
                 </span>
-                <span className="text-2xl font-semibold text-white block mb-1">
+                <span className="text-2xl font-semibold text-chalk block mb-1">
                   {fact.value}
                 </span>
-                <span className="text-sm text-white/50">
+                <span className="text-sm text-chalk/50">
                   {fact.description}
                 </span>
               </motion.div>
@@ -270,7 +270,7 @@ export default function About() {
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent" />
               </motion.div>
             ))}
           </div>
@@ -280,7 +280,7 @@ export default function About() {
       {/* Skills Section */}
       <section className="py-24 px-4 md:px-6 relative">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-chalk/10 to-transparent" />
         </div>
 
         <div className="max-w-7xl mx-auto">
@@ -293,7 +293,7 @@ export default function About() {
             <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
               Expertise
             </span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white">
+            <h2 className="text-3xl md:text-4xl font-semibold text-chalk">
               Skills & Tools
             </h2>
           </motion.div>
@@ -304,10 +304,10 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="space-y-4 p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+              className="space-y-4 p-8 rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05]"
             >
-              <h3 className="text-xl font-semibold text-white">Design</h3>
-              <ul className="space-y-3 text-white/60">
+              <h3 className="text-xl font-semibold text-chalk">Design</h3>
+              <ul className="space-y-3 text-chalk/60">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#0087ef]" />
                   User Experience Design
@@ -336,10 +336,10 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="space-y-4 p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+              className="space-y-4 p-8 rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05]"
             >
-              <h3 className="text-xl font-semibold text-white">Development</h3>
-              <ul className="space-y-3 text-white/60">
+              <h3 className="text-xl font-semibold text-chalk">Development</h3>
+              <ul className="space-y-3 text-chalk/60">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#0087ef]" />
                   React / Next.js
@@ -368,10 +368,10 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="space-y-4 p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+              className="space-y-4 p-8 rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05]"
             >
-              <h3 className="text-xl font-semibold text-white">Tools</h3>
-              <ul className="space-y-3 text-white/60">
+              <h3 className="text-xl font-semibold text-chalk">Tools</h3>
+              <ul className="space-y-3 text-chalk/60">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#0087ef]" />
                   Figma

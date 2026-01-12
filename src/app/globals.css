@@ -119,14 +119,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Outfit', system-ui, sans-serif;
-  }
-  
-  /* Smoother scrolling */
-  html {
-    scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 }
 
@@ -262,4 +262,24 @@
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* Liquid glass floating background animation */
+@keyframes liquidFloat {
+  0%, 100% {
+    background-position: center center;
+  }
+  25% {
+    background-position: 30% 70%;
+  }
+  50% {
+    background-position: 70% 30%;
+  }
+  75% {
+    background-position: 40% 60%;
+  }
+}
+
+.animate-liquid-float {
+  animation: liquidFloat 15s ease-in-out infinite;
 }

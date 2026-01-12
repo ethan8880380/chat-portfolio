@@ -35,7 +35,7 @@ export function RelatedProjects({ projects }: RelatedProjectsProps) {
   if (projects.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-24 bg-black">
+    <section className="py-16 md:py-24 bg-ink">
       <div className="px-4 md:px-6 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -44,8 +44,8 @@ export function RelatedProjects({ projects }: RelatedProjectsProps) {
           transition={{ duration: 0.6 }}
           className="text-left mb-12"
         >
-          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">More Projects</h2>
-          <p className="text-lg text-white/60">
+          <h2 className="text-2xl md:text-3xl font-semibold text-chalk mb-4">More Projects</h2>
+          <p className="text-lg text-chalk/60">
             Explore other work from my portfolio
           </p>
         </motion.div>
@@ -78,7 +78,7 @@ export function RelatedProjects({ projects }: RelatedProjectsProps) {
         >
           <Link 
             href="/work"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white/[0.03] border border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-[#0087ef]/30 transition-all group"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] text-chalk hover:bg-chalk/[0.06] hover:border-[#0087ef]/30 transition-all group"
           >
             View All Projects
             <ArrowUpRight className="h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

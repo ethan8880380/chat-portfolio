@@ -3,6 +3,8 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { TextAnimate } from "@/components/ui/text-animate";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
+import { LinearBlur } from "progressive-blur";
 import { cn } from "@/lib/utils";
 import {
     ImageIcon,
@@ -75,7 +77,7 @@ function useAutoResizeTextarea({
     return { textareaRef, adjustHeight };
 }
 
-// Faster and smoother loading animation
+// Faster and smoother loading animation with liquid glass
 const LoadingAnimation = () => {
     return (
         <motion.div
@@ -86,7 +88,7 @@ const LoadingAnimation = () => {
             className="flex justify-start mb-6"
         >
             <div className="px-6 py-4">
-                {/* Faster pulsing dot */}
+                {/* Pulsing dot with accent color */}
                 <div className="relative">
                     <motion.div
                         animate={{
@@ -96,9 +98,9 @@ const LoadingAnimation = () => {
                         transition={{
                             duration: 1,
                             repeat: Infinity,
-                            ease: [0.4, 0, 0.6, 1] // Smoother easing
+                            ease: [0.4, 0, 0.6, 1]
                         }}
-                        className="w-3 h-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg"
+                        className="w-3 h-3 bg-[#0087ef] rounded-full shadow-lg"
                     />
                     <motion.div
                         animate={{
@@ -110,7 +112,7 @@ const LoadingAnimation = () => {
                             repeat: Infinity,
                             ease: [0.4, 0, 0.6, 1]
                         }}
-                        className="absolute inset-0 w-3 h-3 bg-blue-400 rounded-full"
+                        className="absolute inset-0 w-3 h-3 bg-[#0087ef]/50 rounded-full"
                     />
                 </div>
             </div>
@@ -123,27 +125,11 @@ export function VercelV0Chat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showingResponse, setShowingResponse] = useState(false);
-    const [showProjectDropdown, setShowProjectDropdown] = useState(false);
-    const [selectedProject, setSelectedProject] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
-        minHeight: 60,
+        minHeight: 40,
         maxHeight: 200,
     });
-
-    // Project options based on training data
-    const projects = [
-        { id: "commercial-analytics-hub", name: "Commercial Analytics Hub", description: "GDUSA Award-winning internal analytics platform serving 1,000+ users weekly" },
-        { id: "enterprise-design-system", name: "Enterprise Design System", description: "Company-wide design system standardizing UX across all digital products" },
-        { id: "genfei-chatbot", name: "GenFEI Chatbot", description: "Complex AI chatbot for Research & Engineering team with multiple knowledge bases" },
-        { id: "iris-analytics", name: "IRIS Analytics Dashboard", description: "Complex analytics dashboard focusing on raw insights and predictive analytics" },
-        { id: "web-templates", name: "Standardized Web Templates", description: "Web templates used by almost all consumer brands at Kimberly-Clark" },
-        { id: "pullups-research", name: "Pull-Ups Potty Training Research", description: "Comprehensive user research for digital potty training solution" },
-        { id: "buyerspring", name: "BuyerSpring Real Estate Platform", description: "Innovative real estate platform reimagining home buying and selling" },
-        { id: "huggies-website", name: "Huggies Website Redesign", description: "Complete website redesign improving UX and driving product discovery" },
-        { id: "defoor-development", name: "DEFOOR Property Development", description: "Custom website for luxury property development company" },
-    ];
 
     // Auto-scroll to bottom when messages change
     useEffect(() => {
@@ -151,20 +137,6 @@ export function VercelV0Chat() {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setShowProjectDropdown(false);
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
     const handleSubmit = async (message: string) => {
         if (!message.trim() || isLoading) return;
@@ -185,7 +157,6 @@ export function VercelV0Chat() {
                 body: JSON.stringify({ 
                     message: userMessage,
                     messages: messages,
-                    selectedProject: selectedProject // Include selected project context
                 }),
             });
 
@@ -236,105 +207,78 @@ export function VercelV0Chat() {
         handleSubmit(prompt);
     };
 
-    const handleProjectSelect = (projectId: string) => {
-        setSelectedProject(projectId);
-        setShowProjectDropdown(false);
-        setShowingResponse(false);
-        
-        // Clear messages when switching projects
-        setMessages([]);
-        
-        // Add initial message about the selected project
-        const selectedProjectData = projects.find(p => p.id === projectId);
-        if (selectedProjectData) {
-            const initialMessage = `Tell me about the ${selectedProjectData.name} project.`;
-            handleSubmit(initialMessage);
-        }
-    };
-
-    const clearProjectSelection = () => {
-        setSelectedProject(null);
-        setMessages([]);
-        setShowingResponse(false);
-    };
-
     // If no messages, show centered layout
     if (messages.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-full min-h-[calc(100vh-80px)] w-full max-w-4xl mx-auto p-4 space-y-8">
-                <h1 className="text-4xl font-bold text-foreground text-center">
+                <h1 className="text-4xl font-bold text-chalk text-center">
                     What do you want to know about me?
                 </h1>
 
                 <div className="w-full">
-                    <div className="relative bg-neutral-900 rounded-xl border border-neutral-800">
-                        <div className="overflow-y-auto">
-                            <Textarea
-                                ref={textareaRef}
-                                value={value}
-                                onChange={(e) => {
-                                    setValue(e.target.value);
-                                    adjustHeight();
-                                }}
-                                onKeyDown={handleKeyDown}
-                                placeholder="Ask me anything about my work, experience, or projects..."
-                                disabled={isLoading}
-                                className={cn(
-                                    "w-full px-4 py-3",
-                                    "resize-none",
-                                    "bg-transparent",
-                                    "border-none",
-                                    "text-white text-lg font-normal",
-                                    "focus:outline-none",
-                                    "focus-visible:ring-0 focus-visible:ring-offset-0",
-                                    "placeholder:text-neutral-500 placeholder:text-lg",
-                                    "min-h-[60px]"
-                                )}
-                                style={{
-                                    overflow: "hidden",
-                                    fontSize: "18px",
-                                    lineHeight: "1.75"
-                                }}
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-between p-3">
-                            <div className="flex items-center gap-2">
-                                {/* Removed attach button */}
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    className="px-2 py-1 rounded-lg text-sm text-zinc-400 transition-colors border border-dashed border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 flex items-center justify-between gap-1"
+                    <LiquidGlass
+                        theme="dark"
+                        blur={20}
+                        opacity={0.6}
+                        showBorder={true}
+                        showGradient={true}
+                        showLiquidBg={true}
+                        applyDistortion={false}
+                        className="rounded-full"
+                    >
+                        <div className="flex items-center gap-3 px-1.5">
+                            <div className="flex-1 overflow-y-auto">
+                                <Textarea
+                                    ref={textareaRef}
+                                    value={value}
+                                    onChange={(e) => {
+                                        setValue(e.target.value);
+                                        adjustHeight();
+                                    }}
+                                    onKeyDown={handleKeyDown}
+                                    placeholder="Ask me anything about my work, experience, or projects..."
                                     disabled={isLoading}
-                                >
-                                    <PlusIcon className="w-4 h-4" />
-                                    Project
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleSendClick}
-                                    disabled={!value.trim() || isLoading}
                                     className={cn(
-                                        "px-1.5 py-1.5 rounded-lg text-sm transition-colors border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 flex items-center justify-between gap-1",
-                                        value.trim() && !isLoading
-                                            ? "bg-white text-black hover:bg-gray-100"
-                                            : "text-zinc-400 cursor-not-allowed"
+                                        "w-full px-4 py-3.5",
+                                        "resize-none",
+                                        "bg-transparent",
+                                        "border-none",
+                                        "text-chalk text-sm font-normal",
+                                        "focus:outline-none",
+                                        "focus-visible:ring-0 focus-visible:ring-offset-0",
+                                        "placeholder:text-chalk/50 placeholder:text-sm",
+                                        "min-h-[48px]"
                                     )}
-                                >
-                                    <ArrowUpIcon
-                                        className={cn(
-                                            "w-4 h-4",
-                                            value.trim() && !isLoading
-                                                ? "text-black"
-                                                : "text-zinc-400"
-                                        )}
-                                    />
-                                    <span className="sr-only">Send</span>
-                                </button>
+                                    style={{
+                                        overflow: "hidden",
+                                        fontSize: "14px",
+                                        lineHeight: "1.5"
+                                    }}
+                                />
                             </div>
+                            <button
+                                type="button"
+                                onClick={handleSendClick}
+                                disabled={!value.trim() || isLoading}
+                                className={cn(
+                                    "px-2 py-2 rounded-full text-sm transition-colors flex items-center justify-between gap-1",
+                                    value.trim() && !isLoading
+                                        ? "bg-chalk text-ink hover:bg-chalk/90"
+                                        : "text-chalk/40 border border-chalk/20 cursor-not-allowed"
+                                )}
+                            >
+                                <ArrowUpIcon
+                                    className={cn(
+                                        "w-4 h-4",
+                                        value.trim() && !isLoading
+                                            ? "text-ink"
+                                            : "text-chalk/40"
+                                    )}
+                                />
+                                <span className="sr-only">Send</span>
+                            </button>
                         </div>
-                    </div>
+                    </LiquidGlass>
 
                     <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
                         <ActionButton
@@ -369,10 +313,10 @@ export function VercelV0Chat() {
 
     // If messages exist, show chat layout with input at bottom
     return (
-        <div className="flex flex-col h-[calc(100vh-80px)] w-full -mt-6">
+        <div className="flex flex-col h-full w-full relative">
             {/* Messages Display - Full width scrolling */}
-            <div className="flex-1 w-full overflow-y-auto pb-24">
-                <div className="max-w-4xl mx-auto space-y-4 py-4 pt-24 px-4 md:px-0">
+            <div className="flex-1 w-full overflow-y-auto pb-32 min-h-0 relative">
+                <div className="max-w-4xl mx-auto space-y-4 pt-6 pb-4 px-4 md:px-6">
                     <AnimatePresence>
                         {messages.map((message, i) => (
                             <motion.div
@@ -382,10 +326,10 @@ export function VercelV0Chat() {
                                 transition={{ duration: 0.3 }}
                                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                             >
-                                <div className={`max-w-[80%] rounded-lg mb-6 ${
+                                <div className={`max-w-[80%] rounded-2xl mb-6 ${
                                     message.role === 'user' 
-                                        ? 'bg-foreground text-background px-4 py-2' 
-                                        : 'text-foreground'
+                                        ? 'bg-chalk text-ink px-4 py-2' 
+                                        : 'text-chalk'
                                 }`}>
                                     {message.role === 'assistant' && message === messages[messages.length - 1] && showingResponse && !isLoading ? (
                                         <TextAnimate 
@@ -414,138 +358,97 @@ export function VercelV0Chat() {
             </div>
 
             {/* Input fixed at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 w-full p-4 ">
+            <div className="absolute bottom-0 left-0 right-0 w-full p-4 md:px-6 z-20">
                 <div className="max-w-4xl mx-auto">
-                    <div className="relative bg-neutral-900 rounded-xl border border-neutral-800">
-                        <div className="overflow-y-auto">
-                            <Textarea
-                                ref={textareaRef}
-                                value={value}
-                                onChange={(e) => {
-                                    setValue(e.target.value);
-                                    adjustHeight();
-                                }}
-                                onKeyDown={handleKeyDown}
-                                placeholder="Ask me anything about my work, experience, or projects..."
-                                disabled={isLoading}
-                                className={cn(
-                                    "w-full px-4 py-3",
-                                    "resize-none",
-                                    "bg-transparent",
-                                    "border-none",
-                                    "text-white text-lg font-normal",
-                                    "focus:outline-none",
-                                    "focus-visible:ring-0 focus-visible:ring-offset-0",
-                                    "placeholder:text-neutral-500 placeholder:text-lg",
-                                    "min-h-[60px]"
-                                )}
-                                style={{
-                                    overflow: "hidden",
-                                    fontSize: "18px",
-                                    lineHeight: "1.75"
-                                }}
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-end p-3">
-                            <div className="flex items-center gap-2">
-                                <div className="relative z-10">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setShowProjectDropdown(!showProjectDropdown);
-                                        }}
-                                        className={cn(
-                                            "px-2 py-1 rounded-lg text-sm transition-colors border border-dashed border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 flex items-center justify-between gap-1 text-zinc-400",
-                                            selectedProject && "bg-zinc-800 border-zinc-600",
-                                            "relative z-20"
-                                        )}
-                                        disabled={isLoading}
-                                    >
-                                        <PlusIcon className="w-4 h-4" />
-                                        {selectedProject ? 
-                                            projects.find(p => p.id === selectedProject)?.name.split(' ')[0] || 'Project'
-                                            : 'Project'
-                                        }
-                                    </button>
-                                    
-                                    {/* Project Dropdown */}
-                                    {showProjectDropdown && (
-                                        <div 
-                                            ref={dropdownRef}
-                                            className="absolute bottom-full mb-2 right-0 w-80 max-w-[calc(100vw-2rem)] bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl z-[100]"
-                                        >
-                                            <div className="p-3 border-b border-neutral-700">
-                                                <div className="flex items-center justify-between">
-                                                    <h3 className="text-sm font-medium text-white">Select Project</h3>
-                                                    {selectedProject && (
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                clearProjectSelection();
-                                                            }}
-                                                            className="text-xs text-zinc-400 hover:text-white transition-colors"
-                                                        >
-                                                            Clear
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="max-h-60 overflow-y-auto">
-                                                {projects.map((project) => (
-                                                    <button
-                                                        key={project.id}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleProjectSelect(project.id);
-                                                        }}
-                                                        className={cn(
-                                                            "w-full text-left p-3 hover:bg-neutral-800 transition-colors border-b border-neutral-800 last:border-b-0",
-                                                            selectedProject === project.id && "bg-neutral-800"
-                                                        )}
-                                                    >
-                                                        <div className="text-sm font-medium text-white mb-1">
-                                                            {project.name}
-                                                        </div>
-                                                        <div className="text-xs text-zinc-400">
-                                                            {project.description}
-                                                        </div>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={handleSendClick}
-                                    disabled={!value.trim() || isLoading}
+                    <LiquidGlass
+                        theme="dark"
+                        blur={20}
+                        opacity={0.6}
+                        showBorder={true}
+                        showGradient={true}
+                        showLiquidBg={true}
+                        applyDistortion={false}
+                        className="rounded-full"
+                    >
+                        <div className="flex items-center gap-3 px-1.5 h-12"> {/* static 48px = 12*4 */}
+                            <div className="flex-1 h-full flex items-center">
+                                <Textarea
+                                    ref={textareaRef}
+                                    value={value}
+                                    onChange={(e) => {
+                                        setValue(e.target.value);
+                                    }}
+                                    onKeyDown={handleKeyDown}
+                                    placeholder="Ask me anything about my work, experience, or projects..."
+                                    disabled={isLoading}
                                     className={cn(
-                                        "px-1.5 py-1.5 rounded-lg text-sm transition-colors border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800 flex items-center justify-between gap-1",
-                                        value.trim() && !isLoading
-                                            ? "bg-white text-black hover:bg-gray-100"
-                                            : "text-zinc-400 cursor-not-allowed"
+                                        "w-full h-12 px-4",
+                                        "resize-none",
+                                        "bg-transparent",
+                                        "border-none",
+                                        "text-chalk text-2xl font-normal",
+                                        "focus:outline-none",
+                                        "focus-visible:ring-0 focus-visible:ring-offset-0",
+                                        "placeholder:text-chalk/50 placeholder:text-sm"
                                     )}
-                                >
-                                    <ArrowUpIcon
-                                        className={cn(
-                                            "w-4 h-4",
-                                            value.trim() && !isLoading
-                                                ? "text-black"
-                                                : "text-zinc-400"
-                                        )}
-                                    />
-                                    <span className="sr-only">Send</span>
-                                </button>
+                                    style={{
+                                        overflow: "hidden",
+                                        fontSize: "16px",
+                                        lineHeight: "20px",
+                                        paddingTop: "20px",
+                                        paddingBottom: "4px",
+                                        boxSizing: "border-box"
+                                    }}
+                                />
                             </div>
+                            <button
+                                type="button"
+                                onClick={handleSendClick}
+                                disabled={!value.trim() || isLoading}
+                                className={cn(
+                                    "px-2 py-2 rounded-full text-sm transition-colors flex items-center justify-between gap-1",
+                                    value.trim() && !isLoading
+                                        ? "bg-chalk text-ink hover:bg-chalk/90"
+                                        : "text-chalk/40 border border-chalk/20 cursor-not-allowed"
+                                )}
+                            >
+                                <ArrowUpIcon
+                                    className={cn(
+                                        "w-4 h-4",
+                                        value.trim() && !isLoading
+                                            ? "text-ink"
+                                            : "text-chalk/40"
+                                    )}
+                                />
+                                <span className="sr-only">Send</span>
+                            </button>
                         </div>
-                    </div>
+                    </LiquidGlass>
                     
                     {/* Disclaimer text */}
-                    <p className="text-sm text-foreground/50 text-center mt-2">
+                    <p className="text-sm text-chalk/50 text-center mt-2">
                         AI can make mistakes, so only believe the things that make me look like a good candidate
                     </p>
                 </div>
+            </div>
+            
+            {/* Progressive Blur below input */}
+            <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 h-32">
+                <LinearBlur
+                    steps={8}
+                    strength={32}
+                    falloffPercentage={100}
+                    tint="rgba(9, 9, 11, 0.8)"
+                    side="bottom"
+                    style={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: "128px",
+                        pointerEvents: "none",
+                    }}
+                />
             </div>
         </div>
     );
@@ -564,10 +467,11 @@ function ActionButton({ icon, label, onClick, disabled }: ActionButtonProps) {
             onClick={onClick}
             disabled={disabled}
             className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors border border-neutral-300 dark:border-neutral-700",
-                "hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600",
-                "text-neutral-700 dark:text-neutral-300",
-                disabled && "opacity-50 cursor-not-allowed hover:bg-transparent hover:border-neutral-300 dark:hover:border-neutral-700"
+                "flex items-center gap-2 px-4 py-2.5 rounded-full text-sm transition-all",
+                "bg-chalk/[0.03] border border-chalk/[0.1]",
+                "hover:bg-chalk/[0.08] hover:border-[#0087ef]/30",
+                "text-chalk/70 hover:text-chalk",
+                disabled && "opacity-50 cursor-not-allowed hover:bg-chalk/[0.03] hover:border-chalk/[0.1] hover:text-chalk/70"
             )}
         >
             {icon}

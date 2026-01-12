@@ -22,9 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${outfit.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${outfit.variable} overflow-x-hidden`}>
       <Analytics />
-      <body className={`${outfit.className} antialiased bg-white`}>
+      <body className={`${outfit.className} antialiased bg-chalk overflow-x-hidden`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

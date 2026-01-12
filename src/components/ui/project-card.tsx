@@ -28,8 +28,8 @@ export function ProjectCard({
       <Link href={`/projects/${project.slug}`} className="group block h-full">
         <div 
           className={`
-            relative overflow-hidden rounded-2xl bg-white/[0.02] border border-white/[0.05]
-            hover:border-white/[0.1] transition-all h-full aspect-video
+            relative overflow-hidden rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05]
+            hover:border-chalk/[0.1] transition-all h-full aspect-video
           `}
         >
           {/* Background Image */}
@@ -59,7 +59,7 @@ export function ProjectCard({
               {project.tags.slice(0, maxTags).map((tag) => (
                 <span 
                   key={tag} 
-                  className="px-2.5 py-1 text-xs font-mono rounded-full bg-white/10 backdrop-blur-sm text-white/80 border border-white/10"
+                  className="px-2.5 py-1 text-xs font-mono rounded-full bg-chalk/10 backdrop-blur-sm text-chalk/80 border border-chalk/10"
                 >
                   {tag}
                 </span>
@@ -67,16 +67,16 @@ export function ProjectCard({
             </div>
 
             {/* Title & Description */}
-            <h3 className="font-semibold text-white mb-2 group-hover:text-[#0087ef] transition-colors text-xl md:text-2xl">
+            <h3 className="font-semibold text-chalk mb-2 group-hover:text-[#0087ef] transition-colors text-xl md:text-2xl">
               {project.title}
             </h3>
             
-            <p className="text-white/60 line-clamp-2 text-sm md:text-base">
+            <p className="text-chalk/60 line-clamp-2 text-sm md:text-base">
               {project.shortDescription}
             </p>
 
             {/* Arrow */}
-            <div className="mt-4 flex items-center gap-2 text-white/60 group-hover:text-[#0087ef] transition-colors">
+            <div className="mt-4 flex items-center gap-2 text-chalk/60 group-hover:text-[#0087ef] transition-colors">
               <span className="text-xs font-mono uppercase tracking-wider">View Project</span>
               <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </div>

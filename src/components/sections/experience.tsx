@@ -68,7 +68,7 @@ export function Experience() {
           <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-4 block">
             Expertise
           </span>
-          <h2 className="heading-base text-white">
+          <h2 className="heading-base text-chalk">
             What I Do
           </h2>
         </motion.div>
@@ -82,24 +82,24 @@ export function Experience() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative rounded-2xl p-6 bg-white/[0.02] border border-white/[0.05] hover:border-[#0087ef]/30 transition-all duration-500 overflow-hidden"
+              className="group relative rounded-2xl p-6 bg-chalk/[0.02] border border-chalk/[0.05] hover:border-[#0087ef]/30 transition-all duration-500 overflow-hidden"
             >
               {/* Gradient Border on Hover */}
               <div className="absolute inset-0 bg-[#0087ef]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               {/* Icon */}
-              <div className="relative z-10 w-12 h-12 rounded-xl bg-[#0087ef]/20 flex items-center justify-center mb-6 text-white">
+              <div className="relative z-10 w-12 h-12 rounded-xl bg-[#0087ef]/20 flex items-center justify-center mb-6 text-chalk">
                 {specialization.icon}
               </div>
 
               <div className="relative z-10">
-                <h4 className="text-xl font-semibold mb-2 text-white">{specialization.title}</h4>
+                <h4 className="text-xl font-semibold mb-2 text-chalk">{specialization.title}</h4>
                 {specialization.stats && (
                   <span className="inline-block text-xs font-mono px-2 py-1 rounded-full bg-[#0087ef]/20 text-[#0087ef] mb-3">
                     {specialization.stats}
                   </span>
                 )}
-                <p className="text-white/50 leading-relaxed">{specialization.description}</p>
+                <p className="text-chalk/50 leading-relaxed">{specialization.description}</p>
               </div>
             </motion.div>
           ))}

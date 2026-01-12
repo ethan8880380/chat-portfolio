@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import { SendIcon } from "lucide-react";
 import { useChatContext } from "@/context/ChatContext";
@@ -284,9 +285,18 @@ export function ChatBot({ className = "" }: { className?: string }) {
                 inputRef.current?.focus();
               }}
             >
+              <LiquidGlass
+                theme="dark"
+                blur={20}
+                opacity={0.6}
+                showBorder={true}
+                showGradient={true}
+                showLiquidBg={true}
+                applyDistortion={false}
+                className="rounded-2xl p-3"
+              >
               <motion.div 
                 layoutId="chat-content"
-                className="backdrop-blur-xl rounded-xl p-3 border bg-background"
                 transition={linearTransition}
               >
                 <motion.form 
@@ -304,7 +314,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Type your message..."
-                        className="w-full bg-background backdrop-blur-sm border text-foreground cursor-text focus:ring-2 focus:ring-primary"
+                        className="w-full bg-chalk/5 border-chalk/20 text-chalk placeholder:text-chalk/50 cursor-text focus:ring-2 focus:ring-[#0087ef]/50 focus:border-[#0087ef]/50"
                         disabled={isLoading}
                         onClick={(e) => {
                           // Prevent propagation to ensure clicks on the input don't trigger expansion
@@ -316,7 +326,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                       layoutId="send-button"
                       transition={linearTransition}
                     >
-                      <Button size="icon" type="submit">
+                      <Button size="icon" type="submit" className="bg-chalk text-ink hover:bg-chalk/90">
                         <SendIcon className="w-4 h-4" />
                       </Button>
                     </motion.div>
@@ -330,6 +340,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         size="icon"
                         onClick={() => setIsExpanded(true)}
                         title="Expand chat"
+                        className="border-chalk/20 text-chalk hover:bg-chalk/10 hover:border-chalk/40"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="15 3 21 3 21 9"></polyline>
@@ -342,6 +353,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                   </motion.div>
                 </motion.form>
               </motion.div>
+              </LiquidGlass>
             </motion.div>
           ) : (
             <>
@@ -350,7 +362,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                 animate={{ opacity: 0.6, backdropFilter: "blur(10px)" }}
                 exit={{ opacity: 0, backdropFilter: "blur(0px)", transition: { duration: 0.2 } }}
                 transition={linearTransition}
-                className="fixed inset-0 bg-background backdrop-blur-xl"
+                className="fixed inset-0 bg-ink/80 backdrop-blur-xl"
                 style={{
                   transition: "backdrop-filter 0.3s ease-out, background-color 0.3s ease-out"
                 }}
@@ -363,24 +375,34 @@ export function ChatBot({ className = "" }: { className?: string }) {
                   scale: !hasOpenedBefore ? springTransition : linearTransition,
                   exit: { duration: 0.15 }
                 }}
-                className="fixed inset-0 m-0 border border-border rounded-xl md:m-4 md:mx-auto md:inset-[5%] lg:inset-[10%] max-h-[100vh] md:max-h-[80vh] max-w-none md:max-w-[70vw] z-50"
+                className="fixed inset-0 m-0 md:m-4 md:mx-auto md:inset-[5%] lg:inset-[10%] max-h-[100vh] md:max-h-[80vh] max-w-none md:max-w-[70vw] z-50"
                 initial={!hasOpenedBefore ? { scale: 0.9, opacity: 0 } : { scale: 1, opacity: 1 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
               >
+                <LiquidGlass
+                  theme="dark"
+                  blur={20}
+                  opacity={0.85}
+                  showBorder={true}
+                  showGradient={true}
+                  showLiquidBg={true}
+                  applyDistortion={false}
+                  className="w-full h-full rounded-none md:rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+                >
                 <motion.div
                   layoutId="chat-content"
                   transition={linearTransition}
-                  className="w-full h-full bg-background/80 backdrop-blur-xl rounded-none md:rounded-xl overflow-hidden shadow-2xl flex flex-col border-none md:border"
+                  className="w-full h-full flex flex-col"
                 >
                   <motion.div
                     initial={!hasOpenedBefore ? { opacity: 0 } : { opacity: 1 }}
                     animate={{ opacity: 1 }}
                     transition={linearTransition}
-                    className="flex justify-between items-center p-4 border-b"
+                    className="flex justify-between items-center p-4 border-b border-chalk/10"
                   >
-                    <h2 className="text-lg font-semibold text-foreground">Chat</h2>
-                    <Button variant="ghost" size="icon" onClick={handleClose} className="text-foreground">
+                    <h2 className="text-lg font-semibold text-chalk">Chat</h2>
+                    <Button variant="ghost" size="icon" onClick={handleClose} className="text-chalk hover:bg-chalk/10">
                       ✕
                     </Button>
                   </motion.div>
@@ -396,7 +418,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={linearTransition}
-                        className="text-center h-[90%] flex items-center justify-center text-foreground"
+                        className="text-center h-[90%] flex items-center justify-center text-chalk/70"
                       >
                         Start a conversation!
                       </motion.div>
@@ -409,8 +431,8 @@ export function ChatBot({ className = "" }: { className?: string }) {
                           key={i}
                           className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[80%] rounded-lg px-3 py-2 ${
-                            message.role === 'user' ? 'bg-background text-foreground border' : 'text-foreground/80'
+                          <div className={`max-w-[80%] rounded-2xl px-3 py-2 ${
+                            message.role === 'user' ? 'bg-chalk text-ink' : 'text-chalk/90'
                           }`}>
                             {message.role === 'bot' && message === messages[messages.length - 1] && !message.seen ? (
                               <TypingAnimation 
@@ -440,9 +462,9 @@ export function ChatBot({ className = "" }: { className?: string }) {
                         transition={linearTransition}
                         className="flex justify-start"
                       >
-                        <div className="bg-muted rounded-lg px-4 py-2">
+                        <div className="bg-chalk/10 rounded-2xl px-4 py-2">
                           <div className="relative">
-                            <span className="font-medium text-base relative inline-block">
+                            <span className="font-medium text-base relative inline-block text-chalk">
                               <span className="opacity-0">thinking</span>
                               <span className="absolute inset-0 flex justify-center">
                                 {/* Shimmer effect for each letter of "thinking" */}
@@ -468,7 +490,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                   </motion.div>
 
                   <motion.div
-                    className="p-4 border-t"
+                    className="p-4 border-t border-chalk/10"
                   >
                     <motion.form 
                       onSubmit={handleSubmit} 
@@ -485,14 +507,14 @@ export function ChatBot({ className = "" }: { className?: string }) {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Type your message..."
-                            className="w-full backdrop-blur-xl cursor-text focus:ring-2 focus:ring-primary"
+                            className="w-full bg-chalk/5 border-chalk/20 text-chalk placeholder:text-chalk/50 cursor-text focus:ring-2 focus:ring-[#0087ef]/50 focus:border-[#0087ef]/50"
                           />
                         </div>
                         <motion.div 
                           layoutId="send-button"
                           transition={linearTransition}
                         >
-                          <Button size="icon" type="submit" disabled={isLoading}>
+                          <Button size="icon" type="submit" disabled={isLoading} className="bg-chalk text-ink hover:bg-chalk/90 disabled:bg-chalk/50">
                             <SendIcon className="w-4 h-4" />
                           </Button>
                         </motion.div>
@@ -506,6 +528,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                             size="icon"
                             onClick={handleClose}
                             title="Minimize chat"
+                            className="border-chalk/20 text-chalk hover:bg-chalk/10 hover:border-chalk/40"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="4 14 10 14 10 20"></polyline>
@@ -519,6 +542,7 @@ export function ChatBot({ className = "" }: { className?: string }) {
                     </motion.form>
                   </motion.div>
                 </motion.div>
+                </LiquidGlass>
               </motion.div>
             </>
           )}

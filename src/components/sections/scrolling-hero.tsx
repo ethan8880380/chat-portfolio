@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageSquare } from "lucide-react";
-import { projectsData, ProjectData } from "@/data/projects";
+import { ProjectData } from "@/data/projects";
 
-export function ScrollingHero() {
+interface ScrollingHeroProps {
+  projects: ProjectData[];
+}
+
+export function ScrollingHero({ projects }: ScrollingHeroProps) {
   const row1Ref = useRef<HTMLDivElement>(null);
   const row2Ref = useRef<HTMLDivElement>(null);
   const row3Ref = useRef<HTMLDivElement>(null);
@@ -19,13 +23,49 @@ export function ScrollingHero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
 
-  // Get project data for each row
-  const allProjects = projectsData;
-  
-  // Create three sets of projects for the rows
-  const row1Projects = [...allProjects, ...allProjects, ...allProjects];
-  const row2Projects = [...allProjects.slice().reverse(), ...allProjects.slice().reverse(), ...allProjects.slice().reverse()];
-  const row3Projects = [...allProjects, ...allProjects, ...allProjects];
+  // Get project data for each row and create unique distributions
+  const { row1Projects, row2Projects, row3Projects } = useMemo(() => {
+    const allProjects = projects;
+    
+    if (allProjects.length === 0) {
+      return {
+        row1Projects: [],
+        row2Projects: [],
+        row3Projects: [],
+      };
+    }
+    
+    // Helper function to rotate array deterministically
+    const rotateArray = <T,>(array: T[], offset: number): T[] => {
+      if (array.length === 0) return array;
+      const rotated = [...array];
+      for (let i = 0; i < offset; i++) {
+        rotated.push(rotated.shift()!);
+      }
+      return rotated;
+    };
+    
+    // Calculate optimal offsets to minimize duplicates on screen
+    // With ~3-4 projects visible per row, we want to offset by at least that amount
+    const offset1 = 0; // Row 1: Original order
+    const offset2 = Math.max(4, Math.floor(allProjects.length / 3)); // Row 2: Offset by ~1/3 or at least 4
+    const offset3 = Math.max(7, Math.floor(allProjects.length * 2 / 3)); // Row 3: Offset by ~2/3 or at least 7
+    
+    // Create unique distributions for each row to avoid duplicates on screen
+    // Row 1: Original order
+    const row1Base = [...allProjects];
+    // Row 2: Rotated to show different projects
+    const row2Base = rotateArray([...allProjects], offset2);
+    // Row 3: Reversed and rotated for maximum variety
+    const row3Base = rotateArray([...allProjects].reverse(), offset3);
+    
+    // Create three sets of projects for infinite scroll (repeat 3 times for seamless loop)
+    return {
+      row1Projects: [...row1Base, ...row1Base, ...row1Base],
+      row2Projects: [...row2Base, ...row2Base, ...row2Base],
+      row3Projects: [...row3Base, ...row3Base, ...row3Base],
+    };
+  }, [projects]);
 
   // Check for mobile on mount
   useEffect(() => {
@@ -44,7 +84,7 @@ export function ScrollingHero() {
     const positions = {
       row1: 0,
       row2: -33.333,
-      row3: 0,
+      row3: -16.666,
     };
 
     const uniformSpeed = 0.008;
@@ -126,7 +166,7 @@ export function ScrollingHero() {
   // Mobile Hero
   if (isMobile) {
     return (
-      <section className="min-h-screen bg-black flex flex-col">
+      <section className="min-h-screen bg-ink flex flex-col">
         {/* Hero Content */}
         <div className="flex-1 flex flex-col justify-center px-4 pt-24 pb-8">
           <motion.div
@@ -137,16 +177,16 @@ export function ScrollingHero() {
           >
             {/* Title */}
             <div>
-              <h1 className="text-4xl font-semibold text-white leading-tight">
+              <h1 className="text-4xl font-semibold text-chalk leading-tight">
                 Ethan Rogers
               </h1>
-              <p className="text-xl text-white/60 mt-2">
+              <p className="text-xl text-chalk/60 mt-2">
                 UX Designer & Front End Developer
               </p>
             </div>
 
             {/* Description */}
-            <p className="text-white/50 text-lg leading-relaxed">
+            <p className="text-chalk/50 text-lg leading-relaxed">
               Creating award-winning digital experiences from concept to code. 5+ years of designing and building enterprise platforms.
             </p>
 
@@ -154,14 +194,14 @@ export function ScrollingHero() {
             <div className="flex flex-col gap-3 pt-2">
               <Link
                 href="/work"
-                className="flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-white text-black font-semibold transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-chalk text-ink font-semibold transition-all"
               >
                 View My Work
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/chat"
-                className="flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-white/[0.05] border border-white/[0.1] text-white font-medium transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-chalk/[0.05] border border-chalk/[0.1] text-chalk font-medium transition-all"
               >
                 <MessageSquare className="w-4 h-4 text-[#0087ef]" />
                 Try My Chatbot
@@ -176,7 +216,7 @@ export function ScrollingHero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-xs font-mono uppercase tracking-[0.2em] text-white/40 px-4 mb-4"
+            className="text-xs font-mono uppercase tracking-[0.2em] text-chalk/40 px-4 mb-4"
           >
             Featured Projects
           </motion.p>
@@ -203,12 +243,12 @@ export function ScrollingHero() {
                     className="object-cover transition-transform duration-500 group-active:scale-105"
                     sizes="288px"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-white font-medium text-sm line-clamp-1">
+                    <h3 className="text-chalk font-medium text-sm line-clamp-1">
                       {project.title}
                     </h3>
-                    <p className="text-white/60 text-xs mt-1 line-clamp-1">
+                    <p className="text-chalk/60 text-xs mt-1 line-clamp-1">
                       {project.tags.slice(0, 2).join(" • ")}
                     </p>
                   </div>
@@ -226,7 +266,7 @@ export function ScrollingHero() {
     <>
       <div 
         ref={heroRef}
-        className="fixed inset-0 h-screen bg-white transition-opacity duration-100 ease-linear z-0"
+        className="fixed inset-0 h-screen bg-chalk transition-opacity duration-100 ease-linear z-0"
         style={{ opacity }}
       >
         {/* Scrolling Image Rows */}
@@ -289,6 +329,7 @@ export function ScrollingHero() {
             <div 
               ref={row3Ref}
               className="flex h-full w-[300%] will-change-transform"
+              style={{ transform: 'translateX(-16.666%)' }}
             >
               {row3Projects.map((project, index) => (
                 <Link 
@@ -318,7 +359,7 @@ export function ScrollingHero() {
       {/* Hover Preview */}
       {hoveredProject && (
         <div 
-          className="fixed pointer-events-none z-[200]"
+          className="fixed pointer-events-none z-[50]"
           style={{
             left: (() => {
               const previewWidth = 430;
@@ -340,12 +381,13 @@ export function ScrollingHero() {
             })(),
           }}
         >
-          <div className="bg-white/95 backdrop-blur-lg border border-black/10 rounded-xl p-4 shadow-xl">
+          <div className="bg-chalk/95 backdrop-blur-lg border border-ink/10 rounded-xl p-4 shadow-xl">
             <div className="w-96 aspect-video relative rounded-lg overflow-hidden">
               <Image
-                src={hoveredProject.images.gallery && hoveredProject.images.gallery.length > 0 
-                  ? hoveredProject.images.gallery[0] 
-                  : hoveredProject.images.hero}
+                src={hoveredProject.images.preview 
+                  || (hoveredProject.images.gallery && hoveredProject.images.gallery.length > 0 
+                    ? hoveredProject.images.gallery[0] 
+                    : hoveredProject.images.hero)}
                 alt={`${hoveredProject.title} preview`}
                 fill
                 className="object-cover"
@@ -353,7 +395,7 @@ export function ScrollingHero() {
               />
             </div>
             <div className="mt-4 px-1">
-              <h3 className="text-lg font-medium text-black">
+              <h3 className="text-lg font-medium text-ink">
                 {hoveredProject.title}
               </h3>
             </div>

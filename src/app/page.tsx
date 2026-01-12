@@ -10,10 +10,16 @@ import { Testimonials } from "@/components/sections/testimonials";
 import { CtaSection } from "@/components/sections/cta-section";
 import { EnhancedFooter } from "@/components/sections/enhanced-footer";
 import { StaticHeader } from "@/components/sections/static-header";
+import { getProjects, getFeaturedProjects } from "@/lib/projects-service";
 
-export default function Home() {
+export default async function Home() {
+  const [projects, featuredProjects] = await Promise.all([
+    getProjects(),
+    getFeaturedProjects(),
+  ]);
+
   return (
-    <>
+    <div className="overflow-x-hidden">
       {/* Noise Overlay */}
       <div className="noise-overlay" />
 
@@ -23,7 +29,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section with Scrolling Images - Fixed background (handles mobile internally) */}
-      <ScrollingHero />
+      <ScrollingHero projects={projects} />
       
       {/* Desktop only: Floating Nav */}
       <div className="hidden md:block">
@@ -36,7 +42,7 @@ export default function Home() {
       </div>
       
       {/* Main Content */}
-      <div className="relative z-10 bg-black">
+      <div className="relative z-10 bg-ink">
         {/* About Section with floating images - Desktop only since mobile hero has this content */}
         <div className="hidden md:block">
           <AboutSection />
@@ -52,7 +58,7 @@ export default function Home() {
         <WorkTimeline />
         
         {/* Featured Projects Showcase */}
-        <FeaturedProjects />
+        <FeaturedProjects projects={featuredProjects} />
         
         {/* Testimonials */}
         <Testimonials />
@@ -63,6 +69,6 @@ export default function Home() {
         {/* Footer */}
         <EnhancedFooter />
       </div>
-    </>
+    </div>
   );
 }

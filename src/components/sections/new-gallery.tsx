@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { projectsData } from "@/data/projects";
 
 // Combined gallery images with mobile and desktop image sources
 const galleryImages = [
@@ -565,7 +564,7 @@ export function NewGallery() {
                       <div className="mb-4 text-primary font-semibold text-sm">
                         Project 1
                       </div>
-                      <h3 className="text-2xl md:text-3xl font-bold mb-4 text-black dark:text-white">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-4 text-ink dark:text-chalk">
                         Commercial Analytics Hub
                       </h3>
                       <div className="w-16 h-1 bg-primary mb-6"></div>
@@ -575,7 +574,7 @@ export function NewGallery() {
                     </div>
                     
                     <div className="mt-auto">
-                      <Link href={`/projects/${projectsData[0].slug}`}>
+                      <Link href="/projects/commercial-analytics-hub">
                         <Button variant="ghost" className="group p-0 hover:bg-transparent">
                           View Project
                           <ArrowUpRight className="h-5 w-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -604,7 +603,7 @@ export function NewGallery() {
                         <div className="mb-4 text-primary font-semibold text-sm">
                           PROJECT {index + 2}
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-bold mb-4 text-black dark:text-white">
+                        <h3 className="text-2xl md:text-3xl font-bold mb-4 text-ink dark:text-chalk">
                           {image.title}
                         </h3>
                         <div className="w-16 h-1 bg-primary mb-6"></div>

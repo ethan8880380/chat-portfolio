@@ -113,7 +113,7 @@ export const AboutSection = (props: AboutSectionProps) => {
   ]);
 
   return (
-    <section ref={aboutRef} id="about" className="relative flex flex-col min-h-screen bg-black -mt-7">
+    <section ref={aboutRef} id="about" className="relative flex flex-col min-h-screen bg-ink -mt-7">
       <motion.div
         className="sticky top-1/4 -translate-y-1/2 z-0 mx-auto flex min-h-0 items-center justify-center md:min-h-[auto]"
         style={containerMotion}
@@ -133,7 +133,7 @@ export const AboutSection = (props: AboutSectionProps) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-3xl md:text-6xl font-semibold leading-tight tracking-tight mb-6 text-white"
+              className="text-3xl md:text-6xl font-semibold leading-tight tracking-tight mb-6 text-chalk"
             >
               {heading}
             </motion.h1>
@@ -142,7 +142,7 @@ export const AboutSection = (props: AboutSectionProps) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="relative z-20 text-lg md:text-xl text-white/60 leading-relaxed max-w-3xl mx-auto"
+              className="relative z-20 text-lg md:text-xl text-chalk/60 leading-relaxed max-w-3xl mx-auto"
             >
               {description}
             </motion.p>
@@ -153,11 +153,11 @@ export const AboutSection = (props: AboutSectionProps) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
-              className="relative z-20 mt-8 inline-flex items-center gap-3 px-5 py-3 rounded-full bg-white/[0.03] border border-white/[0.08]"
+              className="relative z-20 mt-8 inline-flex items-center gap-3 px-5 py-3 rounded-full bg-chalk/[0.03] border border-chalk/[0.08]"
             >
               <GraduationCap className="w-5 h-5 text-[#0087ef]" />
-              <span className="text-sm text-white/70">
-                <span className="text-white font-medium">University of Washington</span> · BDes Interaction Design
+              <span className="text-sm text-chalk/70">
+                <span className="text-chalk font-medium">University of Washington</span> · BDes Interaction Design
               </span>
             </motion.div>
 
@@ -170,13 +170,13 @@ export const AboutSection = (props: AboutSectionProps) => {
             >
               <Link 
                 href="/chat"
-                className="px-8 py-4 rounded-full bg-white text-black font-semibold hover:bg-white/90 transition-all"
+                className="px-8 py-4 rounded-full bg-chalk text-ink font-semibold hover:bg-chalk/90 transition-all"
               >
                 View Chatbot
               </Link>
               <Link 
                 href="/contact" 
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white/[0.03] border border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-[#0087ef]/30 transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] text-chalk hover:bg-chalk/[0.06] hover:border-[#0087ef]/30 transition-all"
               >
                 <Mail className="w-4 h-4" />
                 Contact Me
@@ -194,7 +194,7 @@ export const AboutSection = (props: AboutSectionProps) => {
               className="absolute w-full max-w-[45vw] md:max-w-[35vw] lg:max-w-[30vw] shadow-2xl"
               style={imageTransforms[index]}
             >
-              <div className="relative rounded-2xl overflow-hidden border border-white/10">
+              <div className="relative rounded-2xl overflow-hidden border border-chalk/10">
                 <Image 
                   src={image.src} 
                   alt={image.alt || ""} 
@@ -203,7 +203,7 @@ export const AboutSection = (props: AboutSectionProps) => {
                   height={500} 
                 />
                 {/* Image Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/30 to-transparent" />
               </div>
             </motion.div>
           ))}

@@ -12,8 +12,8 @@ interface ProjectHeroProps {
 export function ProjectHero({ project }: ProjectHeroProps) {
 
   return (
-    <section className="py-20 pt-32 bg-black">
-      <div className="px-4 md:px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+    <section className="py-20 pt-32 bg-ink">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         
 
         <div className="grid lg:grid-cols-1 col-span-3 gap-8 items-center">
@@ -25,7 +25,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
           transition={{ duration: 0.6 }}
           className=""
         >
-          <Link href="/work" className="inline-flex items-center text-white/60 hover:text-white transition-colors group">
+          <Link href="/work" className="inline-flex items-center text-chalk/60 hover:text-chalk transition-colors group">
             <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Projects
           </Link>
@@ -41,7 +41,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
               {project.tags.map((tag) => (
                 <span 
                   key={tag} 
-                  className="px-3 py-1 text-sm font-mono rounded-full bg-white/10 text-white/80 border border-white/10"
+                  className="px-3 py-1 text-sm font-mono rounded-full bg-chalk/10 text-chalk/80 border border-chalk/10"
                 >
                   {tag}
                 </span>
@@ -49,12 +49,12 @@ export function ProjectHero({ project }: ProjectHeroProps) {
             </div>
 
             {/* Title */}
-            <h1 className="heading-base text-left text-white">
+            <h1 className="heading-base text-left text-chalk">
               {project.title}
             </h1>
 
             {/* Description */}
-            <p className="text-lg md:text-xl text-white/60 leading-relaxed">
+            <p className="text-lg md:text-xl text-chalk/60 leading-relaxed">
               {project.shortDescription}
             </p>
 
@@ -65,7 +65,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
                   href={project.liveUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-white/90 transition-all group"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-chalk text-ink font-semibold hover:bg-chalk/90 transition-all group"
                 >
                   View Live Project
                   <ExternalLink className="h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -76,7 +76,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
                   href={project.githubUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/[0.08] text-white hover:bg-white/[0.06] hover:border-[#0087ef]/30 transition-all group"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] text-chalk hover:bg-chalk/[0.06] hover:border-[#0087ef]/30 transition-all group"
                 >
                   View Code
                   <Github className="h-4 w-4 group-hover:scale-110 transition-transform" />
@@ -108,7 +108,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
               </div>
               
               {/* Subtle gradient overlay for depth */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/20 to-transparent" />
             </div>
             
             {/* Decorative elements */}

@@ -17,6 +17,9 @@ export default {
         bleeding: ["Bleeding Cowboys", "cursive"],
   		},
   		colors: {
+  			// Off-black and off-white to avoid pure colors
+  			ink: '#09090b',      // off-black (neutral-950)
+  			chalk: '#fafaf9',    // off-white (stone-50)
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

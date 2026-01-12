@@ -6,6 +6,7 @@ export interface ProjectData {
   fullDescription: string;
   images: {
     hero: string;
+    preview?: string;
     gallery?: string[];
   };
   tags: string[];
@@ -24,6 +25,26 @@ export interface ProjectData {
   liveUrl?: string;
   githubUrl?: string;
   color: string;
+  featured?: boolean;
+  // Rich content from Notion page blocks (optional)
+  notionPageId?: string;
+  richContent?: NotionBlock[];
+}
+
+// Notion block types for rich content
+export interface NotionBlock {
+  id: string;
+  type: string;
+  content: string;
+  // For images, embeds, etc.
+  url?: string;
+  caption?: string;
+  // For lists
+  items?: string[];
+  // For code blocks
+  language?: string;
+  // For headings
+  level?: number;
 }
 
 export const projectsData: ProjectData[] = [
@@ -246,19 +267,22 @@ export const projectsData: ProjectData[] = [
   }
 ];
 
-// Helper function to get project by slug
-export function getProjectBySlug(slug: string): ProjectData | undefined {
+// Static helper functions (for fallback/development without Notion)
+export function getProjectBySlugStatic(slug: string): ProjectData | undefined {
   return projectsData.find(project => project.slug === slug);
 }
 
-// Helper function to get all project slugs
-export function getAllProjectSlugs(): string[] {
+export function getAllProjectSlugsStatic(): string[] {
   return projectsData.map(project => project.slug);
 }
 
-// Helper function to get related projects (excluding current)
-export function getRelatedProjects(currentSlug: string, limit: number = 4): ProjectData[] {
+export function getRelatedProjectsStatic(currentSlug: string, limit: number = 4): ProjectData[] {
   return projectsData
     .filter(project => project.slug !== currentSlug)
     .slice(0, limit);
-} 
+}
+
+// Legacy exports (kept for backward compatibility during migration)
+export const getProjectBySlug = getProjectBySlugStatic;
+export const getAllProjectSlugs = getAllProjectSlugsStatic;
+export const getRelatedProjects = getRelatedProjectsStatic; 

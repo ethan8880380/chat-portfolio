@@ -69,7 +69,7 @@ export function CtaSection() {
           <div className="relative rounded-3xl overflow-hidden">
             {/* Gradient Border */}
             <div className="absolute inset-0 rounded-3xl bg-[#0087ef]/50 p-px">
-              <div className="w-full h-full rounded-3xl bg-black" />
+              <div className="w-full h-full rounded-3xl bg-ink" />
             </div>
 
             <div className="relative p-8 md:p-16">
@@ -99,10 +99,10 @@ export function CtaSection() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-chalk/5 border border-chalk/10 mb-8"
                 >
                   <Sparkles className="w-4 h-4 text-[#0087ef]" />
-                  <span className="text-sm font-mono text-white/60">Available for new opportunities</span>
+                  <span className="text-sm font-mono text-chalk/60">Available for new opportunities</span>
                 </motion.div>
                 
                 <motion.h2
@@ -110,7 +110,7 @@ export function CtaSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-4xl md:text-6xl font-semibold text-white mb-6 leading-tight tracking-tight"
+                  className="text-4xl md:text-6xl font-semibold text-chalk mb-6 leading-tight tracking-tight"
                 >
                   Let's get to work
                 </motion.h2>
@@ -120,7 +120,7 @@ export function CtaSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="text-lg md:text-xl text-white/50 mb-10 max-w-2xl mx-auto"
+                  className="text-lg md:text-xl text-chalk/50 mb-10 max-w-2xl mx-auto"
                 >
                   I'm currently seeking new opportunities, collaborations, and conversations 
                   about design, development, and everything in between.
@@ -136,25 +136,22 @@ export function CtaSection() {
                 >
                   <Link 
                     href="/contact"
-                    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-semibold hover:bg-white/90 transition-all group"
+                    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-chalk text-ink font-semibold hover:bg-chalk/90 transition-all group"
                   >
                     Get in Touch
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
 
                   <button 
-                    onClick={handleChatOpen}
-                    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-[#0087ef]/30 transition-all group"
-                  >
-                    <MessageSquare className="w-4 h-4 text-[#0087ef]" />
-                    Try My Chatbot
+                    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-chalk/5 border border-chalk/10 text-chalk font-medium hover:bg-chalk/10 hover:border-[#0087ef]/30 transition-all group"
+                  ><Link href="/chat" className="inline-flex items-center gap-2">    Try My Chatbot <MessageSquare className="w-4 h-4 text-[#0087ef]" /></Link>
                   </button>
 
                   <a 
                     href="/ethan-rogers-resume.pdf" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white/60 hover:text-white transition-all group"
+                    className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-chalk/60 hover:text-chalk transition-all group"
                   >
                     <Download className="w-4 h-4" />
                     Resume
@@ -173,25 +170,25 @@ export function CtaSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="rounded-2xl p-6 md:p-8 bg-white/[0.02] border border-white/[0.05]"
+            className="rounded-2xl p-6 md:p-8 bg-chalk/[0.02] border border-chalk/[0.05]"
           >
-            <h4 className="text-sm font-mono uppercase tracking-[0.2em] text-white/40 mb-6">Contact</h4>
+            <h4 className="text-sm font-mono uppercase tracking-[0.2em] text-chalk/40 mb-6">Contact</h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {contactInfo.map((item, index) => (
                 <div key={index} className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-white/40">
+                  <div className="flex items-center gap-2 text-chalk/40">
                     <item.icon className="w-4 h-4" />
                     <span className="text-xs font-mono uppercase tracking-wider">{item.label}</span>
                   </div>
                   {item.href ? (
                     <a 
                       href={item.href}
-                      className="text-white hover:text-[#0087ef] transition-colors font-medium"
+                      className="text-chalk hover:text-[#0087ef] transition-colors font-medium"
                     >
                       {item.value}
                     </a>
                   ) : (
-                    <span className="text-white font-medium">{item.value}</span>
+                    <span className="text-chalk font-medium">{item.value}</span>
                   )}
                 </div>
               ))}
@@ -204,9 +201,9 @@ export function CtaSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="rounded-2xl p-6 md:p-8 bg-white/[0.02] border border-white/[0.05]"
+            className="rounded-2xl p-6 md:p-8 bg-chalk/[0.02] border border-chalk/[0.05]"
           >
-            <h4 className="text-sm font-mono uppercase tracking-[0.2em] text-white/40 mb-6">Connect</h4>
+            <h4 className="text-sm font-mono uppercase tracking-[0.2em] text-chalk/40 mb-6">Connect</h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {socialLinks.map((item, index) => (
                 <a
@@ -214,13 +211,13 @@ export function CtaSection() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:border-[#0087ef]/30 hover:bg-[#0087ef]/5 transition-all group"
+                  className="flex items-center justify-between p-4 rounded-xl bg-chalk/[0.03] border border-chalk/[0.05] hover:border-[#0087ef]/30 hover:bg-[#0087ef]/5 transition-all group"
                 >
                   <div className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5 text-white/50 group-hover:text-[#0087ef] transition-colors" />
-                    <span className="font-medium text-white/80 group-hover:text-white transition-colors">{item.label}</span>
+                    <item.icon className="w-5 h-5 text-chalk/50 group-hover:text-[#0087ef] transition-colors" />
+                    <span className="font-medium text-chalk/80 group-hover:text-chalk transition-colors">{item.label}</span>
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-white/30 group-hover:text-[#0087ef] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <ArrowUpRight className="w-4 h-4 text-chalk/30 group-hover:text-[#0087ef] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
               ))}
             </div>
