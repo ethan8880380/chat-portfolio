@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  turbopack: {},
   webpack(config) {
     config.module.rules.push({
       test: /\.gif$/,
