@@ -229,11 +229,11 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
             className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {allProjects.slice(0, 6).map((project, index) => (
+            {projects.slice(0, 6).map((project, index) => (
               <Link
                 key={project.id}
                 href={`/projects/${project.slug}`}
-                className={`flex-shrink-0 snap-start ${index === 0 ? 'ml-4' : ''} ${index === allProjects.slice(0, 6).length - 1 ? 'mr-4' : ''}`}
+                className={`flex-shrink-0 snap-start ${index === 0 ? 'ml-4' : ''} ${index === projects.slice(0, 6).length - 1 ? 'mr-4' : ''}`}
               >
                 <div className="w-72 aspect-video relative rounded-2xl overflow-hidden group">
                   <Image
