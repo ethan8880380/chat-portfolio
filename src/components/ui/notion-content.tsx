@@ -96,6 +96,10 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "image":
       if (!block.url) return null;
+      // Check if URL is from Notion (s3 or notion.so domains)
+      const isNotionUrl = block.url.includes("s3.us-west-2.amazonaws.com") || 
+                          block.url.includes("notion.so") ||
+                          block.url.includes("prod-files-secure");
       return (
         <figure className="my-8">
           <div className="relative w-full aspect-video rounded-xl overflow-hidden">
@@ -105,6 +109,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 896px"
+              unoptimized={isNotionUrl}
             />
           </div>
           {block.caption && (

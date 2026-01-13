@@ -72,7 +72,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </div>
               
               {/* Sticky CTA Sidebar - 1/4 width */}
-              <div className="lg:w-1/4">
+              <div className="lg:w-1/4 lg:self-start">
                 <div className="sticky top-24">
                   <div className="bg-chalk/5 border border-chalk/10 rounded-3xl p-6 space-y-6">
                     <div>
