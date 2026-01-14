@@ -95,6 +95,7 @@ function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps) {
             className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
             sizes="(max-width: 768px) 100vw, 50vw"
             quality={90}
+            priority={index < 2}
           />
 
           {/* Gradient Overlay */}

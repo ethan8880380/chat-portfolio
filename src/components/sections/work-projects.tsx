@@ -51,6 +51,7 @@ function WorkProjectCard({ project, index }: WorkProjectCardProps) {
             sizes="(max-width: 768px) 100vw, 50vw"
             quality={90}
             unoptimized={isNotionUrl(project.images.hero)}
+            priority={index < 2}
           />
 
           {/* Gradient Overlay */}

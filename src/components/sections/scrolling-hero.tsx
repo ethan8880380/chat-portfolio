@@ -242,6 +242,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                     fill
                     className="object-cover transition-transform duration-500 group-active:scale-105"
                     sizes="288px"
+                    priority={index < 3}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -291,6 +292,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                     fill
                     className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
                     sizes="33vw"
+                    priority={index < 2}
                   />
                 </Link>
               ))}
@@ -318,6 +320,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                     fill
                     className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
                     sizes="33vw"
+                    priority={index < 2}
                   />
                 </Link>
               ))}
@@ -345,6 +348,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                     fill
                     className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
                     sizes="33vw"
+                    priority={index < 2}
                   />
                 </Link>
               ))}
