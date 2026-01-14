@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { ProjectData } from "@/data/projects";
+import { isNotionUrl } from "@/lib/utils";
 
 interface ProjectCardProps {
   project: ProjectData;
@@ -41,6 +42,7 @@ export function ProjectCard({
               className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
               sizes={imageSizes}
               quality={90}
+              unoptimized={isNotionUrl(project.images.hero)}
             />
           </div>
 
