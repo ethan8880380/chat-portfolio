@@ -6,6 +6,7 @@ const NOTION_API_KEY = process.env.NOTION_API_KEY;
  * API route to proxy Notion images
  * Notion image URLs are temporary signed URLs that expire after ~1 hour
  * This route fetches fresh URLs on-demand
+ * This in needed because Notion image urls are temporary signed urls that expire after ~1 hour
  */
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
