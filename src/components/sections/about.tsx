@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useMemo } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { Mail, GraduationCap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,10 +27,16 @@ export const AboutSection = (props: AboutSectionProps) => {
   };
 
   const [isMobile, setIsMobile] = useState(false);
-  const aboutRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
+  const aboutRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: aboutRef,
     offset: ["start end", "end start"],
+  });
+
+  // Track when section is in view for fixed positioning
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setIsInView(latest > 0.1 && latest < 0.9);
   });
 
   useEffect(() => {
@@ -43,39 +49,38 @@ export const AboutSection = (props: AboutSectionProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const containerMotion = {
-    opacity: useTransform(scrollYProgress, [0, 0.3, 0.5], [1, 1, 0]),
-    scale: useTransform(scrollYProgress, [0, 0.5], [1, 0.95]),
-  };
+  // Text fades in early, stays visible, fades out near end
+  const textOpacity = useTransform(scrollYProgress, [0.1, 0.2, 0.7, 0.85], [0, 1, 1, 0]);
+  const textScale = useTransform(scrollYProgress, [0.1, 0.2, 0.7, 0.85], [0.95, 1, 1, 0.95]);
 
   // Create all transform hooks at the top level, unconditionally
-  // Mobile transforms
-  const mobileTranslateX1 = useTransform(scrollYProgress, [0, 1], ["20%", "120%"]);
-  const mobileTranslateY1 = useTransform(scrollYProgress, [0, 1], ["15%", "100%"]);
-  const mobileRotateZ1 = useTransform(scrollYProgress, [0, 1], ["0.6deg", "4deg"]);
-  const mobileTranslateX2 = useTransform(scrollYProgress, [0, 1], ["-20%", "-120%"]);
-  const mobileTranslateY2 = useTransform(scrollYProgress, [0, 1], ["-15%", "-100%"]);
-  const mobileRotateZ2 = useTransform(scrollYProgress, [0, 1], ["-3deg", "4deg"]);
-  const mobileTranslateX3 = useTransform(scrollYProgress, [0, 1], ["25%", "150%"]);
-  const mobileTranslateY3 = useTransform(scrollYProgress, [0, 1], ["-10%", "-60%"]);
-  const mobileRotateZ3 = useTransform(scrollYProgress, [0, 1], ["-0.6deg", "-6deg"]);
-  const mobileTranslateX4 = useTransform(scrollYProgress, [0, 1], ["-25%", "-150%"]);
-  const mobileTranslateY4 = useTransform(scrollYProgress, [0, 1], ["12%", "80%"]);
-  const mobileRotateZ4 = useTransform(scrollYProgress, [0, 1], ["4.6deg", "8deg"]);
+  // Mobile transforms - images spread outward
+  const mobileTranslateX1 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "150%"]);
+  const mobileTranslateY1 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "100%"]);
+  const mobileRotateZ1 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "6deg"]);
+  const mobileTranslateX2 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-150%"]);
+  const mobileTranslateY2 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-100%"]);
+  const mobileRotateZ2 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "6deg"]);
+  const mobileTranslateX3 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "180%"]);
+  const mobileTranslateY3 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-70%"]);
+  const mobileRotateZ3 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "-8deg"]);
+  const mobileTranslateX4 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-180%"]);
+  const mobileTranslateY4 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "70%"]);
+  const mobileRotateZ4 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "10deg"]);
 
-  // Desktop transforms
-  const desktopTranslateX1 = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const desktopTranslateY1 = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
-  const desktopRotateZ1 = useTransform(scrollYProgress, [0, 1], ["0deg", "-4deg"]);
-  const desktopTranslateX2 = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
-  const desktopTranslateY2 = useTransform(scrollYProgress, [0, 1], ["0%", "-90%"]);
-  const desktopRotateZ2 = useTransform(scrollYProgress, [0, 1], ["4deg", "4deg"]);
-  const desktopTranslateX3 = useTransform(scrollYProgress, [0, 1], ["0%", "140%"]);
-  const desktopTranslateY3 = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
-  const desktopRotateZ3 = useTransform(scrollYProgress, [0, 1], ["0deg", "-12deg"]);
-  const desktopTranslateX4 = useTransform(scrollYProgress, [0, 1], ["0%", "-140%"]);
-  const desktopTranslateY4 = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
-  const desktopRotateZ4 = useTransform(scrollYProgress, [0, 1], ["8deg", "8deg"]);
+  // Desktop transforms - images spread wider
+  const desktopTranslateX1 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "140%"]);
+  const desktopTranslateY1 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "80%"]);
+  const desktopRotateZ1 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "-6deg"]);
+  const desktopTranslateX2 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-70%"]);
+  const desktopTranslateY2 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-100%"]);
+  const desktopRotateZ2 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "6deg"]);
+  const desktopTranslateX3 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "160%"]);
+  const desktopTranslateY3 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-50%"]);
+  const desktopRotateZ3 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "-15deg"]);
+  const desktopTranslateX4 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "-160%"]);
+  const desktopTranslateY4 = useTransform(scrollYProgress, [0.25, 0.9], ["0%", "80%"]);
+  const desktopRotateZ4 = useTransform(scrollYProgress, [0.25, 0.9], ["0deg", "12deg"]);
 
   // Create image transforms by selecting the appropriate pre-calculated values
   const imageTransforms = useMemo(() => [
@@ -113,104 +118,75 @@ export const AboutSection = (props: AboutSectionProps) => {
   ]);
 
   return (
-    <section ref={aboutRef} id="about" className="relative flex flex-col min-h-screen bg-ink -mt-7">
-      <motion.div
-        className="sticky top-1/4 -translate-y-1/2 z-0 mx-auto flex min-h-0 items-center justify-center md:min-h-[auto]"
-        style={containerMotion}
-      >
-        <div className="py-16 text-center md:py-24 lg:py-28 px-4 md:px-6">
-          <div className="max-w-4xl mx-auto w-full">
-            <motion.span 
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-6 block"
-            >
-              {tagline}
-            </motion.span>
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-3xl md:text-6xl font-semibold leading-tight tracking-tight mb-6 text-chalk"
-            >
-              {heading}
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="relative z-20 text-lg md:text-xl text-chalk/60 leading-relaxed max-w-3xl mx-auto"
-            >
-              {description}
-            </motion.p>
-            
-            {/* Education Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="relative z-20 mt-8 inline-flex items-center gap-3 px-5 py-3 rounded-full bg-chalk/[0.03] border border-chalk/[0.08]"
-            >
-              <GraduationCap className="w-5 h-5 text-[#0087ef]" />
-              <span className="text-sm text-chalk/70">
-                <span className="text-chalk font-medium">University of Washington</span> · BDes Interaction Design
+    <section ref={aboutRef} id="about" className="relative bg-ink -mt-7 h-[300vh] hidden md:block">
+      {/* Fixed text content - stays centered when section is in view */}
+      {isInView && (
+        <motion.div
+          className="fixed inset-0 flex items-center justify-center z-0 pointer-events-none"
+          style={{ opacity: textOpacity, scale: textScale }}
+        >
+          <div className="py-16 text-center md:py-24 lg:py-28 px-4 md:px-6 pointer-events-auto">
+            <div className="max-w-4xl mx-auto w-full">
+              <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#0087ef] mb-6 block">
+                {tagline}
               </span>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="relative z-20 mt-8 flex items-center justify-center gap-4"
-            >
-              <Link 
-                href="/chat"
-                className="px-8 py-4 rounded-full bg-chalk text-ink font-semibold hover:bg-chalk/90 transition-all"
-              >
-                View Chatbot
-              </Link>
-              <Link 
-                href="/contact" 
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] text-chalk hover:bg-chalk/[0.06] hover:border-[#0087ef]/30 transition-all"
-              >
-                <Mail className="w-4 h-4" />
-                Contact Me
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </motion.div>
-
-      <div className="relative z-10 flex h-[100svh] flex-col justify-center sm:h-[120svh] md:h-[120svh] lg:h-[140vh] lg:justify-normal">
-        <div className="relative flex size-full items-center justify-center overflow-visible">
-          {images.map((image, index) => (
-            <motion.div
-              key={index}
-              className="absolute w-full max-w-[45vw] md:max-w-[35vw] lg:max-w-[30vw] shadow-2xl"
-              style={imageTransforms[index]}
-            >
-              <div className="relative rounded-2xl overflow-hidden border border-chalk/10">
-                <Image 
-                  src={image.src} 
-                  alt={image.alt || ""} 
-                  className="size-full object-cover"
-                  width={500}
-                  height={500} 
-                />
-                {/* Image Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/30 to-transparent" />
+              <h1 className="text-3xl md:text-6xl font-semibold leading-tight tracking-tight mb-6 text-chalk">
+                {heading}
+              </h1>
+              <p className="text-lg md:text-xl text-chalk/60 leading-relaxed max-w-3xl mx-auto">
+                {description}
+              </p>
+              
+              {/* Education Badge */}
+              <div className="mt-8 inline-flex items-center gap-3 px-5 py-3 rounded-full bg-chalk/[0.03] border border-chalk/[0.08]">
+                <GraduationCap className="w-5 h-5 text-[#0087ef]" />
+                <span className="text-sm text-chalk/70">
+                  <span className="text-chalk font-medium">University of Washington</span> · BDes Interaction Design
+                </span>
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
 
-      <div className="absolute inset-0 -z-10 mt-[80vh] sm:mt-[100vh]" />
+              <div className="mt-8 flex items-center justify-center gap-4">
+                <Link 
+                  href="/chat"
+                  className="px-8 py-4 rounded-full bg-chalk text-ink font-semibold hover:bg-chalk/90 transition-all"
+                >
+                  View Chatbot
+                </Link>
+                <Link 
+                  href="/contact" 
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-chalk/[0.03] border border-chalk/[0.08] text-chalk hover:bg-chalk/[0.06] hover:border-[#0087ef]/30 transition-all"
+                >
+                  <Mail className="w-4 h-4" />
+                  Contact Me
+                </Link>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Images - animate based on scroll */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {images.map((image, index) => (
+          <motion.div
+            key={index}
+            className="absolute w-full max-w-[45vw] md:max-w-[35vw] lg:max-w-[30vw] shadow-2xl"
+            style={imageTransforms[index]}
+          >
+            <div className="relative rounded-2xl overflow-hidden border border-chalk/10">
+              <Image 
+                src={image.src} 
+                alt={image.alt || ""} 
+                className="size-full object-cover"
+                width={500}
+                height={500} 
+              />
+              {/* Image Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/30 to-transparent" />
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </section>
   );
 };

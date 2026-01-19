@@ -121,12 +121,11 @@
   }
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
   }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Outfit', system-ui, sans-serif;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 }
 

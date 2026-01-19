@@ -44,9 +44,7 @@ export default async function Home() {
       {/* Main Content */}
       <div className="relative z-10 bg-ink">
         {/* About Section with floating images - Desktop only since mobile hero has this content */}
-        <div className="hidden md:block">
-          <AboutSection />
-        </div>
+        <AboutSection />
         
         {/* Skills & Stats Marquee */}
         <StatsMarquee />

@@ -8,6 +8,26 @@ interface NotionContentProps {
   className?: string;
 }
 
+/**
+ * Helper to get the image URL - uses proxy for Notion-hosted images to avoid expired signed URLs
+ */
+function getImageUrl(block: NotionBlock): string {
+  if (!block.url) return "";
+  
+  // Check if this is a Notion-hosted image (signed URL that expires)
+  const isNotionHosted = 
+    block.url.includes("s3.us-west-2.amazonaws.com") || 
+    block.url.includes("notion.so") ||
+    block.url.includes("prod-files-secure");
+  
+  // Use proxy API for Notion-hosted images to get fresh signed URLs
+  if (isNotionHosted && block.id) {
+    return `/api/notion-image?blockId=${block.id}`;
+  }
+  
+  return block.url;
+}
+
 export function NotionContent({ blocks, className = "" }: NotionContentProps) {
   if (!blocks || blocks.length === 0) {
     return null;
@@ -94,22 +114,21 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
         </pre>
       );
 
-    case "image":
+    case "image": {
       if (!block.url) return null;
-      // Check if URL is from Notion (s3 or notion.so domains)
-      const isNotionUrl = block.url.includes("s3.us-west-2.amazonaws.com") || 
-                          block.url.includes("notion.so") ||
-                          block.url.includes("prod-files-secure");
+      const imageUrl = getImageUrl(block);
+      // Use unoptimized for proxy URLs since they redirect
+      const useProxy = imageUrl.startsWith("/api/");
       return (
         <figure className="my-8">
           <div className="relative w-full aspect-video rounded-xl overflow-hidden">
             <Image
-              src={block.url}
+              src={imageUrl}
               alt={block.caption || "Project image"}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 896px"
-              unoptimized={isNotionUrl}
+              unoptimized={useProxy}
             />
           </div>
           {block.caption && (
@@ -119,14 +138,16 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
           )}
         </figure>
       );
+    }
 
-    case "video":
+    case "video": {
       if (!block.url) return null;
+      const videoUrl = getImageUrl(block);
       return (
         <figure className="my-8">
           <div className="relative w-full aspect-video rounded-xl overflow-hidden">
             <video
-              src={block.url}
+              src={videoUrl}
               controls
               className="w-full h-full object-cover"
             />
@@ -138,6 +159,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
           )}
         </figure>
       );
+    }
 
     case "embed":
       if (!block.url) return null;

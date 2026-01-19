@@ -22,6 +22,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
   const [hoveredProject, setHoveredProject] = useState<ProjectData | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
   // Get project data for each row and create unique distributions
   const { row1Projects, row2Projects, row3Projects } = useMemo(() => {
@@ -163,6 +164,22 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isMobile]);
 
+  // Preload hover preview images
+  useEffect(() => {
+    const preloadImages = projects.map((project) => {
+      const previewUrl = project.images.preview 
+        || (project.images.gallery && project.images.gallery.length > 0 
+          ? project.images.gallery[0] 
+          : project.images.hero);
+      return previewUrl;
+    }).filter(Boolean);
+
+    preloadImages.forEach((url) => {
+      const img = new window.Image();
+      img.src = url;
+    });
+  }, [projects]);
+
   // Mobile Hero
   if (isMobile) {
     return (
@@ -236,14 +253,17 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                 className={`flex-shrink-0 snap-start ${index === 0 ? 'ml-4' : ''} ${index === projects.slice(0, 6).length - 1 ? 'mr-4' : ''}`}
               >
                 <div className="w-72 aspect-video relative rounded-2xl overflow-hidden group">
-                  <Image
-                    src={project.images.hero}
-                    alt={project.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-active:scale-105"
-                    sizes="288px"
-                    priority={index < 3}
-                  />
+                  <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
+                    <Image
+                      src={project.images.hero}
+                      alt={project.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-active:scale-105"
+                      sizes="288px"
+                      priority={index < 3}
+                      onLoad={() => setLoadedImages((prev) => new Set([...prev, project.images.hero]))}
+                    />
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <h3 className="text-chalk font-medium text-sm line-clamp-1">
@@ -286,14 +306,17 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                   onMouseEnter={() => setHoveredProject(project)}
                   onMouseLeave={() => setHoveredProject(null)}
                 >
-                  <Image
-                    src={project.images.hero}
-                    alt={project.title}
-                    fill
-                    className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
-                    sizes="33vw"
-                    priority={index < 2}
-                  />
+                  <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
+                    <Image
+                      src={project.images.hero}
+                      alt={project.title}
+                      fill
+                      className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
+                      sizes="33vw"
+                      priority={index < 2}
+                      onLoad={() => setLoadedImages((prev) => new Set([...prev, project.images.hero]))}
+                    />
+                  </div>
                 </Link>
               ))}
             </div>
@@ -314,14 +337,17 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                   onMouseEnter={() => setHoveredProject(project)}
                   onMouseLeave={() => setHoveredProject(null)}
                 >
-                  <Image
-                    src={project.images.hero}
-                    alt={project.title}
-                    fill
-                    className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
-                    sizes="33vw"
-                    priority={index < 2}
-                  />
+                  <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
+                    <Image
+                      src={project.images.hero}
+                      alt={project.title}
+                      fill
+                      className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
+                      sizes="33vw"
+                      priority={index < 2}
+                      onLoad={() => setLoadedImages((prev) => new Set([...prev, project.images.hero]))}
+                    />
+                  </div>
                 </Link>
               ))}
             </div>
@@ -342,14 +368,17 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                   onMouseEnter={() => setHoveredProject(project)}
                   onMouseLeave={() => setHoveredProject(null)}
                 >
-                  <Image
-                    src={project.images.hero}
-                    alt={project.title}
-                    fill
-                    className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
-                    sizes="33vw"
-                    priority={index < 2}
-                  />
+                  <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
+                    <Image
+                      src={project.images.hero}
+                      alt={project.title}
+                      fill
+                      className="object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
+                      sizes="33vw"
+                      priority={index < 2}
+                      onLoad={() => setLoadedImages((prev) => new Set([...prev, project.images.hero]))}
+                    />
+                  </div>
                 </Link>
               ))}
             </div>
