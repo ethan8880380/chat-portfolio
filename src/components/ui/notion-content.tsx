@@ -117,19 +117,29 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
     case "image": {
       if (!block.url) return null;
       const imageUrl = getImageUrl(block);
-      // Use unoptimized for proxy URLs since they redirect
-      const useProxy = imageUrl.startsWith("/api/");
+      const isProxied = imageUrl.startsWith("/api/");
+      
       return (
         <figure className="my-8">
           <div className="relative w-full aspect-video rounded-xl overflow-hidden">
-            <Image
-              src={imageUrl}
-              alt={block.caption || "Project image"}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 896px"
-              unoptimized={useProxy}
-            />
+            {isProxied ? (
+              // Use regular img for proxied Notion images to avoid Next.js Image issues
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageUrl}
+                alt={block.caption || "Project image"}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <Image
+                src={imageUrl}
+                alt={block.caption || "Project image"}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 896px"
+              />
+            )}
           </div>
           {block.caption && (
             <figcaption className="text-center text-chalk/50 text-lg mt-3">

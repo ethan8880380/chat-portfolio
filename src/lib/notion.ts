@@ -19,6 +19,8 @@ async function notionFetch(endpoint: string, options: RequestInit = {}) {
       "Content-Type": "application/json",
       ...options.headers,
     },
+    // Revalidate every hour to keep content fresh
+    next: { revalidate: 3600 },
   });
 
   if (!response.ok) {

@@ -1,12 +1,15 @@
- import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
+
+// Force dynamic - never cache this route
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 /**
  * API route to proxy Notion images
  * Notion image URLs are temporary signed URLs that expire after ~1 hour
- * This route fetches fresh URLs on-demand
- * This in needed because Notion image urls are temporary signed urls that expire after ~1 hour
+ * This route fetches fresh URLs and streams the image data directly
  */
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -27,7 +30,6 @@ export async function GET(request: NextRequest) {
         "Authorization": `Bearer ${NOTION_API_KEY}`,
         "Notion-Version": "2022-06-28",
       },
-      // Don't cache this response - we need fresh URLs
       cache: "no-store",
     });
 
@@ -39,41 +41,67 @@ export async function GET(request: NextRequest) {
 
     const block = await response.json();
     
-    let imageUrl: string | null = null;
+    let mediaUrl: string | null = null;
 
     // Handle image blocks
     if (block.type === "image") {
       if (block.image?.type === "file") {
-        imageUrl = block.image.file?.url;
+        mediaUrl = block.image.file?.url;
       } else if (block.image?.type === "external") {
-        imageUrl = block.image.external?.url;
+        mediaUrl = block.image.external?.url;
       }
     }
     
     // Handle video blocks
     if (block.type === "video") {
       if (block.video?.type === "file") {
-        imageUrl = block.video.file?.url;
+        mediaUrl = block.video.file?.url;
       } else if (block.video?.type === "external") {
-        imageUrl = block.video.external?.url;
+        mediaUrl = block.video.external?.url;
       }
     }
 
     // Handle file blocks
     if (block.type === "file") {
       if (block.file?.type === "file") {
-        imageUrl = block.file.file?.url;
+        mediaUrl = block.file.file?.url;
       } else if (block.file?.type === "external") {
-        imageUrl = block.file.external?.url;
+        mediaUrl = block.file.external?.url;
       }
     }
 
-    if (!imageUrl) {
+    if (!mediaUrl) {
       return NextResponse.json({ error: "No media URL found in block" }, { status: 404 });
     }
 
-    // Redirect to the fresh signed URL
-    return NextResponse.redirect(imageUrl);
+    // Fetch the actual image/media and stream it back
+    const mediaResponse = await fetch(mediaUrl, {
+      cache: "no-store",
+    });
+
+    if (!mediaResponse.ok) {
+      console.error("Failed to fetch media:", mediaResponse.status);
+      return NextResponse.json({ error: "Failed to fetch media" }, { status: mediaResponse.status });
+    }
+
+    // Get the content type from the response
+    const contentType = mediaResponse.headers.get("content-type") || "application/octet-stream";
+    
+    // Stream the response body
+    const body = mediaResponse.body;
+    
+    if (!body) {
+      return NextResponse.json({ error: "No response body" }, { status: 500 });
+    }
+
+    // Return the image with appropriate headers
+    return new NextResponse(body, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+      },
+    });
   } catch (error) {
     console.error("Error fetching Notion image:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

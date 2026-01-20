@@ -12,6 +12,9 @@ import { CtaSection } from "@/components/sections/cta-section";
 import { EnhancedFooter } from "@/components/sections/enhanced-footer";
 import { NotionContent } from "@/components/ui/notion-content";
 
+// Revalidate page every hour to keep Notion content fresh
+export const revalidate = 3600;
+
 interface ProjectPageProps {
   params: Promise<{
     slug: string;
