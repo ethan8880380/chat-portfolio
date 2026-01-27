@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { ProjectData } from "@/data/projects";
+import { ProjectImage } from "@/components/ui/project-image";
 
 interface ScrollingHeroProps {
   projects: ProjectData[];
@@ -254,7 +254,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
               >
                 <div className="w-72 aspect-video relative rounded-2xl overflow-hidden group">
                   <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
-                    <Image
+                    <ProjectImage
                       src={project.images.hero}
                       alt={project.title}
                       fill
@@ -307,7 +307,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                   onMouseLeave={() => setHoveredProject(null)}
                 >
                   <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
-                    <Image
+                    <ProjectImage
                       src={project.images.hero}
                       alt={project.title}
                       fill
@@ -338,7 +338,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                   onMouseLeave={() => setHoveredProject(null)}
                 >
                   <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
-                    <Image
+                    <ProjectImage
                       src={project.images.hero}
                       alt={project.title}
                       fill
@@ -369,7 +369,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
                   onMouseLeave={() => setHoveredProject(null)}
                 >
                   <div className={`absolute inset-0 transition-opacity duration-700 ${loadedImages.has(project.images.hero) ? 'opacity-100' : 'opacity-0'}`}>
-                    <Image
+                    <ProjectImage
                       src={project.images.hero}
                       alt={project.title}
                       fill
@@ -416,7 +416,7 @@ export function ScrollingHero({ projects }: ScrollingHeroProps) {
         >
           <div className="bg-chalk/95 backdrop-blur-lg border border-ink/10 rounded-xl p-4 shadow-xl">
             <div className="w-96 aspect-video relative rounded-lg overflow-hidden">
-              <Image
+              <ProjectImage
                 src={hoveredProject.images.preview 
                   || (hoveredProject.images.gallery && hoveredProject.images.gallery.length > 0 
                     ? hoveredProject.images.gallery[0] 

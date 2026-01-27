@@ -177,14 +177,24 @@ function transformNotionPageToProject(
   const galleryString = getTextProperty(props["Gallery Images"]);
   const galleryImages = parseGalleryImages(galleryString);
 
+  // Get the raw hero image URL to check if it's from Notion
+  const heroImageUrl = getFilesProperty(props["Hero Image"]) || getTextProperty(props["Hero Image"]) || getUrlProperty(props["Hero Image"]) || "";
+  
+  // Check if the hero image is from Notion (signed URL that expires)
+  const isNotionHostedHero = heroImageUrl.includes("s3.us-west-2.amazonaws.com") || 
+                              heroImageUrl.includes("notion.so") ||
+                              heroImageUrl.includes("prod-files-secure");
+
   return {
     id: props["Order"] ? getNumberProperty(props["Order"]) : index,
+    notionPageId: page.id, // Always include page ID for image proxying
     slug: getTextProperty(props["Slug"]),
     title: getTitleProperty(props["Title"]),
     shortDescription: getTextProperty(props["Short Description"]),
     fullDescription: getTextProperty(props["Full Description"]),
     images: {
-      hero: getFilesProperty(props["Hero Image"]) || getTextProperty(props["Hero Image"]) || getUrlProperty(props["Hero Image"]) || "",
+      // Use proxy URL for Notion-hosted images, otherwise use direct URL
+      hero: isNotionHostedHero ? `/api/notion-property-image?pageId=${page.id}&property=Hero%20Image` : heroImageUrl,
       preview: getFilesProperty(props["Preview"]) || undefined,
       gallery: galleryImages,
     },

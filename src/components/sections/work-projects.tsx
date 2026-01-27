@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { ProjectData } from "@/data/projects";
-import { isNotionUrl } from "@/lib/utils";
 
 interface WorkProjectsProps {
   projects: ProjectData[];
@@ -43,16 +42,26 @@ function WorkProjectCard({ project, index }: WorkProjectCardProps) {
           className="relative overflow-hidden rounded-2xl bg-chalk/[0.02] border border-chalk/[0.05] hover:border-chalk/[0.1] transition-all aspect-video"
         >
           {/* Background Image */}
-          <Image
-            src={project.images.hero}
-            alt={project.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            quality={90}
-            unoptimized={isNotionUrl(project.images.hero)}
-            priority={index < 2}
-          />
+          {project.images.hero.startsWith("/api/") ? (
+            // Use regular img for proxied Notion images
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={project.images.hero}
+              alt={project.title}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+              loading={index < 2 ? "eager" : "lazy"}
+            />
+          ) : (
+            <Image
+              src={project.images.hero}
+              alt={project.title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              quality={90}
+              priority={index < 2}
+            />
+          )}
 
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-transparent" />

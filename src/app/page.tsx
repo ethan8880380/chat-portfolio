@@ -12,6 +12,9 @@ import { EnhancedFooter } from "@/components/sections/enhanced-footer";
 import { StaticHeader } from "@/components/sections/static-header";
 import { getProjects, getFeaturedProjects } from "@/lib/projects-service";
 
+// Revalidate page every hour to keep Notion content fresh
+export const revalidate = 3600;
+
 export default async function Home() {
   const [projects, featuredProjects] = await Promise.all([
     getProjects(),

@@ -10,6 +10,7 @@ interface ProjectHeroProps {
 }
 
 export function ProjectHero({ project }: ProjectHeroProps) {
+  const isProxyUrl = project.images.hero.startsWith("/api/");
 
   return (
     <section className="py-20 pt-32 bg-ink">
@@ -96,15 +97,25 @@ export function ProjectHero({ project }: ProjectHeroProps) {
           >
             <div className="relative overflow-hidden rounded-2xl aspect-[2/1]">
               <div className="aspect-video relative">
-                <Image
-                  src={project.images.hero}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                  style={{ objectPosition: '50% 10%' }}
-                  quality={100}
-                  priority
-                />
+                {isProxyUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={project.images.hero}
+                    alt={project.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    style={{ objectPosition: '50% 10%' }}
+                  />
+                ) : (
+                  <Image
+                    src={project.images.hero}
+                    alt={project.title}
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: '50% 10%' }}
+                    quality={100}
+                    priority
+                  />
+                )}
               </div>
               
               {/* Subtle gradient overlay for depth */}

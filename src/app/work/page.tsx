@@ -4,6 +4,9 @@ import { WorkProjects } from "@/components/sections/work-projects";
 import { CtaSection } from "@/components/sections/cta-section";
 import { EnhancedFooter } from "@/components/sections/enhanced-footer";
 
+// Revalidate page every hour to keep Notion content fresh
+export const revalidate = 3600;
+
 export default async function WorkPage() {
   const projects = await getProjects();
 

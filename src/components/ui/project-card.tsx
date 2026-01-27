@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { ProjectData } from "@/data/projects";
-import { isNotionUrl } from "@/lib/utils";
 
 interface ProjectCardProps {
   project: ProjectData;
@@ -18,6 +17,8 @@ export function ProjectCard({
   maxTags = 3,
   imageSizes = "(max-width: 768px) 100vw, 50vw"
 }: ProjectCardProps) {
+  const isProxyUrl = project.images.hero.startsWith("/api/");
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -35,15 +36,24 @@ export function ProjectCard({
         >
           {/* Background Image */}
           <div className="absolute inset-0 w-full h-full">
-            <Image
-              src={project.images.hero}
-              alt={project.title}
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-              sizes={imageSizes}
-              quality={90}
-              unoptimized={isNotionUrl(project.images.hero)}
-            />
+            {isProxyUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={project.images.hero}
+                alt={project.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                loading="lazy"
+              />
+            ) : (
+              <Image
+                src={project.images.hero}
+                alt={project.title}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                sizes={imageSizes}
+                quality={90}
+              />
+            )}
           </div>
 
           {/* Gradient Overlay */}
