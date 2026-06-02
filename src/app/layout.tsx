@@ -1,19 +1,74 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Space_Grotesk, Space_Mono, Instrument_Serif, Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { ChatProvider } from "@/context/ChatContext";
-import { Analytics } from "@vercel/analytics/next"
+import { EditorialNav } from "@/components/home/editorial-nav";
+import { Analytics } from "@vercel/analytics/next";
 
-const outfit = Outfit({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
+  display: "swap",
+});
+
+// Editorial pairing (currently used on the home page)
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-instrument-serif",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Ethan Rogers | UX Designer & Engineer",
-  description: "UX Designer and researcher with significant front-end programming expertise, building award-winning platforms.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ),
+  title: {
+    default: "Ethan Rogers — Design Technologist & UX Engineer",
+    template: "%s — Ethan Rogers",
+  },
+  description:
+    "Design technologist and front-end engineer who prototypes forward-looking product experiences — interaction, motion, and Gen AI — across web and mobile. Seattle, WA.",
+  authors: [{ name: "Ethan Rogers" }],
+  keywords: [
+    "Design Technologist",
+    "UX Engineer",
+    "Front-End Engineer",
+    "Prototyping",
+    "Motion Design",
+    "React",
+    "Gen AI",
+    "Design Systems",
+    "Seattle",
+  ],
+  openGraph: {
+    title: "Ethan Rogers — Design Technologist & UX Engineer",
+    description:
+      "Design technologist and front-end engineer who prototypes forward-looking product experiences — interaction, motion, and Gen AI — across web and mobile.",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ethan Rogers — Design Technologist & UX Engineer",
+    description:
+      "Design technologist and front-end engineer who prototypes forward-looking product experiences — interaction, motion, and Gen AI.",
+  },
 };
 
 export default function RootLayout({
@@ -22,19 +77,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={outfit.variable}>
-      <Analytics />
-      <body className={`${outfit.className} antialiased bg-chalk overflow-x-clip`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <ChatProvider>
-            {children}
-          </ChatProvider>
-        </ThemeProvider>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${spaceGrotesk.variable} ${spaceMono.variable} ${instrumentSerif.variable} ${inter.variable}`}
+    >
+      <body className="bg-cream font-inter text-espresso antialiased overflow-x-clip">
+        <ChatProvider>
+          <EditorialNav />
+          {children}
+        </ChatProvider>
+        <Analytics />
       </body>
     </html>
   );

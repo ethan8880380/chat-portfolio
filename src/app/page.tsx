@@ -1,75 +1,19 @@
-import { Experience } from "@/components/sections/experience";
-import { AboutSection } from "@/components/sections/about";
-import { GradientScroll } from "@/components/ui/gradient-scroll";
-import { ScrollingHero } from "@/components/sections/scrolling-hero";
-import { FloatingNav } from "@/components/sections/floating-nav";
-import { FeaturedProjects } from "@/components/sections/featured-projects";
-import { StatsMarquee } from "@/components/sections/stats-marquee";
-import { WorkTimeline } from "@/components/sections/work-timeline";
-import { Testimonials } from "@/components/sections/testimonials";
-import { CtaSection } from "@/components/sections/cta-section";
-import { EnhancedFooter } from "@/components/sections/enhanced-footer";
-import { StaticHeader } from "@/components/sections/static-header";
-import { getProjects, getFeaturedProjects } from "@/lib/projects-service";
+import { getFeaturedProjects } from "@/lib/projects-service";
+import { EditorialHero } from "@/components/home/editorial-hero";
+import { EditorialWork } from "@/components/home/editorial-work";
+import { EditorialFooter } from "@/components/home/editorial-footer";
 
-// Revalidate page every hour to keep Notion content fresh
+// Revalidate every hour to keep Notion content fresh
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [projects, featuredProjects] = await Promise.all([
-    getProjects(),
-    getFeaturedProjects(),
-  ]);
+  const featuredProjects = await getFeaturedProjects();
 
   return (
-    <div className="overflow-x-hidden">
-      {/* Noise Overlay */}
-      <div className="noise-overlay" />
-
-      {/* Mobile Header - Only visible on mobile */}
-      <div className="md:hidden">
-        <StaticHeader theme="dark" />
-      </div>
-
-      {/* Hero Section with Scrolling Images - Fixed background (handles mobile internally) */}
-      <ScrollingHero projects={projects} />
-      
-      {/* Desktop only: Floating Nav */}
-      <div className="hidden md:block">
-        <FloatingNav />
-      </div>
-      
-      {/* Desktop only: Gradient Animation Section */}
-      <div className="hidden md:block relative z-10 -mt-[50vh]">
-        <GradientScroll />
-      </div>
-      
-      {/* Main Content */}
-      <div className="relative z-10 bg-ink">
-        {/* About Section with floating images - Desktop only since mobile hero has this content */}
-        <AboutSection />
-        
-        {/* Skills & Stats Marquee */}
-        <StatsMarquee />
-        
-        {/* Specializations Grid */}
-        <Experience />
-
-        {/* Work Timeline */}
-        <WorkTimeline />
-        
-        {/* Featured Projects Showcase */}
-        <FeaturedProjects projects={featuredProjects} />
-        
-        {/* Testimonials */}
-        <Testimonials />
-        
-        {/* Call to Action */}
-        <CtaSection />
-        
-        {/* Footer */}
-        <EnhancedFooter />
-      </div>
-    </div>
+    <main className="bg-cream">
+      <EditorialHero />
+      <EditorialWork projects={featuredProjects} />
+      <EditorialFooter />
+    </main>
   );
 }

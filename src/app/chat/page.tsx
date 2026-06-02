@@ -1,16 +1,26 @@
-import { StaticHeader } from "@/components/sections/static-header";
-import { VercelV0Chat } from "@/components/ui/v0-ai-chat";
-import { EnhancedFooter } from "@/components/sections/enhanced-footer";
+import type { Metadata } from "next";
+import { EditorialChat } from "@/components/editorial/editorial-chat";
+
+export const metadata: Metadata = {
+  title: "Ask My AI",
+  description:
+    "Chat with a Gen AI assistant trained on Ethan Rogers' résumé and case studies.",
+};
 
 export default function ChatPage() {
   return (
-    <main className="h-screen flex flex-col bg-ink overflow-hidden">
-      <StaticHeader theme="dark" />
-      <section className="flex-1 flex pt-24 overflow-hidden">
-        <div className="w-full h-full">
-          <VercelV0Chat />
-        </div>
-      </section>
+    <main className="flex min-h-[calc(100dvh-4rem)] flex-col bg-cream md:min-h-[calc(100dvh-5rem)]">
+      <div className="mx-auto w-full max-w-3xl px-6 pb-5 pt-8">
+        <p className="font-inter text-xs uppercase tracking-[0.22em] text-clay">
+          AI Assistant
+        </p>
+        <h1 className="mt-2 font-serif text-3xl text-espresso md:text-4xl">
+          Ask my AI
+        </h1>
+      </div>
+      <div className="min-h-0 flex-1 border-t border-espresso/12">
+        <EditorialChat />
+      </div>
     </main>
   );
 }

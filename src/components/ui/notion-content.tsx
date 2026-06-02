@@ -13,18 +13,16 @@ interface NotionContentProps {
  */
 function getImageUrl(block: NotionBlock): string {
   if (!block.url) return "";
-  
-  // Check if this is a Notion-hosted image (signed URL that expires)
-  const isNotionHosted = 
-    block.url.includes("s3.us-west-2.amazonaws.com") || 
+
+  const isNotionHosted =
+    block.url.includes("s3.us-west-2.amazonaws.com") ||
     block.url.includes("notion.so") ||
     block.url.includes("prod-files-secure");
-  
-  // Use proxy API for Notion-hosted images to get fresh signed URLs
+
   if (isNotionHosted && block.id) {
     return `/api/notion-image?blockId=${block.id}`;
   }
-  
+
   return block.url;
 }
 
@@ -34,7 +32,9 @@ export function NotionContent({ blocks, className = "" }: NotionContentProps) {
   }
 
   return (
-    <div className={`notion-content space-y-6 [&>*:first-child]:mt-0 ${className}`}>
+    <div
+      className={`notion-content space-y-6 [&>*:first-child]:mt-0 ${className}`}
+    >
       {blocks.map((block, index) => (
         <NotionBlockRenderer key={block.id || index} block={block} />
       ))}
@@ -51,64 +51,66 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
     case "paragraph":
       if (!block.content) return null;
       return (
-        <p className="text-lg text-chalk/60 leading-[1.8]">
+        <p className="font-inter text-lg leading-[1.8] text-espresso/75">
           {block.content}
         </p>
       );
 
     case "heading_1":
       return (
-        <h2 className="text-[2.75rem] font-bold text-chalk mt-16 mb-6 leading-tight">
+        <h2 className="mb-5 mt-16 font-serif text-3xl leading-[1.1] text-espresso md:text-4xl">
           {block.content}
         </h2>
       );
 
     case "heading_2":
       return (
-        <h3 className="text-[1.375rem] font-medium text-chalk mt-10 mb-3 leading-tight pl-4 border-l-2 border-[#0087ef]">
+        <h3 className="mb-3 mt-12 border-l-2 border-clay pl-4 font-serif text-2xl leading-snug text-espresso">
           {block.content}
         </h3>
       );
 
     case "heading_3":
       return (
-        <h4 className="text-[1.25rem] font-medium text-chalk mt-8 mb-2 leading-tight">
+        <h4 className="mb-2 mt-8 font-serif text-xl leading-snug text-espresso">
           {block.content}
         </h4>
       );
 
     case "list_item":
       return (
-        <li className="text-lg text-chalk/70 ml-6 list-disc leading-[1.6] -mt-6">
+        <li className="-mt-6 ml-6 list-disc font-inter text-lg leading-[1.6] text-espresso/75 marker:text-clay">
           {block.content}
         </li>
       );
 
     case "numbered_list_item":
       return (
-        <li className="text-lg text-chalk/80 ml-6 list-decimal leading-[1.6] -mt-6">
+        <li className="-mt-6 ml-6 list-decimal font-inter text-lg leading-[1.6] text-espresso/75 marker:text-clay">
           {block.content}
         </li>
       );
 
     case "quote":
       return (
-        <blockquote className="border-l-4 border-[#0087ef] pl-6 py-2 my-6 text-lg italic text-chalk/80 leading-[1.8]">
+        <blockquote className="my-8 border-l-2 border-clay pl-6 font-serif text-2xl italic leading-snug text-espresso">
           {block.content}
         </blockquote>
       );
 
     case "callout":
       return (
-        <div className="bg-chalk/5 border border-chalk/10 rounded-lg p-6 my-6">
-          <p className="text-lg text-chalk/80 leading-[1.8]">{block.content}</p>
+        <div className="my-6 rounded-[12px] bg-espresso/[0.04] p-6">
+          <p className="font-inter text-lg leading-[1.8] text-espresso/75">
+            {block.content}
+          </p>
         </div>
       );
 
     case "code":
       return (
-        <pre className="bg-ink/50 border border-chalk/10 rounded-lg p-6 my-6 overflow-x-auto">
-          <code className="text-lg text-green-400 font-mono leading-relaxed">
+        <pre className="my-6 overflow-x-auto rounded-[12px] bg-espresso p-6">
+          <code className="font-mono text-sm leading-relaxed text-cream">
             {block.content}
           </code>
         </pre>
@@ -118,17 +120,16 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
       if (!block.url) return null;
       const imageUrl = getImageUrl(block);
       const isProxied = imageUrl.startsWith("/api/");
-      
+
       return (
-        <figure className="my-8">
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+        <figure className="my-10">
+          <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
             {isProxied ? (
-              // Use regular img for proxied Notion images to avoid Next.js Image issues
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={imageUrl}
                 alt={block.caption || "Project image"}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 loading="lazy"
               />
             ) : (
@@ -137,12 +138,12 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
                 alt={block.caption || "Project image"}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 896px"
+                sizes="(max-width: 768px) 100vw, 768px"
               />
             )}
           </div>
           {block.caption && (
-            <figcaption className="text-center text-chalk/50 text-lg mt-3">
+            <figcaption className="mt-3 font-inter text-sm text-espresso/50">
               {block.caption}
             </figcaption>
           )}
@@ -154,16 +155,16 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
       if (!block.url) return null;
       const videoUrl = getImageUrl(block);
       return (
-        <figure className="my-8">
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+        <figure className="my-10">
+          <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
             <video
               src={videoUrl}
               controls
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
           </div>
           {block.caption && (
-            <figcaption className="text-center text-chalk/50 text-lg mt-3">
+            <figcaption className="mt-3 font-inter text-sm text-espresso/50">
               {block.caption}
             </figcaption>
           )}
@@ -173,22 +174,21 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "embed":
       if (!block.url) return null;
-      // Handle common embeds (YouTube, Vimeo, etc.)
       if (block.url.includes("youtube.com") || block.url.includes("youtu.be")) {
         const videoId = extractYouTubeId(block.url);
         if (videoId) {
           return (
-            <figure className="my-8">
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+            <figure className="my-10">
+              <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}`}
-                  className="w-full h-full"
+                  className="h-full w-full"
                   allowFullScreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 />
               </div>
               {block.caption && (
-                <figcaption className="text-center text-chalk/50 text-lg mt-3">
+                <figcaption className="mt-3 font-inter text-sm text-espresso/50">
                   {block.caption}
                 </figcaption>
               )}
@@ -196,23 +196,22 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
           );
         }
       }
-      // Generic embed fallback
       return (
-        <div className="my-8">
+        <div className="my-10">
           <iframe
             src={block.url}
-            className="w-full aspect-video rounded-xl"
+            className="aspect-video w-full rounded-[12px]"
           />
         </div>
       );
 
     case "divider":
-      return <hr className="border-chalk/10 my-10" />;
+      return <hr className="my-12 border-espresso/12" />;
 
     case "toggle":
       return (
-        <details className="bg-chalk/5 border border-chalk/10 rounded-lg p-6 my-6">
-          <summary className="text-lg text-chalk/80 cursor-pointer font-medium leading-[1.8]">
+        <details className="my-6 rounded-[12px] bg-espresso/[0.04] p-6">
+          <summary className="cursor-pointer font-inter text-lg font-medium leading-[1.8] text-espresso/80">
             {block.content}
           </summary>
         </details>
@@ -223,16 +222,15 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
   }
 }
 
-// Helper to extract YouTube video ID
 function extractYouTubeId(url: string): string | null {
   const patterns = [
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
   ];
-  
+
   for (const pattern of patterns) {
     const match = url.match(pattern);
     if (match) return match[1];
   }
-  
+
   return null;
 }

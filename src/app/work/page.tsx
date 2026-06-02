@@ -1,31 +1,47 @@
+import type { Metadata } from "next";
 import { getProjects } from "@/lib/projects-service";
-import { StaticHeader } from "@/components/sections/static-header";
-import { WorkProjects } from "@/components/sections/work-projects";
-import { CtaSection } from "@/components/sections/cta-section";
-import { EnhancedFooter } from "@/components/sections/enhanced-footer";
+import { PageHeader } from "@/components/editorial/page-header";
+import { WorkList } from "@/components/editorial/work-list";
+import { EditorialFooter } from "@/components/home/editorial-footer";
 
-// Revalidate page every hour to keep Notion content fresh
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Work",
+  description:
+    "Selected projects spanning enterprise UX, design systems, AI tools, and consumer web by Ethan Rogers.",
+};
 
 export default async function WorkPage() {
   const projects = await getProjects();
 
   return (
-    <main className="min-h-screen bg-ink">
-      <StaticHeader theme="dark" />
-      <section className="py-16 md:pt-48 pt-48 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-left flex flex-col items-start mb-12">
-            <h1 className="heading-base text-chalk mb-6">My Work</h1>
-            <p className="text-lg text-chalk/60 max-w-2xl">
-              A collection of projects showcasing my expertise in design, development, and user experience.
-            </p>
-          </div>
-          <WorkProjects projects={projects} />
+    <main className="bg-cream">
+      <PageHeader
+        eyebrow="Index"
+        title={
+          <>
+            Selected work, <em className="italic text-clay">prototype</em> to{" "}
+            <em className="italic text-clay">production</em>.
+          </>
+        }
+        intro="A collection of projects spanning enterprise UX, design systems, AI tools, and consumer web — from first sketch to shipped code."
+      />
+
+      <section className="mx-auto max-w-6xl px-6 pb-24 md:px-10 md:pb-32">
+        <div className="flex items-center justify-between border-b border-espresso/15 pb-5">
+          <p className="font-inter text-xs uppercase tracking-[0.22em] text-espresso/55">
+            All projects
+          </p>
+          <p className="font-inter text-xs uppercase tracking-[0.22em] text-espresso/45">
+            {String(projects.length).padStart(2, "0")} total
+          </p>
         </div>
+
+        <WorkList projects={projects} />
       </section>
-      <CtaSection />
-      <EnhancedFooter />
+
+      <EditorialFooter />
     </main>
   );
 }
