@@ -11,7 +11,7 @@ export function EditorialWork({ projects }: EditorialWorkProps) {
   return (
     <section className="bg-cream">
       <div className="mx-auto max-w-6xl px-6 pb-24 md:px-10 md:pb-32">
-        <div className="flex items-center justify-between border-b border-espresso/15 pb-5">
+        <div className="flex items-center justify-between border-b border-espresso/10 pb-5">
           <p className="font-inter text-xs uppercase tracking-[0.22em] text-espresso/55">
             Selected Work
           </p>

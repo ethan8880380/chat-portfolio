@@ -11,6 +11,7 @@ const SOCIAL = [
 
 const SITEMAP = [
   { label: "Work", href: "/work" },
+  { label: "Snippets", href: "/snippets" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
   { label: "Ask AI", href: "/chat" },

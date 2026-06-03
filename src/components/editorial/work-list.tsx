@@ -48,7 +48,7 @@ export function WorkList({ projects }: WorkListProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-8%" }}
             transition={{ duration: 0.6, delay: (i % 6) * 0.06, ease: EASE }}
-            className="border-b border-espresso/12"
+            className="border-b border-espresso/10"
           >
             <Link
               href={`/projects/${project.slug}`}

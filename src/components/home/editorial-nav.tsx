@@ -5,9 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 
 const LINKS = [
   { label: "Work", href: "/work" },
+  { label: "Snippets", href: "/snippets" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -36,9 +38,16 @@ export function EditorialNav() {
       initial={{ y: -72, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="sticky top-0 z-50 border-b border-espresso/10 bg-cream/80 backdrop-blur-md"
+      className="sticky top-0 z-50"
     >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 md:h-20 md:px-10">
+      <ProgressiveBlur
+        className="z-0"
+        position="top"
+        height="100px"
+        blurLevels={[0.5, 1, 2, 4, 8, 16, 32, 64]}
+      />
+
+      <nav className="relative z-10 mx-auto flex h-16 max-w-6xl items-center justify-between px-6 md:h-20 md:px-10">
         <Link
           href="/"
           className="font-inter text-sm font-medium tracking-tight text-espresso"
@@ -105,7 +114,7 @@ export function EditorialNav() {
       </nav>
 
       {open && (
-        <div className="border-t border-espresso/10 bg-cream px-6 py-4 md:hidden">
+        <div className="relative z-10 border-t border-espresso/10 bg-cream px-6 py-4 md:hidden">
           <div className="flex flex-col gap-1">
             {[...LINKS, { label: "Ask AI", href: "/chat" }].map((l) => (
               <Link

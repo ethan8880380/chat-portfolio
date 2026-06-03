@@ -1,217 +1,159 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
-import { categoryPrompts as trainingPrompts, validModels, additionalContext } from '@/lib/chat-training';
+import {
+  categoryPrompts as trainingPrompts,
+  validModels,
+  additionalContext,
+  resumeContext,
+  responseGuidelines,
+} from '@/lib/chat-training';
 
-// Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const DEFAULT_MODEL = 'gpt-4o-mini';
+
+// Map project slugs to their detailed case-study context
+const projectContext: Record<string, string> = {
+  'commercial-analytics-hub': additionalContext.commercialAnalyticsHub,
+  'enterprise-design-system': additionalContext.enterpriseDesignSystem,
+  'genfei-chatbot': additionalContext.genfeiChatbot,
+  'iris-analytics': additionalContext.irisAnalytics,
+  'web-templates': additionalContext.webTemplates,
+  'pullups-research': additionalContext.pullupsResearch,
+  buyerspring: additionalContext.buyerspring,
+  'huggies-website': additionalContext.huggiesWebsite,
+  'defoor-development': additionalContext.defoorDevelopment,
+};
+
+// Keyword-driven case-study / personal context. Append-only and deduped so triggers
+// layer extra grounding onto the prompt instead of clobbering it.
+const contextRules: { test: RegExp; context: string }[] = [
+  { test: /\b(iris|predictive|forecast|demand|scenario planner|netflow)/, context: additionalContext.irisAnalytics },
+  { test: /\b(analytics|dashboard|power\s?bi|insight|metrics|\bdata\b)/, context: additionalContext.commercialAnalyticsHub },
+  { test: /\b(supply chain|logistics)/, context: additionalContext.commercialAnalyticsHub },
+  { test: /\b(design system|figma|component library|tokens?)/, context: additionalContext.enterpriseDesignSystem },
+  { test: /\b(genfei|chatbot|conversational|llm|gpt|ai assistant)/, context: additionalContext.genfeiChatbot },
+  { test: /\bhuggies/, context: additionalContext.huggiesWebsite },
+  { test: /\b(template|consumer (?:site|website|brand))/, context: additionalContext.webTemplates },
+  { test: /\b(pull[- ]?ups|potty|parents?)/, context: additionalContext.pullupsResearch },
+  { test: /\b(buyerspring|real estate|home buying|off-market)/, context: additionalContext.buyerspring },
+  { test: /\b(defoor|property development)/, context: additionalContext.defoorDevelopment },
+  { test: /\bfreelance/, context: additionalContext.buyerspring },
+  { test: /\b(philosophy|design approach)/, context: additionalContext.designPhilosophy },
+  { test: /\b(workflow|how (?:do|did) you (?:build|develop|code))/, context: additionalContext.developmentApproach },
+  { test: /\b(research|usability|user testing|interviews?)/, context: additionalContext.researchMethods },
+  { test: /\b(project management|prioriti|deadlines?|juggl)/, context: additionalContext.projectManagement },
+  { test: /\b(career|goals?|future|aspiration)/, context: additionalContext.careerGoals },
+];
+
+type Category = keyof typeof trainingPrompts;
+
+// Lightly infer a category prompt from the message when the client doesn't send one.
+function inferCategory(lowerMessage: string): Category {
+  if (/\b(develop|coding|engineer|tech stack|react|next\.?js|typescript|front[- ]?end)/.test(lowerMessage)) return 'development';
+  if (/\b(research|usability|interview|a\/b|testing)/.test(lowerMessage)) return 'research';
+  if (/\b(design system|figma|component|tokens?)/.test(lowerMessage)) return 'design';
+  if (/\b(analytics|dashboard|power\s?bi|\bdata\b)/.test(lowerMessage)) return 'analytics';
+  if (/\b(career|goals?|future|growth)/.test(lowerMessage)) return 'career';
+  if (/\b(philosophy|approach|process)/.test(lowerMessage)) return 'philosophy';
+  if (/\bproject/.test(lowerMessage)) return 'projects';
+  return 'default';
+}
+
+function buildSystemPrompt(message: string, category: unknown, selectedProject: unknown): string {
+  const lowerMessage = message.toLowerCase();
+
+  const resolvedCategory: Category =
+    typeof category === 'string' && category in trainingPrompts
+      ? (category as Category)
+      : inferCategory(lowerMessage);
+
+  // Foundation every answer is grounded in: category guidance + the full résumé + voice/format rules.
+  let systemPrompt =
+    `${trainingPrompts[resolvedCategory]}\n\n` +
+    `Résumé and background — treat this as your source of truth:\n${resumeContext.trim()}\n` +
+    responseGuidelines;
+
+  // Layer in deeper case-study context.
+  if (typeof selectedProject === 'string' && projectContext[selectedProject]) {
+    systemPrompt +=
+      `\n\nThe visitor is focused on the "${selectedProject}" project. Center your answers on it and gently steer tangents back to it.\n\n` +
+      projectContext[selectedProject];
+    return systemPrompt;
+  }
+
+  const added = new Set<string>();
+  for (const { test, context } of contextRules) {
+    if (added.size >= 3) break;
+    if (test.test(lowerMessage) && !added.has(context)) {
+      systemPrompt += `\n\n${context}`;
+      added.add(context);
+    }
+  }
+
+  return systemPrompt;
+}
+
 export async function POST(request: Request) {
   try {
-    const { message, messages = [], category = 'default', model = 'gpt-4', selectedProject } = await request.json();
+    const { message, messages = [], category, model, selectedProject } = await request.json();
 
-    if (!message) {
-      return NextResponse.json(
-        { error: 'Message is required' },
-        { status: 400 }
-      );
+    if (!message || typeof message !== 'string') {
+      return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
     if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        { error: 'OpenAI API key is not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'OpenAI API key is not configured' }, { status: 500 });
     }
 
-    // Prepare conversation history
-    const conversationHistory = messages.map((msg: { role: string; content: string }) => ({
-      role: msg.role,
-      content: msg.content
-    }));
+    // Only carry forward valid, non-empty user/assistant turns from the client.
+    const conversationHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = (
+      Array.isArray(messages) ? messages : []
+    )
+      .filter(
+        (msg: { role?: string; content?: string }) =>
+          msg && (msg.role === 'user' || msg.role === 'assistant') && typeof msg.content === 'string' && msg.content.trim()
+      )
+      .map((msg: { role: string; content: string }) => ({
+        role: msg.role as 'user' | 'assistant',
+        content: msg.content,
+      }));
 
-    // Add the current message
     conversationHistory.push({ role: 'user', content: message });
 
-    // Get the appropriate system prompt based on category
-    const validCategory = Object.keys(trainingPrompts).includes(category) ? category : 'default';
-    let systemPrompt = trainingPrompts[validCategory as keyof typeof trainingPrompts];
-
-    // Add project-specific context if a project is selected
-    if (selectedProject) {
-      systemPrompt += `\n\nIMPORTANT: The user has selected to focus on the "${selectedProject}" project. Only answer questions about this specific project and redirect any off-topic questions back to this project. If asked about other projects or general topics, politely redirect the conversation back to the selected project.`;
-      
-      // Add specific project context
-      switch (selectedProject) {
-        case 'commercial-analytics-hub':
-          systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
-          break;
-        case 'enterprise-design-system':
-          systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem}`;
-          break;
-        case 'genfei-chatbot':
-          systemPrompt += `\n\n${additionalContext.genfeiChatbot}`;
-          break;
-        case 'iris-analytics':
-          systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
-          break;
-        case 'web-templates':
-          systemPrompt += `\n\n${additionalContext.webTemplates}`;
-          break;
-        case 'pullups-research':
-          systemPrompt += `\n\n${additionalContext.pullupsResearch}`;
-          break;
-        case 'buyerspring':
-          systemPrompt += `\n\n${additionalContext.buyerspring}`;
-          break;
-        case 'huggies-website':
-          systemPrompt += `\n\n${additionalContext.huggiesWebsite}`;
-          break;
-        case 'defoor-development':
-          systemPrompt += `\n\n${additionalContext.defoorDevelopment}`;
-          break;
-      }
-    } else {
-      // Add relevant additional context based on the message content (existing logic)
-      const lowerMessage = message.toLowerCase();
-      
-      // Check for general introduction/about me questions
-      if (lowerMessage.includes('tell me about yourself') || 
-          lowerMessage.includes('who are you') || 
-          lowerMessage.includes('your background') ||
-          lowerMessage.includes('your experience')) {
-        systemPrompt = trainingPrompts.default;
-      }
-      
-      // Check for role-specific questions
-      if (lowerMessage.includes('role') || lowerMessage.includes('job') || lowerMessage.includes('work')) {
-        systemPrompt = trainingPrompts.uxDesign;
-        if (lowerMessage.includes('developer') || lowerMessage.includes('coding')) {
-          systemPrompt = trainingPrompts.development;
-        }
-      }
-      
-      // Add specific project context
-      if (lowerMessage.includes('analytics') || lowerMessage.includes('data')) {
-        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
-        if (lowerMessage.includes('iris') || lowerMessage.includes('predictive')) {
-          systemPrompt += `\n\n${additionalContext.irisAnalytics}`;
-        }
-      }
-      if (lowerMessage.includes('supply chain') || lowerMessage.includes('logistics')) {
-        systemPrompt += `\n\n${additionalContext.commercialAnalyticsHub}`;
-      }
-      if (lowerMessage.includes('design system') || lowerMessage.includes('figma')) {
-        systemPrompt += `\n\n${additionalContext.enterpriseDesignSystem}`;
-      }
-      if (lowerMessage.includes('huggies') || lowerMessage.includes('redesign')) {
-        systemPrompt += `\n\n${additionalContext.huggiesWebsite}`;
-      }
-      if (lowerMessage.includes('real estate') || lowerMessage.includes('freelance')) {
-        systemPrompt += `\n\n${additionalContext.buyerspring}`;
-      }
-      
-      // Add personal context
-      if (lowerMessage.includes('philosophy') || lowerMessage.includes('approach')) {
-        systemPrompt += `\n\n${additionalContext.designPhilosophy}`;
-      }
-      if (lowerMessage.includes('workflow') || lowerMessage.includes('development')) {
-        systemPrompt += `\n\n${additionalContext.developmentApproach}`;
-      }
-      if (lowerMessage.includes('research') || lowerMessage.includes('testing')) {
-        systemPrompt += `\n\n${additionalContext.researchMethods}`;
-      }
-      if (lowerMessage.includes('project') || lowerMessage.includes('management')) {
-        systemPrompt += `\n\n${additionalContext.projectManagement}`;
-      }
-      if (lowerMessage.includes('career') || lowerMessage.includes('goals')) {
-        systemPrompt += `\n\n${additionalContext.careerGoals}`;
-      }
-    }
-
-    // Map of keywords to project images
-    const projectImages = {
-      analytics: "/projectImages/desktop/comm-analytics.png",
-      design: "/projectImages/desktop/design-system.png",
-      development: "/projectImages/desktop/dev-work.png",
-      research: "/projectImages/desktop/research.png",
-      default: "/projectImages/desktop/comm-analytics.png"
-    };
-
-    // Determine which image to return based on the message content or selected project
-    let selectedImage: string | null = null;
-    if (selectedProject) {
-      // Return project-specific image based on selected project
-      switch (selectedProject) {
-        case 'commercial-analytics-hub':
-        case 'iris-analytics':
-          selectedImage = projectImages.analytics;
-          break;
-        case 'enterprise-design-system':
-        case 'huggies-website':
-        case 'web-templates':
-          selectedImage = projectImages.design;
-          break;
-        case 'genfei-chatbot':
-        case 'buyerspring':
-        case 'defoor-development':
-          selectedImage = projectImages.development;
-          break;
-        case 'pullups-research':
-          selectedImage = projectImages.research;
-          break;
-      }
-    } else {
-      const lowerMessage = message.toLowerCase();
-      if ((lowerMessage.includes('analytics') || lowerMessage.includes('data')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-        selectedImage = projectImages.analytics;
-      } else if ((lowerMessage.includes('design') || lowerMessage.includes('figma')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-        selectedImage = projectImages.design;
-      } else if ((lowerMessage.includes('development') || lowerMessage.includes('code')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-        selectedImage = projectImages.development;
-      } else if ((lowerMessage.includes('research') || lowerMessage.includes('user research')) && !(lowerMessage.includes('who are you') || lowerMessage.includes('about yourself') || lowerMessage.includes('background'))) {
-        selectedImage = projectImages.research;
-      }
-    }
-
-    // Validate model parameter - fall back to default if not valid
-    const validModel = validModels.includes(model) ? model : 'gpt-3.5-turbo';
+    const systemPrompt = buildSystemPrompt(message, category, selectedProject);
+    const validModel = typeof model === 'string' && validModels.includes(model) ? model : DEFAULT_MODEL;
 
     try {
       const response = await openai.chat.completions.create({
         model: validModel,
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt,
-          },
-          ...conversationHistory
-        ],
-        max_tokens: 300,
-        temperature: 1.0,
+        messages: [{ role: 'system', content: systemPrompt }, ...conversationHistory],
+        max_tokens: 600,
+        temperature: 0.6,
       });
 
-      return NextResponse.json({ 
-        reply: response.choices[0].message.content,
-        image: selectedImage || undefined
+      const reply = response.choices[0]?.message?.content?.trim();
+
+      return NextResponse.json({
+        reply:
+          reply ||
+          "Sorry — I couldn't put a response together just then. Mind rephrasing, or reach out directly at ethan0380@gmail.com?",
       });
     } catch (openaiError: unknown) {
       console.error('OpenAI API error:', openaiError);
-      const errorMessage = openaiError instanceof Error ? openaiError.message : '';
-      
-      // Handle quota/rate limit errors with a friendly fallback
-      if (errorMessage.includes('429') || errorMessage.includes('quota')) {
-        return NextResponse.json({ 
-          reply: "Thanks for your interest! The AI chatbot is currently unavailable. Feel free to reach out directly at ethan0380@gmail.com or explore my projects in the Work section.",
-          image: undefined
+      const errorMessage = openaiError instanceof Error ? openaiError.message.toLowerCase() : '';
+
+      // Handle quota/rate limit errors with a friendly fallback.
+      if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('rate limit')) {
+        return NextResponse.json({
+          reply:
+            "Thanks for your interest! The AI assistant is taking a quick break. Feel free to reach out directly at ethan0380@gmail.com or explore my projects in the Work section.",
         });
       }
-      
-      return NextResponse.json(
-        { error: 'Error communicating with OpenAI' },
-        { status: 500 }
-      );
+
+      return NextResponse.json({ error: 'Error communicating with OpenAI' }, { status: 500 });
     }
   } catch (error: unknown) {
     console.error('Error processing chat request:', error);
@@ -220,4 +162,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

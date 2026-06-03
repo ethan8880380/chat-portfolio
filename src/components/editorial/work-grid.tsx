@@ -14,7 +14,7 @@ export function WorkGrid({ projects }: WorkGridProps) {
       {projects.map((project, i) => (
         <Reveal key={project.slug} delay={(i % 2) * 0.08}>
           <Link href={`/projects/${project.slug}`} className="group block">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[14px] bg-espresso/[0.04]">
+            <div className="relative aspect-video overflow-hidden rounded-[14px] bg-espresso/[0.04]">
               <SmartImage
                 src={project.images.hero}
                 alt={project.title}

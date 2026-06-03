@@ -112,6 +112,24 @@
   }
 }
 
+@layer components {
+  /* Shiki output (rendered server-side on /snippets). The card supplies the
+     espresso background, so strip Shiki's inline one and keep token colors. */
+  .snippet-code pre.shiki {
+    margin: 0;
+    background-color: transparent !important;
+    font-family: var(--font-space-mono), ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    tab-size: 2;
+  }
+  .snippet-code pre.shiki code {
+    display: block;
+    width: fit-content;
+    min-width: 100%;
+  }
+}
+
 @layer utilities {
   /* Faint architectural grid background */
   .grid-lines {

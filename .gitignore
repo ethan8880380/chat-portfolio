@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# vendored reference projects (source for /snippets, not part of the app)
+/code-snippets/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

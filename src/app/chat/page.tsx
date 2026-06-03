@@ -10,17 +10,7 @@ export const metadata: Metadata = {
 export default function ChatPage() {
   return (
     <main className="flex min-h-[calc(100dvh-4rem)] flex-col bg-cream md:min-h-[calc(100dvh-5rem)]">
-      <div className="mx-auto w-full max-w-3xl px-6 pb-5 pt-8">
-        <p className="font-inter text-xs uppercase tracking-[0.22em] text-clay">
-          AI Assistant
-        </p>
-        <h1 className="mt-2 font-serif text-3xl text-espresso md:text-4xl">
-          Ask my AI
-        </h1>
-      </div>
-      <div className="min-h-0 flex-1 border-t border-espresso/12">
-        <EditorialChat />
-      </div>
+      <EditorialChat />
     </main>
   );
 }
