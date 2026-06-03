@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getProjects } from "@/lib/projects-service";
 import { PageHeader } from "@/components/editorial/page-header";
-import { WorkList } from "@/components/editorial/work-list";
+import { WorkGrid } from "@/components/editorial/work-grid";
 import { EditorialFooter } from "@/components/home/editorial-footer";
 
 export const revalidate = 3600;
@@ -38,7 +38,9 @@ export default async function WorkPage() {
           </p>
         </div>
 
-        <WorkList projects={projects} />
+        <div className="mt-12">
+          <WorkGrid projects={projects} />
+        </div>
       </section>
 
       <EditorialFooter />
