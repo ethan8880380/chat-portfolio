@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/editorial/page-header";
-import { CodeBlock } from "@/components/editorial/code-block";
-import { EditorialFooter } from "@/components/home/editorial-footer";
-import { Reveal } from "@/components/ui/reveal";
+import { PageHero } from "@/components/layout/page-hero";
+import { SiteGrid, SiteSection, SiteSpacer } from "@/components/layout/site-section";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { CodeBlock } from "@/components/snippets/code-block";
 import { snippetProjects } from "@/data/snippets";
 
 export const metadata: Metadata = {
@@ -13,75 +13,65 @@ export const metadata: Metadata = {
 
 export default function SnippetsPage() {
   return (
-    <main className="bg-cream">
-      <PageHeader
-        eyebrow="Source"
-        title={
-          <>
-            Code I&apos;m <em className="italic text-clay">proud</em> of.
-          </>
-        }
-        intro="A few favorite snippets pulled from real projects — the algorithm behind a real-estate marketplace, a from-scratch narrated slide engine, type-safe faceted search, and the backend that keeps an AI assistant honest."
-      />
+    <>
+      <main className="flex-1">
+        <PageHero
+          eyebrow="Snippets"
+          title="Code I'm proud of."
+          description="A few favorite snippets pulled from real projects — the algorithm behind a real-estate marketplace, a from-scratch narrated slide engine, type-safe faceted search, and the backend that keeps an AI assistant honest."
+        />
 
-      <div className="mx-auto max-w-6xl px-6 pb-24 md:px-10 md:pb-32">
         {snippetProjects.map((project, projectIndex) => (
-          <section
+          <SiteSection
             key={project.id}
-            className="[&:not(:first-child)]:mt-24"
-          >
-            <Reveal>
-              <div className="flex items-baseline justify-between gap-6">
-                <h2 className="font-serif text-3xl leading-[1.1] text-espresso md:text-4xl">
-                  {project.name}
-                </h2>
-                <span className="shrink-0 font-inter text-xs uppercase tracking-[0.22em] text-espresso/45">
-                  {String(projectIndex + 1).padStart(2, "0")} / {String(snippetProjects.length).padStart(2, "0")}
-                </span>
-              </div>
-
-              <p className="mt-5 max-w-2xl font-inter text-lg leading-relaxed text-espresso/65">
+            id={project.id}
+            eyebrow={`${String(projectIndex + 1).padStart(2, "0")} / ${String(snippetProjects.length).padStart(2, "0")}`}
+            title={project.name}
+            description={
+              <>
                 {project.summary}
-              </p>
-
-              <ul className="mt-6 flex flex-wrap gap-2">
-                {project.stack.map((tag) => (
-                  <li
-                    key={tag}
-                    className="rounded-full bg-espresso/[0.05] px-3 py-1 font-mono text-xs text-espresso/60"
-                  >
-                    {tag}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-
-            <div className="mt-14 space-y-16">
+                <span className="mt-6 flex flex-wrap gap-2">
+                  {project.stack.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border bg-background px-2.5 py-0.5 font-mono text-xs text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </span>
+              </>
+            }
+          >
+            <SiteGrid>
               {project.snippets.map((snippet) => (
-                <Reveal key={snippet.id}>
-                  <article>
-                    <h3 className="font-serif text-2xl leading-snug text-espresso">
+                <article
+                  key={snippet.id}
+                  className="grid gap-6 bg-background p-8 md:p-10 lg:grid-cols-12 lg:gap-10"
+                >
+                  <div className="lg:col-span-4">
+                    <h3 className="text-base font-medium text-foreground sm:text-lg">
                       {snippet.title}
                     </h3>
-                    <p className="mt-2.5 max-w-2xl font-inter text-base leading-relaxed text-espresso/60">
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                       {snippet.description}
                     </p>
-                    <div className="mt-6">
-                      <CodeBlock
-                        code={snippet.code}
-                        language={snippet.language}
-                        filename={snippet.filename}
-                      />
-                    </div>
-                  </article>
-                </Reveal>
+                  </div>
+                  <div className="min-w-0 lg:col-span-8">
+                    <CodeBlock
+                      code={snippet.code}
+                      language={snippet.language}
+                      filename={snippet.filename}
+                    />
+                  </div>
+                </article>
               ))}
-            </div>
-          </section>
+            </SiteGrid>
+          </SiteSection>
         ))}
-      </div>
-
-      <EditorialFooter />
-    </main>
+        <SiteSpacer />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

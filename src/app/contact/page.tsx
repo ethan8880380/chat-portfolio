@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
-import { PageHeader } from "@/components/editorial/page-header";
-import { Reveal } from "@/components/ui/reveal";
-import { EditorialFooter } from "@/components/home/editorial-footer";
+import { PageHero } from "@/components/layout/page-hero";
+import {
+  SiteGrid,
+  SiteSection,
+  SiteSpacer,
+  siteLinkCellClassName,
+} from "@/components/layout/site-section";
+import { SiteFooter } from "@/components/layout/site-footer";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -10,85 +15,78 @@ export const metadata: Metadata = {
     "Get in touch with Ethan Rogers — design technologist and front-end engineer based in Seattle, WA.",
 };
 
+export default function ContactPage() {
+  return (
+    <>
+      <main className="flex-1">
+        <PageHero
+          eyebrow="Contact · Available for work"
+          title="Let's build something together."
+          description="I'm currently open to design technologist and front-end roles, and always up for interesting product and prototyping work. The fastest way to reach me is email."
+          footer={
+            <a
+              href="mailto:ethan0380@gmail.com"
+              className={`${siteLinkCellClassName} sm:flex-row sm:items-end sm:justify-between`}
+            >
+              <div>
+                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                  Email · primary
+                </p>
+                <p className="mt-4 break-words text-2xl font-semibold tracking-tighter text-foreground sm:text-4xl md:text-5xl">
+                  ethan0380@gmail.com
+                </p>
+              </div>
+              <ArrowUpRight className="mt-6 size-6 shrink-0 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground sm:mt-0" />
+            </a>
+          }
+        />
+
+        <SiteSection eyebrow="Elsewhere" title="Other ways to connect">
+          <SiteGrid className="sm:grid-cols-2">
+            {LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.isExternal ? "_blank" : undefined}
+                rel={link.isExternal ? "noopener noreferrer" : undefined}
+                className={siteLinkCellClassName}
+              >
+                <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                  {link.label}
+                </p>
+                <p className="mt-8 text-base font-medium text-foreground sm:text-lg">
+                  {link.value}
+                </p>
+                <ArrowUpRight className="absolute right-8 top-8 size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 md:right-10 md:top-10" />
+              </a>
+            ))}
+          </SiteGrid>
+        </SiteSection>
+        <SiteSpacer />
+      </main>
+      <SiteFooter />
+    </>
+  );
+}
+
 const LINKS = [
-  { label: "Phone", value: "253-888-0380", href: "tel:253-888-0380", external: false },
+  { label: "Phone", value: "253-888-0380", href: "tel:253-888-0380", isExternal: false },
   {
     label: "LinkedIn",
     value: "linkedin.com/in/ethan-rogers",
     href: "https://www.linkedin.com/in/ethan-rogers/",
-    external: true,
+    isExternal: true,
   },
   {
     label: "GitHub",
     value: "github.com/ethan8880380",
     href: "https://github.com/ethan8880380",
-    external: true,
+    isExternal: true,
   },
   {
     label: "Résumé",
     value: "Download PDF",
     href: "/ethan-rogers-resume.pdf",
-    external: true,
+    isExternal: true,
   },
 ];
-
-export default function ContactPage() {
-  return (
-    <main className="bg-cream">
-      <PageHeader
-        eyebrow="Contact — Available for work"
-        title={
-          <>
-            Let&apos;s build something{" "}
-            <em className="italic text-clay">together</em>.
-          </>
-        }
-        intro="I'm currently open to design technologist and front-end roles, and always up for interesting product and prototyping work. The fastest way to reach me is email."
-      />
-
-      <section className="mx-auto max-w-6xl px-6 pb-24 md:px-10 md:pb-32">
-        <Reveal>
-          <a
-            href="mailto:ethan0380@gmail.com"
-            className="group block border-t border-espresso/12 py-10 md:py-14"
-          >
-            <p className="font-inter text-xs uppercase tracking-[0.2em] text-espresso/45">
-              Email &mdash; primary
-            </p>
-            <span className="mt-4 flex items-center justify-between gap-6">
-              <span className="break-words font-serif text-[clamp(1.75rem,6vw,4.5rem)] leading-[1.05] text-espresso transition-colors group-hover:text-clay">
-                ethan0380@gmail.com
-              </span>
-              <ArrowUpRight className="hidden h-10 w-10 shrink-0 text-espresso/40 transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-clay md:block" />
-            </span>
-          </a>
-        </Reveal>
-
-        <div className="border-t border-espresso/12">
-          {LINKS.map((link, i) => (
-            <Reveal key={link.label} delay={i * 0.05}>
-              <a
-                href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noopener noreferrer" : undefined}
-                className="group flex items-center justify-between gap-4 border-b border-espresso/12 py-6 md:py-7"
-              >
-                <span className="font-inter text-xs uppercase tracking-[0.2em] text-espresso/45">
-                  {link.label}
-                </span>
-                <span className="flex items-center gap-4">
-                  <span className="font-serif text-xl text-espresso transition-colors group-hover:text-clay md:text-2xl">
-                    {link.value}
-                  </span>
-                  <ArrowUpRight className="h-5 w-5 shrink-0 text-espresso/40 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-clay" />
-                </span>
-              </a>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <EditorialFooter />
-    </main>
-  );
-}

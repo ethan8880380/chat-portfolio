@@ -51,57 +51,57 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
     case "paragraph":
       if (!block.content) return null;
       return (
-        <p className="font-inter text-lg leading-[1.8] text-espresso/75">
+        <p className="text-base leading-relaxed text-foreground/80 md:text-lg">
           {block.content}
         </p>
       );
 
     case "heading_1":
       return (
-        <h2 className="mb-5 mt-16 font-serif text-3xl leading-[1.1] text-espresso md:text-4xl">
+        <h2 className="mb-5 mt-16 text-3xl font-semibold tracking-tighter text-foreground sm:text-4xl">
           {block.content}
         </h2>
       );
 
     case "heading_2":
       return (
-        <h3 className="mb-3 mt-12 border-l-2 border-clay pl-4 font-serif text-2xl leading-snug text-espresso">
+        <h3 className="mb-3 mt-12 text-2xl font-semibold tracking-tight text-foreground">
           {block.content}
         </h3>
       );
 
     case "heading_3":
       return (
-        <h4 className="mb-2 mt-8 font-serif text-xl leading-snug text-espresso">
+        <h4 className="mb-2 mt-8 text-lg font-medium text-foreground">
           {block.content}
         </h4>
       );
 
     case "list_item":
       return (
-        <li className="-mt-6 ml-6 list-disc font-inter text-lg leading-[1.6] text-espresso/75 marker:text-clay">
+        <li className="-mt-6 ml-6 list-disc text-base leading-relaxed text-foreground/80 marker:text-muted-foreground md:text-lg">
           {block.content}
         </li>
       );
 
     case "numbered_list_item":
       return (
-        <li className="-mt-6 ml-6 list-decimal font-inter text-lg leading-[1.6] text-espresso/75 marker:text-clay">
+        <li className="-mt-6 ml-6 list-decimal text-base leading-relaxed text-foreground/80 marker:text-muted-foreground md:text-lg">
           {block.content}
         </li>
       );
 
     case "quote":
       return (
-        <blockquote className="my-8 border-l-2 border-clay pl-6 font-serif text-2xl italic leading-snug text-espresso">
+        <blockquote className="my-8 border-l-2 border-foreground pl-6 text-xl font-medium tracking-tight text-foreground md:text-2xl">
           {block.content}
         </blockquote>
       );
 
     case "callout":
       return (
-        <div className="my-6 rounded-[12px] bg-espresso/[0.04] p-6">
-          <p className="font-inter text-lg leading-[1.8] text-espresso/75">
+        <div className="my-6 rounded-lg border bg-muted/50 p-6">
+          <p className="text-base leading-relaxed text-foreground/80 md:text-lg">
             {block.content}
           </p>
         </div>
@@ -109,8 +109,8 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "code":
       return (
-        <pre className="my-6 overflow-x-auto rounded-[12px] bg-espresso p-6">
-          <code className="font-mono text-sm leading-relaxed text-cream">
+        <pre className="my-6 overflow-x-auto rounded-lg border bg-muted/50 p-6">
+          <code className="font-mono text-sm leading-relaxed text-foreground">
             {block.content}
           </code>
         </pre>
@@ -123,7 +123,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
       return (
         <figure className="my-10">
-          <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
+          <div className="relative aspect-video w-full overflow-hidden border bg-muted">
             {isProxied ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -143,7 +143,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
             )}
           </div>
           {block.caption && (
-            <figcaption className="mt-3 font-inter text-sm text-espresso/50">
+            <figcaption className="mt-3 font-mono text-xs text-muted-foreground">
               {block.caption}
             </figcaption>
           )}
@@ -156,7 +156,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
       const videoUrl = getImageUrl(block);
       return (
         <figure className="my-10">
-          <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
+          <div className="relative aspect-video w-full overflow-hidden border bg-muted">
             <video
               src={videoUrl}
               controls
@@ -164,7 +164,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
             />
           </div>
           {block.caption && (
-            <figcaption className="mt-3 font-inter text-sm text-espresso/50">
+            <figcaption className="mt-3 font-mono text-xs text-muted-foreground">
               {block.caption}
             </figcaption>
           )}
@@ -179,7 +179,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
         if (videoId) {
           return (
             <figure className="my-10">
-              <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
+              <div className="relative aspect-video w-full overflow-hidden border bg-muted">
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}`}
                   className="h-full w-full"
@@ -188,7 +188,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
                 />
               </div>
               {block.caption && (
-                <figcaption className="mt-3 font-inter text-sm text-espresso/50">
+                <figcaption className="mt-3 font-mono text-xs text-muted-foreground">
                   {block.caption}
                 </figcaption>
               )}
@@ -200,18 +200,18 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
         <div className="my-10">
           <iframe
             src={block.url}
-            className="aspect-video w-full rounded-[12px]"
+            className="aspect-video w-full border bg-muted"
           />
         </div>
       );
 
     case "divider":
-      return <hr className="my-12 border-espresso/12" />;
+      return <hr className="my-12" />;
 
     case "toggle":
       return (
-        <details className="my-6 rounded-[12px] bg-espresso/[0.04] p-6">
-          <summary className="cursor-pointer font-inter text-lg font-medium leading-[1.8] text-espresso/80">
+        <details className="my-6 rounded-lg border bg-muted/50 p-6">
+          <summary className="cursor-pointer text-base font-medium text-foreground">
             {block.content}
           </summary>
         </details>

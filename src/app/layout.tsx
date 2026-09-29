@@ -1,36 +1,19 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Space_Mono, Instrument_Serif, Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ChatProvider } from "@/context/ChatContext";
-import { EditorialNav } from "@/components/home/editorial-nav";
+import { SiteHeader } from "@/components/layout/site-header";
 import { Analytics } from "@vercel/analytics/next";
 
-const spaceGrotesk = Space_Grotesk({
+const geistSans = Geist({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
+  variable: "--font-geist-sans",
   display: "swap",
 });
 
-const spaceMono = Space_Mono({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-space-mono",
-  display: "swap",
-});
-
-// Editorial pairing (currently used on the home page)
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-geist-mono",
   display: "swap",
 });
 
@@ -80,11 +63,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${spaceMono.variable} ${instrumentSerif.variable} ${inter.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="bg-cream font-inter text-espresso antialiased overflow-x-clip">
+      <body className="relative flex min-h-svh flex-col">
+        <div
+          aria-hidden
+          className="bg-dots pointer-events-none fixed inset-x-0 top-0 -z-10 h-screen opacity-[0.015] [mask-image:radial-gradient(ellipse_at_top,black,transparent_80%)]"
+        />
         <ChatProvider>
-          <EditorialNav />
+          <SiteHeader />
           {children}
         </ChatProvider>
         <Analytics />

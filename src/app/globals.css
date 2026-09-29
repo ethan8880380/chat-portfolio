@@ -3,71 +3,42 @@
 @tailwind utilities;
 
 @layer base {
-  /* Light / paper theme (the only theme) */
   :root {
-    --background: 48 16% 92%;
-    --foreground: 45 6% 10%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
 
-    --card: 48 16% 92%;
-    --card-foreground: 45 6% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
 
-    --popover: 48 16% 92%;
-    --popover-foreground: 45 6% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
 
-    --primary: 45 6% 10%;
-    --primary-foreground: 48 16% 92%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 45 12% 87%;
-    --secondary-foreground: 45 6% 10%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 45 11% 88%;
-    --muted-foreground: 40 4% 38%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 45 12% 85%;
-    --accent-foreground: 45 6% 10%;
+    --accent: 0 0% 94.1%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 12 100% 50%;
-    --destructive-foreground: 48 16% 92%;
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 45 6% 10%;
-    --input: 45 6% 10%;
-    --ring: 45 6% 10%;
+    --border: 0 0% 92.2%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 63.9%;
 
-    --chart-1: 12 100% 50%;
-    --chart-2: 45 6% 10%;
-    --chart-3: 40 4% 45%;
-    --chart-4: 40 4% 70%;
-    --chart-5: 45 11% 88%;
+    --chart-1: 221 86% 42%;
+    --chart-2: 224 76% 48%;
+    --chart-3: 221 83% 53%;
+    --chart-4: 217 91% 60%;
+    --chart-5: 213 94% 68%;
 
-    --radius: 0;
-  }
-
-  /* Inverted block: drop this class on a wrapper to flip Shadcn tokens to black-on-paper */
-  .section-invert {
-    --background: 45 6% 10%;
-    --foreground: 48 16% 92%;
-
-    --card: 45 6% 10%;
-    --card-foreground: 48 16% 92%;
-
-    --popover: 45 6% 10%;
-    --popover-foreground: 48 16% 92%;
-
-    --primary: 48 16% 92%;
-    --primary-foreground: 45 6% 10%;
-
-    --secondary: 45 5% 16%;
-    --secondary-foreground: 48 16% 92%;
-
-    --muted: 44 5% 16%;
-    --muted-foreground: 45 8% 64%;
-
-    --accent: 44 5% 18%;
-    --accent-foreground: 48 16% 92%;
-
-    --border: 48 16% 92%;
-    --input: 48 16% 92%;
-    --ring: 48 16% 92%;
+    --radius: 0.75rem;
   }
 }
 
@@ -80,45 +51,21 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    @apply bg-cream text-espresso antialiased;
-    font-family: var(--font-inter), system-ui, sans-serif;
+    @apply bg-background font-sans text-foreground antialiased;
     overflow-x: clip;
   }
   ::selection {
-    background: #2b50e0;
-    color: #f7f8fa;
+    @apply bg-foreground text-background;
   }
 }
 
 @layer components {
-  /* Mono uppercase label used for eyebrows / metadata */
-  .eyebrow {
-    @apply font-mono text-[0.7rem] uppercase tracking-[0.25em] leading-none;
-  }
-
-  /* Oversized brutalist display type */
-  .display {
-    @apply font-display font-bold uppercase leading-[0.85] tracking-[-0.02em];
-  }
-
-  /* Page gutter shared across sections */
-  .gutter {
-    @apply px-5 md:px-10 lg:px-16;
-  }
-
-  /* Thick top rule that reads as a brutalist divider */
-  .hr-thick {
-    @apply border-t-2 border-ink;
-  }
-}
-
-@layer components {
-  /* Shiki output (rendered server-side on /snippets). The card supplies the
-     espresso background, so strip Shiki's inline one and keep token colors. */
+  /* Shiki output (rendered server-side on /snippets). The code block supplies
+     its own surface, so strip Shiki's inline background and keep token colors. */
   .snippet-code pre.shiki {
     margin: 0;
     background-color: transparent !important;
-    font-family: var(--font-space-mono), ui-monospace, SFMono-Regular, monospace;
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
     font-size: 0.8125rem;
     line-height: 1.7;
     tab-size: 2;
@@ -131,36 +78,14 @@
 }
 
 @layer utilities {
-  /* Faint architectural grid background */
-  .grid-lines {
-    background-image: linear-gradient(
-        to right,
-        rgba(10, 10, 10, 0.06) 1px,
-        transparent 1px
-      ),
-      linear-gradient(to bottom, rgba(10, 10, 10, 0.06) 1px, transparent 1px);
-    background-size: 80px 80px;
+  .bg-grid {
+    background-image: linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 64px 64px;
   }
 
-  /* Pause CSS marquee on hover */
-  .pause-on-hover:hover {
-    animation-play-state: paused;
+  .bg-dots {
+    background-image: radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
-}
-
-/* Subtle editorial scrollbar */
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(22, 24, 29, 0.18);
-  border-radius: 9999px;
-  border: 3px solid #f7f8fa;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(43, 80, 224, 0.6);
 }

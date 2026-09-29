@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EditorialChat } from "@/components/editorial/editorial-chat";
+import { ChatPanel } from "@/components/chat/chat-panel";
 
 export const metadata: Metadata = {
   title: "Ask My AI",
@@ -9,8 +9,10 @@ export const metadata: Metadata = {
 
 export default function ChatPage() {
   return (
-    <main className="flex min-h-[calc(100dvh-4rem)] flex-col bg-cream md:min-h-[calc(100dvh-5rem)]">
-      <EditorialChat />
+    <main className="flex h-[calc(100dvh-4rem)] flex-col">
+      <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col border-x">
+        <ChatPanel />
+      </div>
     </main>
   );
 }

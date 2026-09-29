@@ -10,30 +10,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
-        display: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
-        mono: ["var(--font-space-mono)", "ui-monospace", "monospace"],
-        // Editorial pairing (home page)
-        serif: ["var(--font-instrument-serif)", "Georgia", "serif"],
-        inter: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: [
+          "var(--font-geist-mono)",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "monospace",
+        ],
       },
       colors: {
-        // Muted paper & ink foundation (softer than pure black/white)
-        paper: "#EFEEE9",
-        ink: "#1C1B19",
-        // Slightly recessed surface for hover / inset states
-        chalk: "#E6E4DD",
-        // Editorial palette — clean, cool, modern
-        // (token names kept; `cream` = canvas, `espresso` = ink, `clay` = accent)
-        cream: "#F7F8FA",
-        espresso: "#16181D",
-        clay: "#2B50E0",
-        // Single bold accent (swap this one token to re-theme the whole site)
-        brand: {
-          DEFAULT: "#FF3B00",
-          fg: "#FFFFFF",
-        },
-        // Shadcn semantic tokens (mapped to B&W via CSS variables)
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -76,21 +62,9 @@ export default {
         },
       },
       borderRadius: {
-        none: "0",
-        sm: "0",
-        md: "0",
-        lg: "0",
-        xl: "0",
-        "2xl": "0",
-        "3xl": "0",
-        full: "9999px",
-      },
-      borderWidth: {
-        DEFAULT: "1px",
-        "1": "1px",
-        "2": "2px",
-        "3": "3px",
-        "4": "4px",
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
@@ -105,17 +79,11 @@ export default {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(-50%)" },
         },
-        "marquee-reverse": {
-          from: { transform: "translateX(-50%)" },
-          to: { transform: "translateX(0)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        marquee: "marquee var(--marquee-duration, 40s) linear infinite",
-        "marquee-reverse":
-          "marquee-reverse var(--marquee-duration, 40s) linear infinite",
+        marquee: "marquee 60s linear infinite",
       },
     },
   },
