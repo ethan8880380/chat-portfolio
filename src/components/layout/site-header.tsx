@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,14 +27,25 @@ export function SiteHeader() {
         <span aria-hidden className="hidden h-5 w-px bg-border md:block" />
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.href}
-              item={item}
-              isActive={isNavActive(pathname, item.href)}
-              className="px-2.5 py-1.5"
-            />
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const isActive = isNavActive(pathname, item.href);
+            return (
+              <NavLink
+                key={item.href}
+                item={item}
+                isActive={isActive}
+                className="relative px-2.5 py-1.5"
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-active"
+                    transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                    className="absolute inset-x-2.5 -bottom-[17px] h-px bg-foreground"
+                  />
+                )}
+              </NavLink>
+            );
+          })}
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5">
@@ -86,14 +98,8 @@ export function SiteLogo({ size = "md" }: { size?: "sm" | "md" }) {
     <Link
       href="/"
       aria-label="Ethan Rogers home"
-      className="flex w-fit shrink-0 items-center gap-2 text-foreground"
+      className="flex w-fit shrink-0 items-center text-foreground"
     >
-      <span
-        aria-hidden
-        className="flex size-6 items-center justify-center rounded-md bg-foreground font-mono text-[10px] font-semibold text-background"
-      >
-        ER
-      </span>
       <span
         className={cn(
           "font-semibold tracking-tight",
@@ -111,11 +117,13 @@ function NavLink({
   isActive,
   className,
   onClick,
+  children,
 }: {
   item: NavItem;
   isActive: boolean;
   className?: string;
   onClick?: () => void;
+  children?: ReactNode;
 }) {
   return (
     <Link
@@ -131,6 +139,7 @@ function NavLink({
       )}
     >
       {item.label}
+      {children}
     </Link>
   );
 }

@@ -50,27 +50,40 @@ function ProjectCard({
 
   return (
     <Link href={`/projects/${project.slug}`} className={siteLinkCellClassName}>
-      <div className="relative aspect-[16/10] overflow-hidden border bg-muted">
+      <div className="relative aspect-[16/10] overflow-hidden rounded-sm border bg-muted">
         <SmartImage
           src={project.images.hero}
           alt={project.title}
           sizes={isCompact ? "(max-width: 768px) 100vw, 33vw" : "(max-width: 768px) 100vw, 50vw"}
-          className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+          className="transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
         />
+        <span className="absolute bottom-3 left-3 inline-flex translate-y-2 items-center gap-1.5 rounded-full bg-foreground/90 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-background opacity-0 backdrop-blur transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          View case study
+          <ArrowUpRight className="size-3" />
+        </span>
       </div>
 
       <div className="mt-8 flex items-center gap-2 font-mono text-xs text-muted-foreground">
         {index !== undefined && (
-          <span className="tabular-nums">{String(index + 1).padStart(2, "0")}</span>
+          <span className="tabular-nums transition-colors group-hover:text-foreground">
+            {String(index + 1).padStart(2, "0")}
+          </span>
         )}
-        <span className="size-1.5 rounded-full bg-foreground/40 transition-colors group-hover:bg-foreground" />
+        <span className="size-1.5 rounded-full bg-foreground/30 transition-colors group-hover:bg-foreground" />
         {label && <span className="truncate">{label}</span>}
         <span className="ml-auto tabular-nums">{project.year}</span>
       </div>
 
-      <h3 className="mt-4 flex items-start justify-between gap-4 text-base font-medium text-foreground sm:text-lg">
+      <h3
+        className={cn(
+          "mt-4 flex items-start justify-between gap-4 font-semibold tracking-tight text-foreground",
+          isCompact ? "text-lg" : "text-xl sm:text-2xl"
+        )}
+      >
         {project.title}
-        <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+        <span className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-full border transition-colors group-hover:border-foreground group-hover:bg-foreground group-hover:text-background">
+          <ArrowUpRight className="size-3.5 transition-transform duration-300 group-hover:rotate-45" />
+        </span>
       </h3>
       {!isCompact && (
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">

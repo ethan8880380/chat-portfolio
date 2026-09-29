@@ -36,7 +36,11 @@ export default function AboutPage() {
           </Button>
         </PageHero>
 
-        <SiteSection eyebrow="The story" title="I make things that work beautifully.">
+        <SiteSection
+          index={1}
+          eyebrow="The story"
+          title="I make things that work beautifully."
+        >
           <SiteGrid className="lg:grid-cols-12">
             <div className={`${siteCellClassName} lg:col-span-5`}>
               <div className="relative aspect-[4/5] overflow-hidden border bg-muted">
@@ -72,7 +76,7 @@ export default function AboutPage() {
           </SiteGrid>
         </SiteSection>
 
-        <SiteSection eyebrow="Experience" title="Where I've been">
+        <SiteSection index={2} eyebrow="Experience" title="Where I've been">
           <SiteGrid>
             {ROLES.map((item) => (
               <div
@@ -104,7 +108,7 @@ export default function AboutPage() {
           </SiteGrid>
         </SiteSection>
 
-        <SiteSection eyebrow="Skills & tools" title="What I bring to a team">
+        <SiteSection index={3} eyebrow="Skills & tools" title="What I bring to a team">
           <SiteGrid className="md:grid-cols-3">
             {SKILLS.map((col) => (
               <div key={col.group} className={siteCellClassName}>
@@ -123,7 +127,11 @@ export default function AboutPage() {
           </SiteGrid>
         </SiteSection>
 
-        <SiteSection eyebrow="Off the clock" title="A few things about me">
+        <SiteSection
+          index={4}
+          eyebrow="Off the clock"
+          title="A few things about me"
+        >
           <SiteGrid className="grid-cols-2 lg:grid-cols-4">
             {FACTS.map((fact) => (
               <div key={fact.label} className={siteCellClassName}>

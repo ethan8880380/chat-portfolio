@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ChatProvider } from "@/context/ChatContext";
 import { SiteHeader } from "@/components/layout/site-header";
+import { PointerTracker } from "@/components/layout/pointer-tracker";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
@@ -16,7 +17,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   display: "swap",
 });
-
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
@@ -70,6 +70,11 @@ export default function RootLayout({
           aria-hidden
           className="bg-dots pointer-events-none fixed inset-x-0 top-0 -z-10 h-screen opacity-[0.015] [mask-image:radial-gradient(ellipse_at_top,black,transparent_80%)]"
         />
+        <div
+          aria-hidden
+          className="bg-noise pointer-events-none fixed inset-0 z-50 opacity-[0.035] mix-blend-multiply"
+        />
+        <PointerTracker />
         <ChatProvider>
           <SiteHeader />
           {children}

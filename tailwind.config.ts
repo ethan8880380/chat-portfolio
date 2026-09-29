@@ -10,8 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: [
+        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],        mono: [
           "var(--font-geist-mono)",
           "ui-monospace",
           "SFMono-Regular",
@@ -79,11 +78,16 @@ export default {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(-50%)" },
         },
+        pulse_ring: {
+          "0%": { transform: "scale(1)", opacity: "0.6" },
+          "80%, 100%": { transform: "scale(2.6)", opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         marquee: "marquee 60s linear infinite",
+        "pulse-ring": "pulse_ring 2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite",
       },
     },
   },

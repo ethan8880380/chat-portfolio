@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
+import { GridMarks } from "@/components/layout/grid-marks";
+import { Reveal } from "@/components/layout/reveal";
 import { cn } from "@/lib/utils";
 
 export function SiteSection({
   id,
+  index,
   eyebrow,
   title,
   description,
@@ -13,27 +16,59 @@ export function SiteSection({
     <section id={id} className="scroll-mt-24">
       <SiteSpacer />
       <div className="border-y">
-        <div className="mx-auto max-w-6xl border-x">
+        <div className="relative mx-auto max-w-6xl border-x">
+          <GridMarks />
           <header className="flex flex-col gap-8 px-8 py-14 sm:flex-row sm:items-end sm:justify-between md:px-10 md:py-20">
-            <div className="max-w-xl">
-              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                {eyebrow}
-              </p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-tighter text-foreground sm:text-4xl">
+            <Reveal className="max-w-2xl">
+              <SectionEyebrow index={index}>{eyebrow}</SectionEyebrow>
+              <h2 className="mt-5 text-balance text-3xl font-semibold tracking-tighter text-foreground sm:text-5xl sm:leading-[1.05]">
                 {title}
               </h2>
               {description && (
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                   {description}
                 </p>
               )}
-            </div>
-            {action && <div className="shrink-0">{action}</div>}
+            </Reveal>
+            {action && (
+              <Reveal delay={0.1} className="shrink-0">
+                {action}
+              </Reveal>
+            )}
           </header>
           {children && <div className="border-t">{children}</div>}
         </div>
       </div>
     </section>
+  );
+}
+
+export function SectionEyebrow({
+  index,
+  className,
+  children,
+}: {
+  index?: number;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <p
+      className={cn(
+        "flex items-center gap-3 font-mono text-xs uppercase tracking-wider text-muted-foreground",
+        className
+      )}
+    >
+      {index !== undefined ? (
+        <span className="tabular-nums text-foreground">
+          {String(index).padStart(2, "0")}
+        </span>
+      ) : (
+        <span aria-hidden className="size-1.5 bg-foreground" />
+      )}
+      <span aria-hidden className="h-px w-6 bg-current opacity-40" />
+      {children}
+    </p>
   );
 }
 
@@ -60,11 +95,12 @@ export const siteCellClassName =
 
 export const siteLinkCellClassName = cn(
   siteCellClassName,
-  "outline-none transition-colors hover:bg-muted/50 focus-visible:bg-muted/50"
+  "spotlight outline-none transition-colors hover:bg-muted/40 focus-visible:bg-muted/40"
 );
 
 interface SiteSectionProps {
   id?: string;
+  index?: number;
   eyebrow: string;
   title: ReactNode;
   description?: ReactNode;

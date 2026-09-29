@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { getFeaturedProjects, getProjects } from "@/lib/projects-service";
 import { Button } from "@/components/ui/button";
 import { HomeHero } from "@/components/home/home-hero";
@@ -24,20 +25,24 @@ export default async function Home() {
       <main className="flex-1">
         <HomeHero marquee={<ProjectMarquee projects={allProjects} />} />
         <SiteSection
+          index={1}
           eyebrow="Selected work"
           title="Recent projects"
           description="Enterprise platforms, design systems, and AI tools — from first sketch to shipped code."
           action={
-            <Button asChild variant="outline">
-              <Link href="/work">View all work</Link>
+            <Button asChild variant="outline" className="group">
+              <Link href="/work">
+                View all work
+                <ArrowRight className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
             </Button>
           }
         >
-          <ProjectGrid projects={featuredProjects} />
+          <ProjectGrid projects={featuredProjects} showIndex />
         </SiteSection>
-        <ImpactMetrics />
-        <ExploreCards />
-        <ContactCta />
+        <ImpactMetrics index={2} />
+        <ExploreCards index={3} />
+        <ContactCta index={4} />
         <SiteSpacer />
       </main>
       <SiteFooter />

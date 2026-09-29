@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteLogo } from "@/components/layout/site-header";
+import { StatusDot } from "@/components/layout/status-dot";
 
 export function SiteFooter() {
   return (
@@ -34,9 +35,16 @@ export function SiteFooter() {
           ))}
         </div>
 
+        <div aria-hidden className="relative select-none overflow-hidden border-t">
+          <p className="translate-y-[22%] whitespace-nowrap px-4 text-center text-[clamp(3.5rem,15.5vw,11.5rem)] font-semibold leading-none tracking-[-0.06em] text-foreground/[0.09]">
+            Ethan Rogers
+          </p>
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent" />
+        </div>
+
         <div className="flex flex-col gap-3 border-t px-8 py-6 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between md:px-10">
           <p className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-emerald-500" />
+            <StatusDot />
             Available for new work
           </p>
           <p className="tabular-nums">
@@ -50,7 +58,7 @@ export function SiteFooter() {
 
 function FooterLink({ link }: { link: FooterLinkItem }) {
   const className =
-    "text-sm text-muted-foreground transition-colors hover:text-foreground";
+    "text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline";
   const isExternal = link.href.startsWith("http") || link.href.endsWith(".pdf");
 
   if (isExternal || link.href.startsWith("mailto:"))

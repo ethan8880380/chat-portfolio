@@ -2,7 +2,9 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Github } from "lucide-react";
 import type { ProjectData } from "@/data/projects";
 import { Button } from "@/components/ui/button";
+import { GridMarks } from "@/components/layout/grid-marks";
 import { SiteGrid } from "@/components/layout/site-section";
+import { SpotlightGrid } from "@/components/layout/spotlight-grid";
 import { SmartImage } from "@/components/ui/smart-image";
 
 export function ProjectHero({ project }: { project: ProjectData }) {
@@ -19,11 +21,8 @@ export function ProjectHero({ project }: { project: ProjectData }) {
   return (
     <section className="-mt-16">
       <div className="relative mx-auto max-w-6xl overflow-hidden border-x px-8 pb-16 pt-32 sm:pt-36 md:px-10 md:pb-20">
-        <div
-          aria-hidden
-          className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_70%_80%_at_0%_100%,black,transparent)]"
-        />
-        <div className="relative max-w-3xl">
+        <SpotlightGrid maskClassName="[mask-image:radial-gradient(ellipse_70%_80%_at_100%_0%,black,transparent)]" />
+        <div className="relative max-w-4xl">
           <Link
             href="/work"
             className="group inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -43,7 +42,7 @@ export function ProjectHero({ project }: { project: ProjectData }) {
             ))}
           </ul>
 
-          <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tighter text-foreground sm:text-5xl lg:text-6xl">
+          <h1 className="mt-8 text-balance text-[clamp(2.5rem,6.5vw,5rem)] font-semibold leading-[0.98] tracking-[-0.045em] text-foreground">
             {project.title}
           </h1>
           <p className="mt-6 max-w-[60ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -74,7 +73,8 @@ export function ProjectHero({ project }: { project: ProjectData }) {
       </div>
 
       <div className="border-y">
-        <div className="mx-auto max-w-6xl border-x">
+        <div className="relative mx-auto max-w-6xl border-x">
+          <GridMarks />
           {meta.length > 0 && (
             <SiteGrid className={META_COLUMNS[meta.length]}>
               {meta.map((item) => (
@@ -82,7 +82,7 @@ export function ProjectHero({ project }: { project: ProjectData }) {
                   <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
                     {item.label}
                   </p>
-                  <p className="mt-2 text-sm text-foreground">{item.value}</p>
+                  <p className="mt-2 text-sm font-medium text-foreground">{item.value}</p>
                 </div>
               ))}
             </SiteGrid>
