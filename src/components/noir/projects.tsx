@@ -7,6 +7,7 @@ import { ArrowUpRight } from "lucide-react";
 import type { ProjectData } from "@/data/projects";
 import { SmartImage } from "@/components/ui/smart-image";
 import { EASE, Fade, Hairline, RiseLines } from "@/components/noir/reveal";
+import { PrototypeCard } from "@/components/noir/prototype";
 import { cn } from "@/lib/utils";
 
 function meta(p: ProjectData) {
@@ -94,7 +95,11 @@ export function FeaturedProjects({ projects }: { projects: ProjectData[] }) {
             data-inspect-props={`slug="${p.slug}"`}
             className={cn("group block md:w-[78%]", i % 2 === 1 && "md:ml-auto")}
           >
-            <QuietImage src={p.images.hero} alt={p.title} aspect="aspect-[16/10]" sizes="(max-width: 768px) 100vw, 78vw" />
+            {p.prototype ? (
+              <PrototypeCard prototype={p.prototype} title={p.title} />
+            ) : (
+              <QuietImage src={p.images.hero} alt={p.title} aspect="aspect-[16/10]" sizes="(max-width: 768px) 100vw, 78vw" />
+            )}
             <div className="mt-6 grid gap-4 md:grid-cols-12 md:gap-8">
               <span className="text-[13px] tabular-nums text-muted-foreground md:col-span-1">
                 {String(i + 1).padStart(2, "0")}
@@ -135,7 +140,11 @@ export function ProjectGrid({ projects }: { projects: ProjectData[] }) {
               const n = projects.indexOf(p) + 1;
               return (
                 <Link key={p.slug} href={`/projects/${p.slug}`} data-inspect="ProjectCard" className="group block">
-                  <NativeImage src={p.images.hero} alt={p.title} sizes="(max-width: 768px) 100vw, 50vw" />
+                  {p.prototype ? (
+                    <PrototypeCard prototype={p.prototype} title={p.title} />
+                  ) : (
+                    <NativeImage src={p.images.hero} alt={p.title} sizes="(max-width: 768px) 100vw, 50vw" />
+                  )}
                   <div className="mt-5 flex items-baseline gap-4">
                     <span className="text-[13px] tabular-nums text-muted-foreground">{String(n).padStart(2, "0")}</span>
                     <div className="min-w-0 flex-1">
