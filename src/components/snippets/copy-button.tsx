@@ -28,7 +28,7 @@ export function CopyButton({ value }: CopyButtonProps) {
       aria-label={isCopied ? "Copied to clipboard" : "Copy code"}
       className={cn(
         "flex items-center gap-1.5 text-xs transition-colors",
-        isCopied ? "text-emerald-600" : "text-muted-foreground hover:text-foreground"
+        isCopied ? "text-emerald-400" : "text-white/60 hover:text-white"
       )}
     >
       {isCopied ? (

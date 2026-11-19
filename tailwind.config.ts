@@ -10,7 +10,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],        mono: [
+        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-anybody)", "var(--font-geist-sans)", "sans-serif"],
+        serif: ["var(--font-instrument)", "ui-serif", "Georgia", "serif"],
+        mono: [
           "var(--font-geist-mono)",
           "ui-monospace",
           "SFMono-Regular",
@@ -50,6 +53,9 @@ export default {
           foreground: "hsl(var(--destructive-foreground))",
         },
         border: "hsl(var(--border))",
+        sel: "hsl(var(--sel) / <alpha-value>)",
+        hot: "hsl(var(--hot) / <alpha-value>)",
+        "ink-panel": "hsl(var(--ink-panel) / <alpha-value>)",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         chart: {
@@ -78,6 +84,10 @@ export default {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(-50%)" },
         },
+        blink: {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
+        },
         pulse_ring: {
           "0%": { transform: "scale(1)", opacity: "0.6" },
           "80%, 100%": { transform: "scale(2.6)", opacity: "0" },
@@ -87,6 +97,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         marquee: "marquee 60s linear infinite",
+        blink: "blink 1s steps(1) infinite",
         "pulse-ring": "pulse_ring 2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite",
       },
     },

@@ -1,267 +1,119 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { PageHero } from "@/components/layout/page-hero";
-import {
-  SiteGrid,
-  SiteSection,
-  SiteSpacer,
-  siteCellClassName,
-} from "@/components/layout/site-section";
-import { SiteFooter } from "@/components/layout/site-footer";
+import { NoirShell } from "@/components/noir/noir-shell";
+import { Fade, RiseLines } from "@/components/noir/reveal";
+import { ContactBlock } from "@/components/noir/contact-block";
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "Ethan Rogers — a design technologist bridging design and engineering. Based in Seattle, WA.",
+  description: "Ethan Rogers — a design technologist bridging design and engineering. Based in Seattle, WA.",
 };
+
+const ROLES = [
+  { years: "2024 — Now", role: "Design & build, independent", org: "BuyerSpring, DEFOOR" },
+  { years: "2021 — Now", role: "UX designer & engineer", org: "Kimberly-Clark" },
+  { years: "2019", role: "UX intern", org: "Micro Focus" },
+  { years: "2018 — 2022", role: "BDes, Interaction Design", org: "University of Washington" },
+];
+
+const TOOLS = [
+  "Figma & variables",
+  "Prototyping",
+  "User research",
+  "Motion",
+  "React / Next.js",
+  "TypeScript",
+  "Tailwind",
+  "Gen AI",
+];
 
 export default function AboutPage() {
   return (
-    <>
-      <main className="flex-1">
-        <PageHero
-          eyebrow="About"
-          title="Where design meets engineering."
-          description="I'm a design technologist who bridges design and engineering — prototyping and shipping forward-looking experiences from concept to code. 4+ years building enterprise platforms, design systems, and AI tools."
-        >
-          <Button asChild size="xl">
-            <Link href="/work">View my work</Link>
-          </Button>
-          <Button asChild size="xl" variant="outline">
-            <a href="/ethan-rogers-resume.pdf" target="_blank" rel="noopener noreferrer">
-              Download résumé
-            </a>
-          </Button>
-        </PageHero>
+    <NoirShell>
+      <main>
+        <section className="flex min-h-svh flex-col justify-end px-6 pb-16 md:px-12">
+          <RiseLines
+            lines={["Hello.", "I’m Ethan."]}
+            delay={0.25}
+            className="font-gserif text-[clamp(4rem,13vw,13rem)] leading-[0.9] tracking-[-0.05em]"
+            mutedLines={[1]}
+          />
+        </section>
 
-        <SiteSection
-          index={1}
-          eyebrow="The story"
-          title="I make things that work beautifully."
-        >
-          <SiteGrid className="lg:grid-cols-12">
-            <div className={`${siteCellClassName} lg:col-span-5`}>
-              <div className="relative aspect-[4/5] overflow-hidden border bg-muted">
-                <Image
-                  src="/projectImages/about/me.png"
-                  alt="Ethan Rogers"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover"
-                  priority
-                />
-              </div>
+        <section className="grid gap-16 px-6 pt-24 md:grid-cols-12 md:px-12 md:pt-40">
+          <Fade className="md:col-span-4">
+            <div className="group relative aspect-[4/5] w-full max-w-sm overflow-hidden bg-card">
+              <Image
+                src="/projectImages/about/me.png"
+                alt="Ethan Rogers"
+                fill
+                sizes="(max-width: 768px) 100vw, 30vw"
+                className="object-cover grayscale transition-[filter] duration-1000 group-hover:grayscale-0"
+                priority
+              />
             </div>
-            <div className={`${siteCellClassName} justify-center gap-4 text-base leading-relaxed text-muted-foreground lg:col-span-7`}>
+          </Fade>
+          <div className="md:col-span-7 md:col-start-6">
+            <Fade>
+              <p className="font-gserif text-[clamp(1.75rem,3.2vw,2.75rem)] leading-[1.15] tracking-[-0.025em]">
+                I joined Kimberly-Clark with a simple mission: make enterprise software that doesn’t make people want
+                to throw their laptop out the window.
+              </p>
+            </Fade>
+            <Fade className="mt-10 space-y-5 text-[15px] leading-relaxed text-muted-foreground md:text-base">
               <p>
-                Four years ago, I joined Kimberly-Clark with a simple mission:
-                make enterprise software that doesn&apos;t make people want to
-                throw their laptop out the window. Turns out, that&apos;s harder
-                than it sounds &mdash; but also way more rewarding.
+                When there was no budget for a developer, I taught myself React, Next.js and OKTA so the thing I designed
+                could actually ship. It won a GDUSA award, and I’ve worked both sides of the handoff ever since.
               </p>
               <p>
-                These days, I split my time between designing analytics
-                platforms, building the front-end that powers them, and
-                prototyping new interactions, motion, and Gen AI experiences. I
-                speak fluent Figma and TypeScript.
+                Today I design analytics platforms, build the front-end that powers them, and prototype new interaction,
+                motion and Gen AI ideas. I believe the best interfaces are the ones you don’t notice.
               </p>
-              <p>
-                Graduate of the University of Washington, lifelong Mariners
-                optimist, and firmly believe the best interfaces are the ones
-                you don&apos;t notice. Go Huskies.
-              </p>
-            </div>
-          </SiteGrid>
-        </SiteSection>
+            </Fade>
+          </div>
+        </section>
 
-        <SiteSection index={2} eyebrow="Experience" title="Where I've been">
-          <SiteGrid>
-            {ROLES.map((item) => (
-              <div
-                key={item.role}
-                className="grid gap-4 bg-background p-8 md:grid-cols-12 md:gap-10 md:p-10"
-              >
-                <p className="font-mono text-xs tabular-nums text-muted-foreground md:col-span-3">
-                  {item.years}
-                </p>
-                <div className="md:col-span-9">
-                  <h3 className="text-base font-medium text-foreground sm:text-lg">
-                    {item.role}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.org}</p>
-                  <ul className="mt-5 space-y-2">
-                    {item.highlights.map((highlight) => (
-                      <li
-                        key={highlight}
-                        className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
-                      >
-                        <span className="mt-2 size-1 shrink-0 rounded-full bg-foreground/50" />
-                        {highlight}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+        <section className="grid gap-10 px-6 pt-48 md:grid-cols-12 md:px-12 md:pt-64">
+          <Fade className="text-[13px] text-muted-foreground md:col-span-3">
+            <p>Experience</p>
+          </Fade>
+          <ul className="border-t md:col-span-9">
+            {ROLES.map((r) => (
+              <li key={r.role} className="grid gap-1 border-b py-6 sm:grid-cols-[10rem_1fr_auto] sm:items-baseline sm:gap-6">
+                <span className="text-[13px] tabular-nums text-muted-foreground">{r.years}</span>
+                <span className="font-gserif text-2xl tracking-tight md:text-3xl">{r.role}</span>
+                <span className="text-[13px] text-muted-foreground">{r.org}</span>
+              </li>
             ))}
-          </SiteGrid>
-        </SiteSection>
+          </ul>
+        </section>
 
-        <SiteSection index={3} eyebrow="Skills & tools" title="What I bring to a team">
-          <SiteGrid className="md:grid-cols-3">
-            {SKILLS.map((col) => (
-              <div key={col.group} className={siteCellClassName}>
-                <h3 className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                  {col.group}
-                </h3>
-                <ul className="mt-6 space-y-3">
-                  {col.items.map((item) => (
-                    <li key={item} className="text-sm text-foreground sm:text-base">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        <section className="grid gap-10 px-6 pt-32 md:grid-cols-12 md:px-12 md:pt-48">
+          <Fade className="text-[13px] text-muted-foreground md:col-span-3">
+            <p>Toolkit</p>
+          </Fade>
+          <Fade className="flex flex-wrap gap-x-8 gap-y-3 text-[15px] text-foreground/80 md:col-span-9">
+            {TOOLS.map((t) => (
+              <span key={t}>{t}</span>
             ))}
-          </SiteGrid>
-        </SiteSection>
+          </Fade>
+        </section>
 
-        <SiteSection
-          index={4}
-          eyebrow="Off the clock"
-          title="A few things about me"
-        >
-          <SiteGrid className="grid-cols-2 lg:grid-cols-4">
-            {FACTS.map((fact) => (
-              <div key={fact.label} className={siteCellClassName}>
-                <p className="text-3xl font-semibold tracking-tighter text-foreground sm:text-4xl md:text-5xl">
-                  {fact.value}
-                </p>
-                <h3 className="mt-8 text-sm font-medium text-foreground">
-                  {fact.label}
-                </h3>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                  {fact.note}
-                </p>
-                <div className="relative mt-8 aspect-square overflow-hidden border bg-muted">
-                  <Image
-                    src={fact.photo.src}
-                    alt={fact.photo.alt}
-                    fill
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            ))}
-          </SiteGrid>
-        </SiteSection>
-        <SiteSpacer />
+        <section className="grid gap-10 px-6 pt-32 md:grid-cols-12 md:px-12 md:pt-48">
+          <Fade className="text-[13px] text-muted-foreground md:col-span-3">
+            <p>Off the clock</p>
+          </Fade>
+          <Fade className="md:col-span-9">
+            <p className="font-gserif max-w-[30ch] text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.25] tracking-[-0.02em] text-muted-foreground">
+              Golf <span className="text-foreground">(under 20, but long)</span>. The Mariners{" "}
+              <span className="text-foreground">(pain is temporary)</span>. Guitar{" "}
+              <span className="text-foreground">(campfire certified)</span>. Huskies, class of ’22.
+            </p>
+          </Fade>
+        </section>
+
+        <ContactBlock />
       </main>
-      <SiteFooter />
-    </>
+    </NoirShell>
   );
 }
-
-const FACTS = [
-  {
-    label: "Handicap",
-    value: "<20",
-    note: "I can hit it a long way though",
-    photo: { src: "/projectImages/about/golf.png", alt: "Golfing" },
-  },
-  {
-    label: "Team",
-    value: "Mariners",
-    note: "Pain is temporary",
-    photo: { src: "/projectImages/about/baby.png", alt: "Childhood photo at a stadium" },
-  },
-  {
-    label: "Hobby",
-    value: "Guitar",
-    note: "Campfire certified",
-    photo: { src: "/projectImages/about/guitar.png", alt: "Playing guitar" },
-  },
-  {
-    label: "Class of",
-    value: "\u201922",
-    note: "Go Huskies",
-    photo: { src: "/projectImages/about/husky.png", alt: "At a UW Huskies game" },
-  },
-];
-
-const SKILLS = [
-  {
-    group: "Design",
-    items: [
-      "Prototyping",
-      "Interaction & Motion",
-      "UX / UI Design",
-      "User Research",
-      "Design Systems",
-    ],
-  },
-  {
-    group: "Development",
-    items: [
-      "React / Next.js",
-      "JavaScript / TypeScript",
-      "HTML / CSS",
-      "Motion / Framer",
-      "Responsive Design",
-    ],
-  },
-  {
-    group: "Tools",
-    items: [
-      "Figma",
-      "Git / GitHub",
-      "OpenAI / Gen AI",
-      "PowerBI",
-      "Adobe Creative Suite",
-    ],
-  },
-];
-
-const ROLES = [
-  {
-    years: "2024 — Now",
-    role: "Full Stack Designer & Developer",
-    org: "Freelance · Seattle, WA",
-    highlights: [
-      "BuyerSpring — match-first real estate platform",
-      "DEFOOR property site (Next.js + Sanity.io)",
-      "100+ project portfolio across design & build",
-    ],
-  },
-  {
-    years: "2021 — Now",
-    role: "UX Designer & Engineer",
-    org: "Kimberly-Clark · Remote, WA",
-    highlights: [
-      "GDUSA award-winning Commercial Analytics Hub",
-      "1,500+ daily users; +75% retention on Huggies",
-      "Enterprise design system on ShadCN + Tailwind + Figma",
-      "50% reduction in dev cycles via standardized templates",
-    ],
-  },
-  {
-    years: "Summer 2019",
-    role: "UX Intern",
-    org: "Micro Focus · Seattle, WA",
-    highlights: [
-      "Modernized the Reflection Desktop UI",
-      "Built a 200+ icon library",
-    ],
-  },
-  {
-    years: "2018 — 2022",
-    role: "BDes, Interaction Design",
-    org: "University of Washington · Seattle, WA",
-    highlights: [
-      "HCI focus with design research methodologies",
-      "Class of '22 — Go Huskies",
-    ],
-  },
-];

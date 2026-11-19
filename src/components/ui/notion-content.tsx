@@ -58,14 +58,14 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "heading_1":
       return (
-        <h2 className="mb-5 mt-16 text-3xl font-semibold tracking-tighter text-foreground sm:text-4xl">
+        <h2 data-inspect="NotionHeading" className="mb-5 mt-20 font-display text-5xl font-black uppercase leading-[0.85] text-foreground wdth-75 sm:text-6xl">
           {block.content}
         </h2>
       );
 
     case "heading_2":
       return (
-        <h3 className="mb-3 mt-12 text-2xl font-semibold tracking-tight text-foreground">
+        <h3 className="mb-3 mt-14 font-display text-3xl font-extrabold uppercase leading-none text-foreground wdth-75 sm:text-4xl">
           {block.content}
         </h3>
       );
@@ -93,14 +93,14 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "quote":
       return (
-        <blockquote className="my-8 border-l-2 border-foreground pl-6 text-xl font-medium tracking-tight text-foreground md:text-2xl">
+        <blockquote className="my-10 border-l-2 border-hot pl-6 font-serif text-2xl italic leading-snug text-foreground md:text-4xl">
           {block.content}
         </blockquote>
       );
 
     case "callout":
       return (
-        <div className="my-6 rounded-lg border bg-muted/50 p-6">
+        <div className="my-6 rounded-2xl rounded-tl-sm border bg-card p-6">
           <p className="text-base leading-relaxed text-foreground/80 md:text-lg">
             {block.content}
           </p>
@@ -123,7 +123,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
       return (
         <figure className="my-10">
-          <div className="relative aspect-video w-full overflow-hidden border bg-muted">
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-foreground/10 bg-muted">
             {isProxied ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -156,7 +156,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
       const videoUrl = getImageUrl(block);
       return (
         <figure className="my-10">
-          <div className="relative aspect-video w-full overflow-hidden border bg-muted">
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-foreground/10 bg-muted">
             <video
               src={videoUrl}
               controls
@@ -179,7 +179,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
         if (videoId) {
           return (
             <figure className="my-10">
-              <div className="relative aspect-video w-full overflow-hidden border bg-muted">
+              <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-foreground/10 bg-muted">
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}`}
                   className="h-full w-full"
