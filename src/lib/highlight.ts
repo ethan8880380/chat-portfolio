@@ -1,6 +1,6 @@
 import { createHighlighter, type Highlighter } from "shiki";
 
-const THEME = "github-light-default";
+const THEME = "vitesse-dark";
 const LANGS = ["typescript", "tsx"] as const;
 
 const LANG_ALIASES: Record<string, string> = {

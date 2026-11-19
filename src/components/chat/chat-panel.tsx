@@ -11,7 +11,7 @@ import { ArrowUp } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export function ChatPanel() {
+export function ChatPanel({ initialQuery }: { initialQuery?: string }) {
   const [value, setValue] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +59,16 @@ export function ChatPanel() {
     }
   };
 
+  // Questions typed into the ⌘K palette arrive as ?q= and send immediately.
+  const sentInitial = useRef(false);
+  useEffect(() => {
+    if (initialQuery && !sentInitial.current) {
+      sentInitial.current = true;
+      send(initialQuery);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuery]);
+
   const isEmpty = messages.length === 0;
   const composer = (
     <ChatComposer
@@ -74,7 +84,7 @@ export function ChatPanel() {
       <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-6 py-16 text-center">
         <div
           aria-hidden
-          className="bg-grid absolute inset-0 bg-center [mask-image:radial-gradient(ellipse_60%_55%_at_50%_45%,black,transparent)]"
+          className="bg-canvas absolute inset-0 [mask-image:radial-gradient(ellipse_60%_55%_at_50%_45%,black,transparent)]"
         />
         <motion.div
           variants={containerVariants}
@@ -86,12 +96,12 @@ export function ChatPanel() {
             variants={itemVariants}
             className="flex items-center gap-2 rounded-full border bg-background px-3 py-1 font-mono text-xs text-muted-foreground"
           >
-            <span className="size-1.5 rounded-full bg-emerald-500" />
+            <span className="size-1.5 rounded-full bg-hot" />
             Ask Ethan&apos;s AI
           </motion.p>
           <motion.h1
             variants={itemVariants}
-            className="mt-8 text-balance text-4xl font-medium tracking-tighter text-foreground sm:text-5xl"
+            className="mt-8 text-balance font-display text-5xl font-black uppercase leading-[0.85] text-foreground wdth-75 sm:text-7xl"
           >
             What do you want to know?
           </motion.h1>
@@ -136,7 +146,7 @@ export function ChatPanel() {
               transition={{ duration: 0.3 }}
               className={cn(
                 "grid gap-3 px-8 py-8 md:grid-cols-12 md:gap-10 md:px-10",
-                m.role === "assistant" && "bg-muted/30"
+                m.role === "assistant" && "bg-card"
               )}
             >
               <MessageLabel role={m.role} />
@@ -146,7 +156,7 @@ export function ChatPanel() {
             </motion.li>
           ))}
           {isLoading && (
-            <li className="grid gap-3 bg-muted/30 px-8 py-8 md:grid-cols-12 md:gap-10 md:px-10">
+            <li className="grid gap-3 bg-card px-8 py-8 md:grid-cols-12 md:gap-10 md:px-10">
               <MessageLabel role="assistant" />
               <motion.span
                 animate={{ opacity: [0.3, 1, 0.3] }}
@@ -177,7 +187,7 @@ function MessageLabel({ role }: { role: Message["role"] }) {
       <span
         className={cn(
           "size-1.5 rounded-full",
-          role === "user" ? "bg-foreground/40" : "bg-emerald-500"
+          role === "user" ? "bg-sel" : "bg-hot"
         )}
       />
       {role === "user" ? "You" : "Ethan's AI"}
