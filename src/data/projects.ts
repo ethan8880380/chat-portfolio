@@ -43,6 +43,8 @@ export interface ProjectData {
   prototype?: {
     /** domain is what the phone's address bar shows, e.g. "huggies.com". */
     variants: { label: string; src: string; domain: string }[];
+    /** Colour field behind the phone on project cards, like the other projects' hero images. */
+    background?: string;
   };
   /**
    * How the work got made: a written chapter, annotated design boards shown at

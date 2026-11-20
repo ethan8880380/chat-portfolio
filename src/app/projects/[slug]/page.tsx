@@ -118,7 +118,7 @@ function Showcase({
   title: string;
 }) {
   return (
-    <div className="px-6 md:px-12">
+    <>
       {showcase.body ? (
         <Chapter label={showcase.label} body={showcase.body} />
       ) : (
@@ -127,7 +127,7 @@ function Showcase({
         </h2>
       )}
       <Boards boards={showcase.images} title={title} />
-    </div>
+    </>
   );
 }
 
@@ -215,6 +215,7 @@ function StaticCaseStudy({ project }: { project: ProjectData }) {
           ))}
         </div>
       )}
+      {project.showcase && <Showcase showcase={project.showcase} title={project.title} />}
       {project.results && <Chapter label="Outcome" body={project.results} />}
       {project.testimonial && (
         <Fade className="pt-32 md:pt-48">
@@ -312,8 +313,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <StaticCaseStudy project={project} />
         )}
 
-        {project.showcase && (
-          <Showcase showcase={project.showcase} title={project.title} />
+        {/* Structured case studies place the showcase before the Outcome. */}
+        {hasRichContent && project.showcase && (
+          <div className="px-6 md:px-12">
+            <Showcase showcase={project.showcase} title={project.title} />
+          </div>
         )}
 
         {next && (

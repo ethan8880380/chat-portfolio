@@ -1879,312 +1879,96 @@ export const workProjects: ProjectData[] = [
     id: 10,
     slug: "kcna-hub",
     title: "Commercial Analytics Hub",
-    shortDescription: "Designing a single entry point for enterprise analytics",
-    fullDescription: "",
+    shortDescription:
+      "The front door to Kimberly-Clark's commercial analytics: one trusted place to find the right dashboard, learn it and get help. It started as a Webflow MVP, won a GDUSA award, and grew into a platform the analytics team now runs themselves.",
+    fullDescription:
+      "An internal platform I designed and built to centralize access to dozens of enterprise analytics dashboards. It cut dashboard discovery from about an hour to about a minute and became the starting point for more than 1,000 people.",
     images: {
-      hero: "/projectImages/desktop/comm-v2-hero.png"
+      hero: "/projectImages/work/kcna-hub/v2-hero.png",
     },
-    tags: [
-      "next.js",
-      "tailwind",
-      "Enterprise"
-    ],
+    tags: ["Enterprise", "Analytics", "next.js", "tailwind", "Award-Winning"],
     year: "2023–2026",
-    role: [
-      "Research",
-      "Development",
-      "Design",
-      "Project Management"
-    ],
-    color: "bg-blue-500",
-    featured: true,
-    richContent: [
-      {
-        id: "2e661e67-1094-8019-afb3-ef0453c91be3",
-        type: "paragraph",
-        content: "The Commercial Analytics Hub is an internal platform I designed and built to centralize access to dozens of enterprise analytics dashboards. Before it existed, finding the right report could take over an hour. After launch, most users could get where they needed to go in under a minute. It became the primary starting point for more than 1,000 people across the organization."
-      },
-      {
-        id: "2e661e67-1094-809f-93fd-d3f3d0ddd629",
-        type: "paragraph",
-        content: "This project is a good example of how UX isn’t always about making new tools—it’s often about making existing tools usable, trustworthy, and easy to find."
-      },
-      {
-        id: "2e661e67-1094-80fc-9962-d5936c8547d2",
-        type: "heading_3",
-        content: "The problem",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-8021-8e12-d0f3d0bfcca2",
-        type: "paragraph",
-        content: "Analytics access was messy. Dashboards were scattered across Power BI workspaces, SharePoint sites, and personal bookmarks. Links changed often and without warning. Ownership was unclear. New hires and occasional users had no reliable way to learn what to use or where to go."
-      },
-      {
-        id: "2e661e67-1094-8059-90be-dc37f04eef3c",
-        type: "paragraph",
-        content: "Power users survived by memorizing paths and saving bookmarks. Everyone else lost time clicking broken links, searching old emails, or messaging coworkers for help. People regularly spent more time finding dashboards than using them."
-      },
-      {
-        id: "2e661e67-1094-80b4-9718-c07a7cec2114",
-        type: "paragraph",
-        content: "The real issue wasn’t the dashboards themselves. It was discovery, trust, and clarity."
-      },
-      {
-        id: "2e661e67-1094-8000-9198-f4ef6702163b",
-        type: "heading_3",
-        content: "Goals",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-8075-8001-cce9a5d0ae29",
-        type: "paragraph",
-        content: "From a user perspective, the goal was simple: find the right dashboard fast, know which one to use, and trust that it would actually work. From a business perspective, the goal was to create a single source of truth for analytics access, reduce wasted time, and increase confidence in data usage."
-      },
-      {
-        id: "2e661e67-1094-800b-a092-c2da1629c353",
-        type: "paragraph",
-        content: "There wasn’t a complicated success metric. If people didn’t use it, it failed."
-      },
-      {
-        id: "2e661e67-1094-80ed-aa18-db7d4f4f88aa",
-        type: "heading_3",
-        content: "My role",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-809b-b5ce-c3ef59473d28",
-        type: "paragraph",
-        content: "I owned the project end-to-end. I led research and stakeholder interviews, defined the product vision, designed the information architecture and UX, designed and built the UI, maintained the front end, and managed stakeholders through multiple iterations. Aside from a small team that helped with backend chatbot integration, I owned design, UX, and front-end development."
-      },
-      {
-        id: "2e661e67-1094-80d3-9943-c541ae82cb6d",
-        type: "heading_3",
-        content: "Research and insight",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-804e-b4b7-e6823aee7bac",
-        type: "paragraph",
-        content: "Through interviews and behavioral analysis in FullStory, I saw a clear split between user types. Power users had built their own systems: bookmarks, memorized workspace paths, and direct navigation. Occasional users had no such system. They bounced between SharePoint sites, clicked outdated links, and messaged teammates for help. Some spent hours just trying to find the right report."
-      },
-      {
-        id: "2e661e67-1094-80a5-90ec-f9142fff29bf",
-        type: "paragraph",
-        content: "When I analyzed click paths and hesitation points, a simple pattern emerged: users didn’t need better dashboards. They needed a single, trusted place to start. Fragmentation—not complexity—was the root cause of wasted time and low confidence."
-      },
-      {
-        id: "2e661e67-1094-80d6-a25d-c2e6b669a4a4",
-        type: "heading_3",
-        content: "Information architecture",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-80b6-8714-cd7c673db59d",
-        type: "paragraph",
-        content: "I organized dashboards by type of analysis—market share, assortment, revenue management, shelf planning, promotions, and more. This matched how analysts already thought about their work and reduced cognitive load."
-      },
-      {
-        id: "2e661e67-1094-8062-a867-e3266a20eaef",
-        type: "paragraph",
-        content: "I explored organizing by questions like “How do we grow market share?” but rejected it. It was too subjective, hard to scale, and required interpretation. Instead, when dashboards overlapped, each entry included a clear description, when to use it, and what level of detail it provided. That removed the need for tribal knowledge."
-      },
-      {
-        id: "2ef61e67-1094-80ea-848c-c3d69d561f91",
-        type: "image",
-        url: "/projectImages/work/kcna-hub/01.png",
-        content: ""
-      },
-      {
-        id: "2e661e67-1094-807d-a276-f5b073cafffb",
-        type: "heading_3",
-        content: "Key design decisions",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-8055-ba4c-d03eb06bb982",
-        type: "paragraph",
-        content: "Rather than trying to fix navigation inside Power BI or SharePoint, I built a dedicated access layer whose only job was clarity and discovery. Dashboards were clearly separated from power-user data tools so non-technical users didn’t land in workflows they couldn’t use."
-      },
-      {
-        id: "2e661e67-1094-8013-bce0-ecfca4acd406",
-        type: "paragraph",
-        content: "The experience was designed for browsing. Clear categories, scannable descriptions, and predictable navigation made it easy to explore even if you didn’t know what you were looking for yet. Trust was built through consistency: links stayed current, changes were communicated, and the hub became the single authoritative source."
-      },
-      {
-        id: "2e661e67-1094-8038-9dc3-c3eadaa69675",
-        type: "heading_3",
-        content: "Training and enablement",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-80cb-9b93-dd8a51cc0054",
-        type: "paragraph",
-        content: "Training used to disappear after live office hours. Once a session ended, the knowledge was effectively gone. I changed that by recording sessions, embedding videos directly into the platform, and labeling them by topic and dashboard."
-      },
-      {
-        id: "2e661e67-1094-80a2-b1f7-ece189acd157",
-        type: "paragraph",
-        content: "What used to be temporary became an on-demand knowledge base. New hires could onboard themselves, occasional users could refresh their memory, and anyone could learn independently without waiting for a live session."
-      },
-      {
-        id: "2ef61e67-1094-80f9-bd33-e34cb48938d4",
-        type: "image",
-        url: "/projectImages/work/kcna-hub/02.png",
-        content: ""
-      },
-      {
-        id: "2e661e67-1094-8074-b1ba-d4103d273dca",
-        type: "heading_3",
-        content: "Iteration and evolution",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-807a-82ee-cff8f7b011ca",
-        type: "paragraph",
-        content: "The first version was a simple MVP built in Webflow to validate adoption. Usage quickly proved there was demand."
-      },
-      {
-        id: "2e661e67-1094-80bb-b6f5-e5f33cbb34e1",
-        type: "paragraph",
-        content: "In the second phase, I expanded the platform by adding training content, improving the information architecture, and aligning the visuals more closely with the internal design system."
-      },
-      {
-        id: "2e661e67-1094-8045-b78c-cbaf2c683e3e",
-        type: "paragraph",
-        content: "As the site grew, Webflow became a bottleneck. Global changes required page-by-page edits, and shared logic was hard to manage. I rebuilt the platform in React to centralize logic, improve performance, and make iteration faster. Users explicitly noticed the speed and clarity improvement."
-      },
-      {
-        id: "2e661e67-1094-8088-bbe7-f1cbe42dc5c4",
-        type: "paragraph",
-        content: "In its most mature phase, the hub fully aligned with the enterprise design system and reusable components. It became a reference model that influenced four to five other internal platforms."
-      },
-      {
-        id: "2ef61e67-1094-8004-bec3-cd083586551e",
-        type: "image",
-        url: "/projectImages/work/kcna-hub/03.png",
-        content: ""
-      },
-      {
-        id: "2e661e67-1094-8092-abae-fa91fb1f7c58",
-        type: "heading_3",
-        content: "AI search and Analytics Academy",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-8073-a3da-fd642b6be7d5",
-        type: "paragraph",
-        content: "To reduce friction even further, I integrated a natural-language chatbot. Instead of browsing categories, users could ask something like, “Where do I find promo performance for Target?” and get a direct link."
-      },
-      {
-        id: "2e661e67-1094-8051-9150-cd7ca15b3c1b",
-        type: "paragraph",
-        content: "I also helped launch the Analytics Academy, a role-based learning system with live sessions, recorded content, and structured learning paths. All of it lived inside the hub, so learning and doing were never far apart."
-      },
-      {
-        id: "2e661e67-1094-808e-8c73-e396a5dda247",
-        type: "heading_3",
-        content: "Impact",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-80f0-ba0e-eae043c92d39",
-        type: "paragraph",
-        content: "The platform reduced dashboard discovery time from about 60 minutes to about 1 minute. It reached more than 1,000 active users within a few months and was adopted organically across teams. Trust in analytics improved, and the platform became a reusable model adopted by other groups."
-      },
-      {
-        id: "2e661e67-1094-8066-a5aa-ceda24c6c9b3",
-        type: "paragraph",
-        content: "One of the most common things I heard was: “It’s the first thing I open every day.”"
-      },
-      {
-        id: "2e661e67-1094-80a1-b221-d335077be4b1",
-        type: "heading_3",
-        content: "Reflection",
-        level: 3
-      },
-      {
-        id: "2e661e67-1094-804d-9db8-df7a31e3a370",
-        type: "paragraph",
-        content: "This project pushed me to grow from designer into a true UX engineer. By owning both design and implementation, I reduced handoff friction, iterated directly on user feedback, and built faster with more confidence."
-      },
-      {
-        id: "2e661e67-1094-8072-803f-f369e4b020cf",
-        type: "paragraph",
-        content: "More than anything, it reinforced what I care about most: great UX isn’t just about interfaces. It’s about clarity, trust, and making people’s work easier every day."
-      }
-    ],
     client: "Kimberly-Clark",
-    technologies: [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Tailwind",
-      "Azure SQL",
-      "Okta",
-      "Power BI",
-      "Docker"
-    ],
-    testimonial: {
-      quote: "Ethan's work on the Analytics Hub transformed how our commercial teams make decisions. The interface is intuitive, powerful, and has become indispensable to our daily operations.",
-      author: "Marwa Salhut",
-      position: "Director of KCNA Commercial Analytics, Kimberly-Clark"
+    role: ["Research", "Design", "Development", "Project Management"],
+    technologies: ["Next.js", "React", "TypeScript", "Tailwind", "Azure SQL", "Okta", "Power BI", "Docker"],
+    challenges:
+      "Analytics access was a mess. Dashboards were scattered across Power BI workspaces, SharePoint sites and personal bookmarks, links changed without warning, and ownership was unclear. Power users survived by memorizing paths; everyone else lost time to broken links, old emails and messages to coworkers, and people regularly spent longer finding a dashboard than using it.\n\nThe dashboards weren't the problem. Discovery, trust and clarity were. The goal was simple: find the right dashboard fast, know which one to use, and trust that it works, while giving the business a single source of truth for analytics. There was no elaborate success metric. If people didn't use it, it failed.",
+    process: {
+      body:
+        "I owned the project end to end: research and stakeholder interviews, the product vision, information architecture, UX and UI, and the front-end build, with a small team helping on the chatbot's back end.\n\nInterviews and FullStory session analysis showed a clear split. Power users had built their own systems of bookmarks and memorized workspace paths. Occasional users had none: they bounced between SharePoint sites, clicked outdated links and messaged teammates for help, and some spent hours looking for a single report. The click paths and hesitation points all pointed the same way. People didn't need better dashboards, they needed one trusted place to start. Fragmentation, not complexity, was the root cause.\n\nSo I organized dashboards by type of analysis (market share, assortment, revenue management, shelf planning, promotions), matching how analysts already think about their work. I explored organizing by business questions like \"How do we grow market share?\" but dropped it: too subjective, hard to scale, and open to interpretation. Where dashboards overlapped, each entry got a plain description of what it's for, when to use it and how detailed it is, which replaced a lot of tribal knowledge.\n\nThe Hub grew in stages. A Webflow MVP proved the demand. A second phase added training and a tighter information architecture. When Webflow became the bottleneck, with global changes needing page-by-page edits, I rebuilt it in React and Next.js to centralize logic and iterate faster, and users noticed the speed straight away. Aligned with the enterprise design system, that version became the model for four or five other internal platforms.",
+      boards: [
+        {
+          src: "/projectImages/work/kcna-hub/02.png",
+          width: 1934,
+          height: 1088,
+          title: "From MVP to platform",
+          caption: "An early version of the Hub (back) and the redesigned home page (front), aligned with the enterprise design system.",
+          wide: true,
+        },
+        {
+          src: "/projectImages/work/kcna-hub/01.png",
+          width: 1536,
+          height: 864,
+          title: "Dashboards by type of analysis",
+          caption: "Categories that match how analysts think, with a plain description on every dashboard and card or table views.",
+        },
+        {
+          src: "/projectImages/work/kcna-hub/03.png",
+          width: 1536,
+          height: 864,
+          title: "Training and AI search",
+          caption: "Recorded courses live next to the dashboards, and the chatbot answers \"where do I find…\" with a direct link.",
+        },
+      ],
     },
+    solution:
+      "Rather than fix navigation inside Power BI or SharePoint, I built a dedicated access layer whose only job is clarity and discovery. Dashboards sit apart from power-user data tools, so non-technical users don't land in workflows they can't use. The experience is built for browsing, with clear categories, scannable descriptions and predictable navigation, so it's easy to explore even before you know what you're looking for. Trust comes from consistency: links stay current, changes are communicated, and the Hub is the one authoritative source.\n\nTraining used to disappear when live office hours ended. I started recording sessions and embedding them in the Hub, labeled by topic and dashboard, so they became an on-demand knowledge base: new hires onboard themselves and occasional users refresh their memory without waiting for the next session. I also helped launch the Analytics Academy, a role-based learning program with live sessions, recordings and structured learning paths, inside the Hub so learning and doing are never far apart. To cut friction further, a natural-language chatbot answers questions like \"Where do I find promo performance for Target?\" with a direct link.",
     showcase: {
       label: "Version 2",
-      body: "Version 2 started from one bottleneck: me. Every new dashboard, broken-report notice, webinar or training video was a code change and a deploy, so the site always lagged the team that owned the content. So I moved the content out of the code and gave the analytics team an admin console to run it themselves.\n\nEach content type is an Azure SQL table that mirrors its TypeScript type, and every admin area follows the same pattern: API routes call a small server module, the module talks to SQL, and if the database can't be reached it falls back to an in-memory store seeded from the original static data. Local development runs with no database at all, an outage degrades to read-only content instead of a blank page, and a script generates SQL seed files from the TypeScript data so a fresh database can be rebuilt end to end. Okta handles sign-in, and a superadmin tab decides who sees the admin shield and which tabs each person can use.\n\nThe console is designed for people who don't think in forms. Every edit shows its result before it's saved: the tool editor renders the live card, the alert editor renders the alert strip, and a Tools-page preview shows the whole public page with unsaved changes applied. A Needs attention column flags tools missing a link, description or filters.\n\nThe public side was rebuilt around what people come to do. The home page opens on Jump right in, the Tools page adds taxonomy filters, favorites, recently viewed and table views, a short survey asks each person once how the Hub is working, and each quarter's release notes ship as a narrated, animated video built in React.",
+      body:
+        "Version 2 started from one bottleneck: me. Every new dashboard, broken-report notice, webinar or training video was a code change and a deploy, so the site always lagged the team that owned the content. So I moved the content out of the code and gave the analytics team an admin console to run it themselves.\n\nEach content type is an Azure SQL table that mirrors its TypeScript type, and every admin area follows the same pattern: API routes call a small server module, the module talks to SQL, and if the database can't be reached it falls back to an in-memory copy of the original data, so an outage degrades to read-only content instead of a blank page. Okta handles sign-in, and a superadmin decides who can use which tabs.\n\nThe console is designed for people who don't think in forms. Every edit shows its result before it's saved: the tool editor renders the live card, the alert editor renders the alert strip, and a preview shows the whole Tools page with unsaved changes applied. On the public side, the home page now opens on what people came to do, the Tools page adds filters, favorites and recently viewed, a short survey asks each person once how the Hub is working, and each quarter's release notes ship as a narrated video built in React.",
       images: [
         {
-          src: "/projectImages/projectContent/comm-v2-admin-tools.png",
-          width: 2880,
-          height: 1800,
-          title: "Admin console · Tools",
-          caption: "Ten tabs, one pattern. 47 dashboards and self-service tools in one table, each cell editable in place, with a Needs attention column for anything incomplete.",
-          wide: true
+          src: "/projectImages/work/kcna-hub/v2-admin.png",
+          width: 3072,
+          height: 1728,
+          title: "Admin console",
+          caption: "47 dashboards and self-service tools in one editable table, with a Needs attention column. Editing a tool shows its public card above the form.",
+          wide: true,
         },
         {
-          src: "/projectImages/projectContent/comm-v2-admin-editor.png",
-          width: 2880,
-          height: 1800,
-          title: "Tool editor",
-          caption: "Editing a section shows the public card above the form, so links, menus and demo buttons are checked before they ship."
+          src: "/projectImages/work/kcna-hub/v2-alerts.png",
+          width: 3072,
+          height: 1728,
+          title: "Alerts and events",
+          caption: "When a data source breaks, an admin flags the card in seconds; critical alerts also disable the Open button. Events can promote themselves to the home page for three weeks.",
         },
         {
-          src: "/projectImages/projectContent/comm-v2-admin-alert.png",
-          width: 2880,
-          height: 1800,
-          title: "Tool alerts",
-          caption: "When a data source breaks, an admin flags the card in seconds. Critical alerts also disable the Open button so nobody lands on a broken report."
-        },
-        {
-          src: "/projectImages/projectContent/comm-v2-admin-events.png",
-          width: 2880,
-          height: 1800,
-          title: "Events",
-          caption: "The commercial calendar. Turning on a badge promotes an event to the home hero for three weeks, then it retires itself."
-        },
-        {
-          src: "/projectImages/projectContent/comm-v2-admin-preview.png",
-          width: 2880,
-          height: 1800,
+          src: "/projectImages/work/kcna-hub/v2-preview.png",
+          width: 3072,
+          height: 1728,
           title: "Tools page preview",
-          caption: "The full public page rendered inside the console with unsaved banners and alerts applied. Nothing is saved from this view."
+          caption: "The public page rendered inside the console with unsaved banners and alerts applied, before anything goes live.",
         },
         {
-          src: "/projectImages/projectContent/comm-v2-tools.png",
-          width: 2880,
-          height: 1800,
-          title: "Tools page",
-          caption: "47 tools with taxonomy filters, favorites and recently viewed, in card or table view."
-        },
-        {
-          src: "/projectImages/projectContent/comm-v2-release-video.jpg",
-          width: 2880,
-          height: 1800,
+          src: "/projectImages/work/kcna-hub/v2-video.jpg",
+          width: 3072,
+          height: 1728,
           title: "Release notes video",
-          caption: "Quarterly release notes as a narrated, animated video built in React with recorded voiceover."
-        }
-      ]
-    }
-  }
+          caption: "Quarterly release notes as a narrated, animated video built in React, so updates reach people who would never read a changelog.",
+          wide: true,
+        },
+      ],
+    },
+    results:
+      "Dashboard discovery dropped from about 60 minutes to about one. The Hub reached more than 1,000 active users within a few months, spread across teams without a mandate, was featured in a company-wide town hall and won a GDUSA Award for Digital Design Excellence. Its patterns became the model for four or five other internal platforms, and version 2 means the analytics team now publishes and maintains everything on it themselves. The comment I heard most: \"It's the first thing I open every day.\"\n\nThe project also turned me from a designer into a UX engineer. Owning both design and implementation cut out handoff friction and let me act on user feedback directly, and it reinforced what I care about most: great UX is less about interfaces than about clarity, trust and making people's work easier every day.",
+    testimonial: {
+      quote:
+        "Ethan's work on the Analytics Hub transformed how our commercial teams make decisions. The interface is intuitive, powerful, and has become indispensable to our daily operations.",
+      author: "Marwa Salhut",
+      position: "Director of KCNA Commercial Analytics, Kimberly-Clark",
+    },
+    color: "bg-blue-500",
+    featured: true,
+  },
 ];

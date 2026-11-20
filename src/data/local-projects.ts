@@ -21,6 +21,8 @@ export const localProjects: ProjectData[] = [
         { label: "Pull-Ups", src: "/prototypes/brand-sites/pull-ups-2/embed", domain: "pull-ups.com" },
         { label: "Depend", src: "/prototypes/brand-sites/depend-2/embed", domain: "depend.com" },
       ],
+      // Huggies red (primary-600 in the brand tokens).
+      background: "#da291c",
     },
     process: {
       body:

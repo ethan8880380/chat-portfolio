@@ -202,7 +202,11 @@ export function PrototypeStage({ prototype, title }: { prototype: Prototype; tit
 export function PrototypeCard({ prototype, title }: { prototype: Prototype; title: string }) {
   const { ref, scale } = useFitScale(1);
   return (
-    <div ref={ref} className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-card py-6">
+    <div
+      ref={ref}
+      className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-card py-6"
+      style={prototype.background ? { background: prototype.background } : undefined}
+    >
       {scale > 0 && (
         <div className="transition-transform duration-[1.2s] ease-out group-hover:scale-[1.015]">
           <Phone src={prototype.variants[0].src} domain={prototype.variants[0].domain} title={title} scale={scale} interactive={false} lazy />
