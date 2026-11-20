@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getFeaturedProjects, getProjects } from "@/lib/projects-service";
+import { getProjects } from "@/lib/projects-service";
+import { homeSelection } from "@/lib/work-order";
 import { NoirShell } from "@/components/noir/noir-shell";
 import { NoirHero } from "@/components/noir/hero";
 import { FeaturedProjects } from "@/components/noir/projects";
@@ -8,7 +9,8 @@ import { ContactBlock } from "@/components/noir/contact-block";
 
 
 export default async function Home() {
-  const [featured, all] = await Promise.all([getFeaturedProjects(), getProjects()]);
+  const all = await getProjects();
+  const featured = homeSelection(all);
 
   return (
     <NoirShell>
