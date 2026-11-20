@@ -28,10 +28,10 @@ const TOOLS = [
 ];
 
 const HOBBIES = [
-  { title: "Golf", note: "Under 20, but long off the tee." },
-  { title: "Mariners", note: "Pain is temporary. Fandom is forever." },
-  { title: "Guitar", note: "Campfire certified." },
-  { title: "Huskies", note: "Class of ’22. Bow down." },
+  { title: "Golf", note: "Under 20, but long off the tee.", photo: "/projectImages/about/golf.png", alt: "Ethan golfing" },
+  { title: "Mariners", note: "Pain is temporary. Fandom is forever.", photo: "/projectImages/about/baby.png", alt: "Ethan as a kid at a Mariners game" },
+  { title: "Guitar", note: "Campfire certified.", photo: "/projectImages/about/guitar.png", alt: "Ethan playing guitar" },
+  { title: "Huskies", note: "Class of ’22. Bow down.", photo: "/projectImages/about/husky.png", alt: "Ethan at a UW Huskies game" },
 ];
 
 export default function AboutPage() {
@@ -115,7 +115,16 @@ export default function AboutPage() {
               <Fade key={h.title} delay={i * 0.08}>
                 <div className="group border-t pt-5">
                   <span className="text-[13px] tabular-nums text-muted-foreground">0{i + 1}</span>
-                  <p className="font-gserif mt-8 text-[clamp(2rem,3.4vw,3rem)] leading-none tracking-[-0.03em] transition-transform duration-500 group-hover:-translate-y-1">
+                  <div className="relative mt-5 aspect-[4/5] overflow-hidden bg-card">
+                    <Image
+                      src={h.photo}
+                      alt={h.alt}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 20vw"
+                      className="object-cover grayscale transition-[filter,transform] duration-1000 group-hover:scale-[1.03] group-hover:grayscale-0"
+                    />
+                  </div>
+                  <p className="font-gserif mt-6 text-[clamp(1.75rem,2.8vw,2.5rem)] leading-none tracking-[-0.03em] transition-transform duration-500 group-hover:-translate-y-1">
                     {h.title}
                   </p>
                   <p className="mt-4 text-[13px] leading-relaxed text-muted-foreground">{h.note}</p>
