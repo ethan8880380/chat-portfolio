@@ -1,3 +1,13 @@
+export interface ProcessImage {
+  src: string;
+  width: number;
+  height: number;
+  title: string;
+  caption?: string;
+  /** Boards marked wide span the full width; the rest sit two to a row. */
+  wide?: boolean;
+}
+
 export interface ProjectData {
   id: number;
   slug: string;
@@ -26,6 +36,25 @@ export interface ProjectData {
   githubUrl?: string;
   color: string;
   featured?: boolean;
+  /**
+   * A live, coded prototype shown in place of screenshots (a static export
+   * served from public/prototypes). The first variant is the default.
+   */
+  prototype?: {
+    /** domain is what the phone's address bar shows, e.g. "huggies.com". */
+    variants: { label: string; src: string; domain: string }[];
+  };
+  /**
+   * How the work got made: a written chapter, annotated design boards shown at
+   * their native size, and an optional side-by-side progression of one screen.
+   */
+  process?: {
+    body: string;
+    boards?: ProcessImage[];
+    progression?: { title: string; caption?: string; stages: ProcessImage[] };
+  };
+  /** A titled set of screenshots shown after the case study, e.g. the shipped site. */
+  showcase?: { label: string; body?: string; images: ProcessImage[] };
   // Rich content from Notion page blocks (optional)
   notionPageId?: string;
   richContent?: NotionBlock[];

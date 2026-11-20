@@ -8,7 +8,7 @@ import { ChevronDown, LayoutDashboard, Menu, ScanLine, Sparkles } from "lucide-r
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useStudio } from "@/components/studio/studio-provider";
 import { cn } from "@/lib/utils";
-import { isNoirPath } from "@/lib/routes";
+import { isNoirPath, normalizePath } from "@/lib/routes";
 
 const NAV_ITEMS = [
   { label: "Work", href: "/work" },
@@ -23,7 +23,7 @@ function isNavActive(pathname: string, href: string) {
 }
 
 export function SiteHeader() {
-  const pathname = usePathname();
+  const pathname = normalizePath(usePathname());
   const { inspect, toggleInspect, setCommandOpen } = useStudio();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pageName = pathname === "/" ? "Home" : pathname.split("/").filter(Boolean).join(" / ");

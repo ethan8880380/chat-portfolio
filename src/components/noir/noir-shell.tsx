@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { normalizePath } from "@/lib/routes";
 
 const LINKS = [
   { href: "/work", label: "Work" },
@@ -14,7 +15,7 @@ const LINKS = [
 
 /** Wraps every noir page: theme, a whisper of navigation, nothing else. */
 export function NoirShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+  const pathname = normalizePath(usePathname());
 
   useEffect(() => {
     document.documentElement.dataset.noir = "";

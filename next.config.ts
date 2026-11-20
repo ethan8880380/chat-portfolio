@@ -33,6 +33,13 @@ const nextConfig: NextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  // public/prototypes holds static exports of coded prototypes (see
+  // scripts/export-huggies-prototype.cjs). Their pages are "<route>.html"
+  // files; serve them at clean URLs. Rewrites returned as an array run after
+  // the filesystem, so real files (_next assets, .txt payloads) win.
+  async rewrites() {
+    return [{ source: "/prototypes/:path*", destination: "/prototypes/:path*.html" }];
+  },
   turbopack: {},
   webpack(config) {
     config.module.rules.push({

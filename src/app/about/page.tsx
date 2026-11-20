@@ -27,6 +27,13 @@ const TOOLS = [
   "Gen AI",
 ];
 
+const HOBBIES = [
+  { title: "Golf", note: "Under 20, but long off the tee." },
+  { title: "Mariners", note: "Pain is temporary. Fandom is forever." },
+  { title: "Guitar", note: "Campfire certified." },
+  { title: "Huskies", note: "Class of ’22. Bow down." },
+];
+
 export default function AboutPage() {
   return (
     <NoirShell>
@@ -103,13 +110,19 @@ export default function AboutPage() {
           <Fade className="text-[13px] text-muted-foreground md:col-span-3">
             <p>Off the clock</p>
           </Fade>
-          <Fade className="md:col-span-9">
-            <p className="font-gserif max-w-[30ch] text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.25] tracking-[-0.02em] text-muted-foreground">
-              Golf <span className="text-foreground">(under 20, but long)</span>. The Mariners{" "}
-              <span className="text-foreground">(pain is temporary)</span>. Guitar{" "}
-              <span className="text-foreground">(campfire certified)</span>. Huskies, class of ’22.
-            </p>
-          </Fade>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:col-span-9 md:grid-cols-4">
+            {HOBBIES.map((h, i) => (
+              <Fade key={h.title} delay={i * 0.08}>
+                <div className="group border-t pt-5">
+                  <span className="text-[13px] tabular-nums text-muted-foreground">0{i + 1}</span>
+                  <p className="font-gserif mt-8 text-[clamp(2rem,3.4vw,3rem)] leading-none tracking-[-0.03em] transition-transform duration-500 group-hover:-translate-y-1">
+                    {h.title}
+                  </p>
+                  <p className="mt-4 text-[13px] leading-relaxed text-muted-foreground">{h.note}</p>
+                </div>
+              </Fade>
+            ))}
+          </div>
         </section>
 
         <ContactBlock />
