@@ -107,10 +107,11 @@ export function PortalHeading({
     const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     return Math.pow(PORTAL_MAX, 1 - e);
   };
-  const scale = useTransform(scrollYProgress, (p) => zoom(p / 0.72));
-  const afterOpacity = useTransform(scrollYProgress, [0.7, 0.85], [0, 1]);
-  const afterY = useTransform(scrollYProgress, [0.7, 0.85], [16, 0]);
-  const beforeOpacity = useTransform(scrollYProgress, [0.55, 0.72], [0, 1]);
+  // Everything lands exactly as the pin releases, so there is no dead scroll.
+  const scale = useTransform(scrollYProgress, (p) => zoom(p / 0.82));
+  const afterOpacity = useTransform(scrollYProgress, [0.8, 1], [0, 1]);
+  const afterY = useTransform(scrollYProgress, [0.8, 1], [16, 0]);
+  const beforeOpacity = useTransform(scrollYProgress, [0.62, 0.82], [0, 1]);
 
   const headingEl = (style?: Record<string, unknown>) => (
     <motion.h2 ref={headingRef} className={className} style={{ transformOrigin: origin, ...style }}>
@@ -145,7 +146,7 @@ export function PortalHeading({
   }
 
   return (
-    <div ref={sectionRef} className="relative h-[240svh]">
+    <div ref={sectionRef} className="relative h-[220svh]">
       <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden px-6 md:px-12">
         <motion.div style={{ opacity: beforeOpacity }}>{before}</motion.div>
         {headingEl({ scale })}
