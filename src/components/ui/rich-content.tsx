@@ -1,52 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import { NotionBlock } from "@/data/projects";
+import type { ContentBlock } from "@/data/projects";
 
-interface NotionContentProps {
-  blocks: NotionBlock[];
+interface RichContentProps {
+  blocks: ContentBlock[];
   className?: string;
 }
 
-/**
- * Helper to get the image URL - uses proxy for Notion-hosted images to avoid expired signed URLs
- */
-function getImageUrl(block: NotionBlock): string {
-  if (!block.url) return "";
-
-  const isNotionHosted =
-    block.url.includes("s3.us-west-2.amazonaws.com") ||
-    block.url.includes("notion.so") ||
-    block.url.includes("prod-files-secure");
-
-  if (isNotionHosted && block.id) {
-    return `/api/notion-image?blockId=${block.id}`;
-  }
-
-  return block.url;
-}
-
-export function NotionContent({ blocks, className = "" }: NotionContentProps) {
+/** Renders a free-form case study body. */
+export function RichContent({ blocks, className = "" }: RichContentProps) {
   if (!blocks || blocks.length === 0) {
     return null;
   }
 
   return (
     <div
-      className={`notion-content space-y-6 [&>*:first-child]:mt-0 ${className}`}
+      className={`rich-content space-y-6 [&>*:first-child]:mt-0 ${className}`}
     >
       {blocks.map((block, index) => (
-        <NotionBlockRenderer key={block.id || index} block={block} />
+        <BlockRenderer key={block.id || index} block={block} />
       ))}
     </div>
   );
 }
 
-interface NotionBlockRendererProps {
-  block: NotionBlock;
+interface BlockRendererProps {
+  block: ContentBlock;
 }
 
-function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
+function BlockRenderer({ block }: BlockRendererProps) {
   switch (block.type) {
     case "paragraph":
       if (!block.content) return null;
@@ -58,7 +41,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "heading_1":
       return (
-        <h2 data-inspect="NotionHeading" className="mb-5 mt-20 font-display text-5xl font-black uppercase leading-[0.85] text-foreground wdth-75 sm:text-6xl">
+        <h2 data-inspect="Heading" className="mb-5 mt-20 font-display text-5xl font-black uppercase leading-[0.85] text-foreground wdth-75 sm:text-6xl">
           {block.content}
         </h2>
       );
@@ -118,30 +101,16 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "image": {
       if (!block.url) return null;
-      const imageUrl = getImageUrl(block);
-      const isProxied = imageUrl.startsWith("/api/");
-
       return (
         <figure className="my-10">
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-foreground/10 bg-muted">
-            {isProxied ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={imageUrl}
-                alt={block.caption || "Project image"}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <Image
-                src={imageUrl}
-                alt={block.caption || "Project image"}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 768px"
-              />
-            )}
-          </div>
+          <Image
+            src={block.url}
+            alt={block.caption || "Project image"}
+            width={0}
+            height={0}
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="h-auto w-full rounded-lg border border-foreground/10 bg-muted"
+          />
           {block.caption && (
             <figcaption className="mt-3 font-mono text-xs text-muted-foreground">
               {block.caption}
@@ -153,7 +122,7 @@ function NotionBlockRenderer({ block }: NotionBlockRendererProps) {
 
     case "video": {
       if (!block.url) return null;
-      const videoUrl = getImageUrl(block);
+      const videoUrl = block.url;
       return (
         <figure className="my-10">
           <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-foreground/10 bg-muted">

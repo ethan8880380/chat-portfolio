@@ -9,8 +9,6 @@ import { ContactBand } from "@/components/home/contact-band";
 import { Container, SectionHead } from "@/components/layout/section-head";
 import { SiteFooter } from "@/components/layout/site-footer";
 
-// Revalidate every hour to keep Notion content fresh
-export const revalidate = 3600;
 
 export const metadata = { title: "Design file view" };
 

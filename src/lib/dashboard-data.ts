@@ -1,8 +1,8 @@
 import type { ProjectData } from "@/data/projects";
 
 /**
- * Everything on /dashboard is derived from real project data (Notion or the
- * static fallback) plus résumé facts — no invented numbers.
+ * Everything on /dashboard is derived from real project data (src/data
+ * work.ts and local-projects.ts) plus résumé facts — no invented numbers.
  */
 
 export type Discipline = "Design" | "Build" | "Research";

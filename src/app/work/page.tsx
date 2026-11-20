@@ -5,7 +5,6 @@ import { RiseLines } from "@/components/noir/reveal";
 import { ProjectGrid } from "@/components/noir/projects";
 import { ContactBlock } from "@/components/noir/contact-block";
 
-export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Work",

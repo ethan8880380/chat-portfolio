@@ -12,7 +12,6 @@ import { CommandMenu } from "@/components/studio/command-menu";
 import { Analytics } from "@vercel/analytics/next";
 import { getProjects } from "@/lib/projects-service";
 
-export const revalidate = 3600;
 
 const geistSans = Geist({
   subsets: ["latin"],

@@ -8,14 +8,13 @@ import {
   getAllProjectSlugs,
 } from "@/lib/projects-service";
 import type { ProcessImage, ProjectData } from "@/data/projects";
-import { NotionContent } from "@/components/ui/notion-content";
+import { RichContent } from "@/components/ui/rich-content";
 import { SmartImage } from "@/components/ui/smart-image";
 import { NoirShell } from "@/components/noir/noir-shell";
 import { Fade, RiseLines } from "@/components/noir/reveal";
 import { ContactBlock } from "@/components/noir/contact-block";
 import { PrototypeStage } from "@/components/noir/prototype";
 
-export const revalidate = 3600;
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -306,7 +305,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         {hasRichContent ? (
           <div className="px-6 pt-32 md:px-12 md:pt-48">
             <div className="mx-auto max-w-2xl text-foreground">
-              <NotionContent blocks={project.richContent!} />
+              <RichContent blocks={project.richContent!} />
             </div>
           </div>
         ) : (

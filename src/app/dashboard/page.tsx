@@ -3,7 +3,6 @@ import { getProjects } from "@/lib/projects-service";
 import { toDashProject } from "@/lib/dashboard-data";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
-export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Dashboard",

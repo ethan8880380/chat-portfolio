@@ -9,24 +9,6 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'prod-files-secure.s3.us-west-2.amazonaws.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.notion.so',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.notion.so',
-        port: '',
-        pathname: '/**',
-      },
     ],
     qualities: [75, 90, 100],
     dangerouslyAllowSVG: true,
@@ -37,6 +19,10 @@ const nextConfig: NextConfig = {
   // scripts/export-huggies-prototype.cjs). Their pages are "<route>.html"
   // files; serve them at clean URLs. Rewrites returned as an array run after
   // the filesystem, so real files (_next assets, .txt payloads) win.
+  // The Commercial Analytics Hub case study lives at its original URL.
+  async redirects() {
+    return [{ source: "/projects/commercial-analytics-hub", destination: "/projects/kcna-hub", permanent: true }];
+  },
   async rewrites() {
     return [{ source: "/prototypes/:path*", destination: "/prototypes/:path*.html" }];
   },

@@ -16,14 +16,14 @@ const DEFAULT_MODEL = 'gpt-4o-mini';
 
 // Map project slugs to their detailed case-study context
 const projectContext: Record<string, string> = {
-  'commercial-analytics-hub': additionalContext.commercialAnalyticsHub,
-  'enterprise-design-system': additionalContext.enterpriseDesignSystem,
-  'genfei-chatbot': additionalContext.genfeiChatbot,
-  'iris-analytics': additionalContext.irisAnalytics,
-  'web-templates': additionalContext.webTemplates,
-  'pullups-research': additionalContext.pullupsResearch,
-  buyerspring: additionalContext.buyerspring,
-  'huggies-website': additionalContext.huggiesWebsite,
+  'kcna-hub': additionalContext.commercialAnalyticsHub,
+  'design-system': additionalContext.enterpriseDesignSystem,
+  genfei: additionalContext.genfeiChatbot,
+  iris: additionalContext.irisAnalytics,
+  'brand-templates': additionalContext.webTemplates,
+  'pu-app': additionalContext.pullupsResearch,
+  'buyer-spring': additionalContext.buyerspring,
+  huggies: additionalContext.huggiesWebsite,
   'defoor-development': additionalContext.defoorDevelopment,
 };
 

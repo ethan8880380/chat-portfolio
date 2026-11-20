@@ -6,8 +6,6 @@ import { FeaturedProjects } from "@/components/noir/projects";
 import { Statement } from "@/components/noir/statement";
 import { ContactBlock } from "@/components/noir/contact-block";
 
-// Revalidate every hour to keep Notion content fresh
-export const revalidate = 3600;
 
 export default async function Home() {
   const [featured, all] = await Promise.all([getFeaturedProjects(), getProjects()]);

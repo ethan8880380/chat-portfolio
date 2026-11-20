@@ -64,13 +64,7 @@ function NativeImage({ src, alt, sizes }: { src: string; alt: string; sizes: str
         viewport={{ once: true, margin: "0px 0px -10% 0px" }}
         transition={{ duration: 1.8, ease: EASE }}
       >
-        {src.startsWith("/api/") ? (
-          // Notion images come through a proxy route next/image rejects.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt={alt} loading="lazy" className={cls} />
-        ) : (
-          <Image src={src} alt={alt} width={0} height={0} sizes={sizes} className={cls} style={{ width: "100%", height: "auto" }} />
-        )}
+        <Image src={src} alt={alt} width={0} height={0} sizes={sizes} className={cls} style={{ width: "100%", height: "auto" }} />
       </motion.div>
     </motion.div>
   );

@@ -1,34 +1,8 @@
 import type { ProjectData } from "@/data/projects";
 
-const IMG = "/projectImages/projectContent";
-
-const irisShowcase: ProjectData["showcase"] = {
-  label: "The website",
-  body: "IRIS also has a front door: a site where commercial teams discover what the platform can do, learn it at their own pace, and request access. It sits on the same design language as the product it introduces, so moving from the site into the app feels like one experience.",
-  images: [
-    { src: `${IMG}/iris-site-home.png`, width: 2880, height: 1800, title: "Home", caption: "IRIS as a decision copilot, with a live carousel of its capabilities.", wide: true },
-    { src: `${IMG}/iris-site-capabilities.png`, width: 2880, height: 1800, title: "Capabilities", caption: "Every capability in one library, filterable by analytics type, data source and team." },
-    { src: `${IMG}/iris-site-training.png`, width: 2880, height: 1800, title: "Training", caption: "Tutorials, documentation and release notes for every capability." },
-    { src: `${IMG}/iris-site-about.png`, width: 2880, height: 1800, title: "About", caption: "What IRIS is and who it serves." },
-    { src: `${IMG}/iris-app-post-event.png`, width: 2880, height: 1800, title: "Post Event Analyzer", caption: "Inside the app: how each promotion performed, with unit lift, trade spend and margin per event." },
-    { src: `${IMG}/iris-app-pea-cleansing.png`, width: 2880, height: 1800, title: "PEA Cleansing", caption: "A guided step for reviewing and overriding volume before the results are used.", wide: true },
-  ],
-};
-
 /**
- * Additions for projects whose main content lives elsewhere (Notion or the
- * static data), merged in by slug.
- */
-export const projectExtras: Record<string, Partial<ProjectData>> = {
-  iris: { showcase: irisShowcase },
-  "iris-analytics": { showcase: irisShowcase },
-};
-
-/**
- * Projects that live in code rather than Notion. The projects service merges
- * these into whatever Notion returns (and into the static fallback), so they
- * show up everywhere — home, /work, project pages, ⌘K and the dashboard.
- * A local project with the same slug as a Notion page replaces it.
+ * The newest case studies, listed first on the site. The rest are in
+ * src/data/work.ts.
  */
 export const localProjects: ProjectData[] = [
   {
@@ -151,86 +125,6 @@ export const localProjects: ProjectData[] = [
       "Scenario planning is the spine of the product. Every plan starts from a read-only Original Scenario, the baseline everything is measured against. An optimization branches an Optimized Scenario from it, and planners branch Simulations from either. The scenario library nests them by lineage, so you can always see what a version was built from, and every revenue, profit, spend and ROI figure carries its change against the baseline. A simulation measures itself against its parent: edit depth, price, timing, inclusion, lift or fees and the live impact updates instantly, a condensed impact bar stays pinned as you scroll, and a changes drawer lists every edit with its own impact and an undo. Each event is tagged as an earner or a burner against the trade budget, so the trade-off shows up at the row, not just in a total. A one-line guide on every plan page shows which of four steps you're on and the one button that moves you forward.\n\nThe promo calendar turns the year into a picture. Every product group is a row across 52 fiscal weeks, and every event is a bar you can recolour by what you're asking: the optimizer's recommendation (deeper, shallower, hold, locked, removed), discount depth, promo strength by ROI, or tactic. Coloured by ROI, a year of events becomes a heat map: weak promotions glow red and strong ones deepen to teal, so the events worth pausing jump out without reading a number. Edited events are outlined, excluded ones dashed, and committed weeks are frozen and locked. The calendar is editable, not just a view — drag an event to move it, drag an edge to resize it, and it snaps to whole fiscal weeks and stops at its neighbours — and the same edits flow back into the grid and the live impact. You can zoom to any quarter, and the colour choice is kept in the URL so a shared link opens on the same view.\n\nThe compare view closes the loop. Planners pick two to four scenarios and a baseline, and the decision comes first: a recommendation card with the suggested scenario, an optional note for approvers and one Save button. A KPI matrix tags the leader on each metric, and a gains-and-losses summary spells out what each scenario wins and gives up. Every screen also carries built-in design notes (purpose, layout, components, MVP versus future), so the prototype doubles as the hand-off spec.",
     results:
       "IRIS TPO went from Figma frames to a product stakeholders can click through end to end, from opening a plan to saving the recommended scenario. Scenario lineage and the colour-coded calendar let planners compare versions of a full-year plan without opening a spreadsheet, and every recommendation arrives with its reason and its price attached. Writing the design notes into the product kept MVP and future scope explicit, and gave engineering a living spec instead of a slide deck.",
-    color: "bg-blue-500",
-    featured: false,
-  },
-  {
-    // Overrides the Notion / static entry with the same slug (see projects-service).
-    id: 0,
-    slug: "commercial-analytics-hub",
-    title: "Commercial Analytics Hub",
-    shortDescription:
-      "GDUSA Award-winning analytics hub for Kimberly-Clark's North American commercial teams, used by 1,000+ people every week. Version 2 turns the site into a platform: tools, training and an academy on the front, and an admin console on Azure SQL so the team can run it without a developer.",
-    fullDescription:
-      "The Commercial Analytics Hub is the front door to Kimberly-Clark's commercial data: Power BI dashboards, self-service workbooks, training and an AI chatbot in one place. Version 1 replaced a cluttered SharePoint site and won a GDUSA award. Version 2 rebuilt it as a content-managed platform: every tool, alert, event, survey, training and resource now lives in Azure SQL and is edited through an admin console I designed and built.",
-    images: {
-      hero: "/projectImages/desktop/comm-v2-hero.png",
-      gallery: [
-        "/projectImages/projectContent/comm-v2-tools.png",
-        "/projectImages/projectContent/comm-v2-release-video.jpg",
-        "/projectImages/projectContent/comm-2.png",
-        "/projectImages/projectContent/comm-1.png",
-      ],
-    },
-    process: {
-      body:
-        "Version 2 started from one bottleneck: me. Every new dashboard, broken-report notice, webinar or training video was a code change and a deploy, so the site always lagged the team that owned the content. The answer was to move the content out of the code and give the analytics team their own tools to run it.\n\nI modelled each content type as an Azure SQL table that mirrors its TypeScript type, then built every admin area on the same pattern: API routes call a small server module, the module talks to SQL, and if the database can't be reached the module falls back to an in-memory store seeded from the original static data. Local development runs with no database at all, an outage degrades to read-only content instead of a blank page, and a script generates SQL seed files from the TypeScript data so a fresh database can be rebuilt end to end. Okta handles sign-in; a superadmin tab decides who sees the admin shield and which tabs each person can use.\n\nThe console is designed for people who don't think in forms. Every edit shows its result before it's saved: the tool editor renders the live card, the alert editor renders the alert strip, and a Tools-page preview shows the whole public page with unsaved changes applied. Tables are editable cell by cell (click the main link to change where a card sends people), a Needs attention column flags tools missing a link, description or filters, and plain-language help sits next to every field that needs it.",
-      boards: [
-        {
-          src: "/projectImages/projectContent/comm-v2-admin-tools.png",
-          width: 2880,
-          height: 1800,
-          title: "Admin console · Tools",
-          caption: "Ten tabs, one pattern. 47 dashboards and self-service tools in one table, each cell editable in place, with a Needs attention column for anything incomplete.",
-          wide: true,
-        },
-        {
-          src: "/projectImages/projectContent/comm-v2-admin-editor.png",
-          width: 2880,
-          height: 1800,
-          title: "Tool editor",
-          caption: "Editing a section shows the public card above the form, so links, menus and demo buttons are checked before they ship.",
-        },
-        {
-          src: "/projectImages/projectContent/comm-v2-admin-alert.png",
-          width: 2880,
-          height: 1800,
-          title: "Tool alerts",
-          caption: "When a data source breaks, an admin flags the card in seconds. Critical alerts also disable the Open button so nobody lands on a broken report.",
-        },
-        {
-          src: "/projectImages/projectContent/comm-v2-admin-events.png",
-          width: 2880,
-          height: 1800,
-          title: "Events",
-          caption: "The commercial calendar. Turning on a badge promotes an event to the home hero for three weeks, then it retires itself.",
-        },
-        {
-          src: "/projectImages/projectContent/comm-v2-admin-preview.png",
-          width: 2880,
-          height: 1800,
-          title: "Tools page preview",
-          caption: "The full public page rendered inside the console with unsaved banners and alerts applied. Nothing is saved from this view.",
-        },
-      ],
-    },
-    tags: ["Analytics", "Admin Console", "Enterprise", "Award-Winning"],
-    year: "2023–2026",
-    client: "Kimberly-Clark",
-    role: ["UX Research", "UX Design", "Full Stack Development", "Database Design"],
-    technologies: ["Next.js", "React", "TypeScript", "Tailwind", "Azure SQL", "Okta", "Power BI", "Docker"],
-    challenges:
-      "This was our first attempt at building a centralized internal platform of this kind. The existing experience lived on a cluttered SharePoint site that was hard to find, visually outdated, and didn't reflect the professionalism the commercial team expected. We lacked the budget to hire a developer, so I took on both design and development, teaching myself React, Next.js, Okta and API work to meet tight deadlines.\n\nVersion 1's success created the next problem. The Hub grew to dozens of tools, a training program and a calendar of sessions, but all of it was still hard-coded. Dashboards broke without users being told, events went stale, and we had no direct way to ask people whether the Hub was working for them. The platform needed to be run by the team that owned the content, not by one designer-developer with a deploy button.",
-    solution:
-      "The platform began as a Webflow site, but needs like a custom chatbot drove a rebuild in React, Next.js and Tailwind. I leaned on progressive disclosure, adaptive layouts for different roles and contextual help, and kept interviewing users across the project's life to steer the big decisions.\n\nVersion 2 rebuilt the public side around what people came to do. The home page opens on Jump right in: monitor performance, diagnose drivers, plan and act, sales and execution, customer portals. The Tools page adds taxonomy filters, favorites, recently viewed, and card and table views, and every card can carry an alert straight from the console. A short survey appears once per person, the Academy and Training sections are fed from the database, and a quick start guide gets new people productive. Each quarter's release notes ship as a narrated, animated video built in React with recorded voiceover, so updates reach people who would never read a changelog. The whole app runs in a hardened, non-root Docker image.",
-    results:
-      "Based on FullStory analytics, we estimate the Hub saves each user over 2 hours a week that would otherwise go to hunting for resources. It was featured in a company-wide town hall, won a GDUSA Award for Digital Design Excellence, and sparked a series of similar sites across the company. With version 2, the analytics team publishes tools, alerts, events, surveys and training themselves without a code change, broken reports are flagged on the card before anyone opens them, and the same SQL-backed admin pattern is ready to reuse on the next internal platform.",
-    testimonial: {
-      quote:
-        "Ethan's work on the Analytics Hub transformed how our commercial teams make decisions. The interface is intuitive, powerful, and has become indispensable to our daily operations.",
-      author: "Marwa Salhut",
-      position: "Director of KCNA Commercial Analytics, Kimberly-Clark",
-    },
     color: "bg-blue-500",
     featured: false,
   },
